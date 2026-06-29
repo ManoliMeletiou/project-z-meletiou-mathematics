@@ -1,48 +1,38 @@
-export interface MasteryState {
-  attempts: number;
-  correct: number;
-  easeFactor: number;
+export type ReviewState = {
   interval: number;
-  nextReviewDate: string;
-}
+  repetition: number;
+  easeFactor: number;
+  nextReview: string;
+};
 
-export function initializeMastery(): MasteryState {
-  return {
-    attempts: 0,
-    correct: 0,
-    easeFactor: 2.5,
-    interval: 0,
-    nextReviewDate: new Date().toISOString()
-  };
-}
+export function scheduleReview(quality: number, previous?: Partial<ReviewState>): ReviewState {
+  const safeQuality = Math.max(0, Math.min(5, quality));
+  let repetition = previous?.repetition ?? 0;
+  let interval = previous?.interval ?? 1;
+  let easeFactor = previous?.easeFactor ?? 2.5;
 
-export function updateMastery(state: MasteryState, isCorrect: boolean): MasteryState {
-  let { attempts, correct, easeFactor, interval } = state;
-  attempts++;
-  if (isCorrect) correct++;
-
-  const quality = isCorrect ? 5 : 2;
-  easeFactor = Math.max(
-    1.3,
-    easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))
-  );
-
-  if (quality < 3) {
+  if (safeQuality < 3) {
+    repetition = 0;
     interval = 1;
   } else {
-    if (attempts === 1) interval = 1;
-    else if (attempts === 2) interval = 3;
+    repetition += 1;
+    if (repetition === 1) interval = 1;
+    else if (repetition === 2) interval = 6;
     else interval = Math.round(interval * easeFactor);
+
+    easeFactor = Math.max(
+      1.3,
+      easeFactor + (0.1 - (5 - safeQuality) * (0.08 + (5 - safeQuality) * 0.02))
+    );
   }
 
-  const nextDate = new Date();
-  nextDate.setDate(nextDate.getDate() + interval);
+  const next = new Date();
+  next.setDate(next.getDate() + interval);
 
   return {
-    attempts,
-    correct,
-    easeFactor,
     interval,
-    nextReviewDate: nextDate.toISOString()
+    repetition,
+    easeFactor,
+    nextReview: next.toISOString()
   };
 }

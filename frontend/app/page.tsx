@@ -1,63 +1,73 @@
-import Link from 'next/link';
+const portals = [
+  {
+    title: 'Student Portal',
+    href: '/dashboard',
+    text: 'Practise generated questions, submit answers, ask for guided hints, and build mastery.',
+    tag: 'Adaptive practice'
+  },
+  {
+    title: 'Teacher Portal',
+    href: '/teacher',
+    text: 'Track class progress, see intervention needs, and prepare assignments and feedback.',
+    tag: 'Class intelligence'
+  },
+  {
+    title: 'Parent Portal',
+    href: '/parent',
+    text: 'See weekly summaries, progress trends, and simple recommendations for support at home.',
+    tag: 'Weekly insight'
+  }
+];
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <section className="mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-16">
-        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-          Meletiou Mathematics
-        </p>
+    <main className="page">
+      <div className="container">
+        <nav className="nav">
+          <div className="brand">
+            <strong>Project Z</strong>
+            <span>Meletiou Mathematics</span>
+          </div>
+          <div className="navLinks">
+            <a className="btn secondary" href="/auth">Sign in</a>
+            <a className="btn blue" href="/dashboard">Start Practice</a>
+          </div>
+        </nav>
 
-        <h1 className="max-w-4xl text-5xl font-bold leading-tight md:text-7xl">
-          Project Z
-        </h1>
+        <section className="hero">
+          <p className="kicker">AI Mathematics Learning Platform</p>
+          <h1>Mathematics that adapts to every learner.</h1>
+          <p className="lead">
+            Project Z is the live foundation for an AI-powered learning ecosystem:
+            verified question generation, guided hints, teacher insights, and parent summaries.
+          </p>
 
-        <p className="mt-6 max-w-3xl text-xl leading-8 text-slate-300">
-          An AI-powered mathematics learning platform for students, teachers,
-          and parents. Choose your portal to begin.
-        </p>
+          <div className="grid grid3" style={{ marginTop: 34 }}>
+            {portals.map((portal) => (
+              <a className="card portalCard" href={portal.href} key={portal.href}>
+                <span className="badge">{portal.tag}</span>
+                <h2 style={{ marginTop: 18 }}>{portal.title}</h2>
+                <p className="muted">{portal.text}</p>
+              </a>
+            ))}
+          </div>
+        </section>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <Link
-            href="/dashboard"
-            className="rounded-2xl border border-cyan-400/30 bg-cyan-400/10 p-6 transition hover:bg-cyan-400/20"
-          >
-            <h2 className="text-2xl font-bold">Student Portal</h2>
-            <p className="mt-3 text-slate-300">
-              Practise questions, get AI hints, and build mastery.
-            </p>
-          </Link>
-
-          <Link
-            href="/teacher"
-            className="rounded-2xl border border-violet-400/30 bg-violet-400/10 p-6 transition hover:bg-violet-400/20"
-          >
-            <h2 className="text-2xl font-bold">Teacher Portal</h2>
-            <p className="mt-3 text-slate-300">
-              View classes, assignments, progress, and intervention needs.
-            </p>
-          </Link>
-
-          <Link
-            href="/parent"
-            className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-6 transition hover:bg-emerald-400/20"
-          >
-            <h2 className="text-2xl font-bold">Parent Portal</h2>
-            <p className="mt-3 text-slate-300">
-              Follow learner progress and weekly recommendations.
-            </p>
-          </Link>
-        </div>
-
-        <div className="mt-8">
-          <Link
-            href="/auth"
-            className="inline-flex rounded-full bg-white px-6 py-3 font-semibold text-slate-950 transition hover:bg-slate-200"
-          >
-            Sign in or create account
-          </Link>
-        </div>
-      </section>
+        <section className="grid grid3" style={{ marginTop: 20 }}>
+          <div className="card">
+            <h2>Verified-first design</h2>
+            <p className="muted">Questions are generated with deterministic answer checking and a local fallback if the external engine is unavailable.</p>
+          </div>
+          <div className="card">
+            <h2>MYP-ready structure</h2>
+            <p className="muted">Built around skills, mastery, feedback, and teacher-led interpretation for richer criteria.</p>
+          </div>
+          <div className="card">
+            <h2>Live MVP online</h2>
+            <p className="muted">This deployed version is now interactive and testable across student, teacher, parent, and auth routes.</p>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
