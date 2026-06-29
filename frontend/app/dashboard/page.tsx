@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { getStoredRole, supabase } from '../../lib/supabaseClient';
 
 type Question = {
   id: string;
@@ -12,6 +13,15 @@ type Question = {
   verified?: boolean;
   source?: string;
   difficulty?: number;
+};
+
+type Attempt = {
+  id: string;
+  question: string;
+  answer: string;
+  correct: boolean;
+  skill: string;
+  createdAt: string;
 };
 
 function normalise(value: string) {
@@ -28,6 +38,20 @@ function isCorrect(userAnswer: string, question: Question) {
   return accepted.includes(user);
 }
 
+function readAttempts(): Attempt[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    return JSON.parse(window.localStorage.getItem('project-z-attempts') || '[]') as Attempt[];
+  } catch {
+    return [];
+  }
+}
+
+function writeAttempts(attempts: Attempt[]) {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem('project-z-attempts', JSON.stringify(attempts.slice(0, 50)));
+}
+
 export default function DashboardPage() {
   const [question, setQuestion] = useState<Question | null>(null);
   const [skill, setSkill] = useState('quad_fact');
@@ -37,12 +61,15 @@ export default function DashboardPage() {
   const [hint, setHint] = useState('');
   const [showAnswer, setShowAnswer] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState({ attempted: 0, correct: 0 });
+  const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [accountLabel, setAccountLabel] = useState('Guest student');
 
-  const accuracy = useMemo(() => {
-    if (!stats.attempted) return 0;
-    return Math.round((stats.correct / stats.attempted) * 100);
-  }, [stats]);
+  const stats = useMemo(() => {
+    const attempted = attempts.length;
+    const correct = attempts.filter((attempt) => attempt.correct).length;
+    const accuracy = attempted ? Math.round((correct / attempted) * 100) : 0;
+    return { attempted, correct, accuracy };
+  }, [attempts]);
 
   async function loadQuestion(nextSkill = skill, nextDifficulty = difficulty) {
     setLoading(true);
@@ -68,18 +95,40 @@ export default function DashboardPage() {
   }
 
   useEffect(() => {
+    setAttempts(readAttempts());
+
+    async function loadAccount() {
+      const role = getStoredRole();
+      if (!supabase) {
+        setAccountLabel(`Guest ${role}`);
+        return;
+      }
+
+      const { data } = await supabase.auth.getUser();
+      setAccountLabel(data.user?.email ? `${data.user.email} · ${role}` : `Guest ${role}`);
+    }
+
+    loadAccount();
     loadQuestion(skill, difficulty);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function submitAnswer() {
-    if (!question) return;
+    if (!question || !answer.trim()) return;
 
     const correct = isCorrect(answer, question);
-    setStats((previous) => ({
-      attempted: previous.attempted + 1,
-      correct: previous.correct + (correct ? 1 : 0)
-    }));
+    const newAttempt: Attempt = {
+      id: `${Date.now()}`,
+      question: question.text,
+      answer,
+      correct,
+      skill,
+      createdAt: new Date().toISOString()
+    };
+
+    const nextAttempts = [newAttempt, ...attempts].slice(0, 50);
+    setAttempts(nextAttempts);
+    writeAttempts(nextAttempts);
 
     setFeedback(correct
       ? 'Correct. Excellent work.'
@@ -99,16 +148,23 @@ export default function DashboardPage() {
     setHint(data.hint || 'Try breaking the question into smaller steps.');
   }
 
+  function resetSession() {
+    setAttempts([]);
+    writeAttempts([]);
+    setFeedback('Session progress reset.');
+  }
+
   return (
     <main className="page">
       <div className="container">
         <nav className="nav">
           <div className="brand">
             <strong>Student Dashboard</strong>
-            <span>Adaptive practice and guided hints</span>
+            <span>{accountLabel}</span>
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
+            <a className="btn secondary" href="/account">Account</a>
             <a className="btn secondary" href="/teacher">Teacher</a>
             <a className="btn secondary" href="/parent">Parent</a>
           </div>
@@ -157,7 +213,8 @@ export default function DashboardPage() {
             <h2>Session progress</h2>
             <p className="muted">Attempted: {stats.attempted}</p>
             <p className="muted">Correct: {stats.correct}</p>
-            <p className={accuracy >= 70 ? 'success' : 'warning'}>Accuracy: {accuracy}%</p>
+            <p className={stats.accuracy >= 70 ? 'success' : 'warning'}>Accuracy: {stats.accuracy}%</p>
+            <button className="btn secondary" onClick={resetSession}>Reset session</button>
           </section>
         </div>
 
@@ -203,6 +260,32 @@ export default function DashboardPage() {
                 </div>
               )}
             </>
+          )}
+        </section>
+
+        <section className="card" style={{ marginTop: 18 }}>
+          <h2>Recent attempts</h2>
+          {attempts.length === 0 ? (
+            <p className="muted">No attempts yet. Submit an answer to start tracking your progress.</p>
+          ) : (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Skill</th>
+                  <th>Answer</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {attempts.slice(0, 8).map((attempt) => (
+                  <tr key={attempt.id}>
+                    <td>{attempt.skill}</td>
+                    <td>{attempt.answer}</td>
+                    <td>{attempt.correct ? 'Correct' : 'Review'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </section>
       </div>
