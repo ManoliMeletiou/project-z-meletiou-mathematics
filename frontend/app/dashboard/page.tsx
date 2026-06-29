@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { getStoredRole, supabase } from '../../lib/supabaseClient';
+import { fetchMyMastery, fetchMyRecentAttempts, recordPracticeAttempt } from '../../lib/projectZData';
 
 type Question = {
   id: string;
@@ -22,6 +23,15 @@ type Attempt = {
   correct: boolean;
   skill: string;
   createdAt: string;
+  synced?: boolean;
+};
+
+type MasteryRow = {
+  skill_id: string;
+  attempts: number;
+  correct: number;
+  mastery_score: number;
+  last_attempt_at: string | null;
 };
 
 function normalise(value: string) {
@@ -62,7 +72,9 @@ export default function DashboardPage() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [loading, setLoading] = useState(false);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [mastery, setMastery] = useState<MasteryRow[]>([]);
   const [accountLabel, setAccountLabel] = useState('Guest student');
+  const [syncStatus, setSyncStatus] = useState('Local progress mode');
 
   const stats = useMemo(() => {
     const attempted = attempts.length;
@@ -70,6 +82,17 @@ export default function DashboardPage() {
     const accuracy = attempted ? Math.round((correct / attempted) * 100) : 0;
     return { attempted, correct, accuracy };
   }, [attempts]);
+
+  async function refreshDatabaseData() {
+    const masteryData = await fetchMyMastery();
+    setMastery(masteryData as MasteryRow[]);
+
+    const remoteAttempts = await fetchMyRecentAttempts(8);
+
+    if (remoteAttempts.length > 0) {
+      setSyncStatus('Synced with Supabase');
+    }
+  }
 
   async function loadQuestion(nextSkill = skill, nextDifficulty = difficulty) {
     setLoading(true);
@@ -99,13 +122,18 @@ export default function DashboardPage() {
 
     async function loadAccount() {
       const role = getStoredRole();
+
       if (!supabase) {
         setAccountLabel(`Guest ${role}`);
+        setSyncStatus('Local progress mode');
         return;
       }
 
       const { data } = await supabase.auth.getUser();
       setAccountLabel(data.user?.email ? `${data.user.email} · ${role}` : `Guest ${role}`);
+      setSyncStatus(data.user ? 'Ready to sync with Supabase' : 'Sign in to sync with Supabase');
+
+      await refreshDatabaseData();
     }
 
     loadAccount();
@@ -113,26 +141,43 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function submitAnswer() {
+  async function submitAnswer() {
     if (!question || !answer.trim()) return;
 
     const correct = isCorrect(answer, question);
+
+    const syncResult = await recordPracticeAttempt({
+      skillId: skill,
+      questionText: question.text,
+      givenAnswer: answer,
+      correct,
+      source: question.source || 'unknown',
+      difficulty: question.difficulty || difficulty
+    });
+
     const newAttempt: Attempt = {
       id: `${Date.now()}`,
       question: question.text,
       answer,
       correct,
       skill,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      synced: Boolean(syncResult.synced)
     };
 
     const nextAttempts = [newAttempt, ...attempts].slice(0, 50);
     setAttempts(nextAttempts);
     writeAttempts(nextAttempts);
 
+    setSyncStatus(syncResult.synced
+      ? 'Synced with Supabase'
+      : `Saved locally. ${syncResult.reason || 'Sign in or run the Phase 3 SQL migration to enable database sync.'}`);
+
     setFeedback(correct
       ? 'Correct. Excellent work.'
       : 'Not quite yet. Use a hint, check your working, or reveal the mark scheme.');
+
+    await refreshDatabaseData();
   }
 
   async function askHint() {
@@ -151,7 +196,7 @@ export default function DashboardPage() {
   function resetSession() {
     setAttempts([]);
     writeAttempts([]);
-    setFeedback('Session progress reset.');
+    setFeedback('Local session progress reset. Supabase history is kept.');
   }
 
   return (
@@ -169,6 +214,10 @@ export default function DashboardPage() {
             <a className="btn secondary" href="/parent">Parent</a>
           </div>
         </nav>
+
+        <div className="notice" style={{ marginBottom: 18 }}>
+          <strong>Data status:</strong> {syncStatus}
+        </div>
 
         <div className="grid grid2">
           <section className="card">
@@ -214,7 +263,7 @@ export default function DashboardPage() {
             <p className="muted">Attempted: {stats.attempted}</p>
             <p className="muted">Correct: {stats.correct}</p>
             <p className={stats.accuracy >= 70 ? 'success' : 'warning'}>Accuracy: {stats.accuracy}%</p>
-            <button className="btn secondary" onClick={resetSession}>Reset session</button>
+            <button className="btn secondary" onClick={resetSession}>Reset local session</button>
           </section>
         </div>
 
@@ -263,30 +312,60 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <section className="card" style={{ marginTop: 18 }}>
-          <h2>Recent attempts</h2>
-          {attempts.length === 0 ? (
-            <p className="muted">No attempts yet. Submit an answer to start tracking your progress.</p>
-          ) : (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Skill</th>
-                  <th>Answer</th>
-                  <th>Result</th>
-                </tr>
-              </thead>
-              <tbody>
-                {attempts.slice(0, 8).map((attempt) => (
-                  <tr key={attempt.id}>
-                    <td>{attempt.skill}</td>
-                    <td>{attempt.answer}</td>
-                    <td>{attempt.correct ? 'Correct' : 'Review'}</td>
+        <section className="grid grid2" style={{ marginTop: 18 }}>
+          <div className="card">
+            <h2>Recent attempts</h2>
+            {attempts.length === 0 ? (
+              <p className="muted">No attempts yet. Submit an answer to start tracking your progress.</p>
+            ) : (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Skill</th>
+                    <th>Answer</th>
+                    <th>Result</th>
+                    <th>Sync</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {attempts.slice(0, 8).map((attempt) => (
+                    <tr key={attempt.id}>
+                      <td>{attempt.skill}</td>
+                      <td>{attempt.answer}</td>
+                      <td>{attempt.correct ? 'Correct' : 'Review'}</td>
+                      <td>{attempt.synced ? 'Supabase' : 'Local'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          <div className="card">
+            <h2>Database mastery</h2>
+            {mastery.length === 0 ? (
+              <p className="muted">No Supabase mastery rows yet. Sign in, run the Phase 3 SQL, and submit answers.</p>
+            ) : (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Skill</th>
+                    <th>Attempts</th>
+                    <th>Mastery</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mastery.map((row) => (
+                    <tr key={row.skill_id}>
+                      <td>{row.skill_id}</td>
+                      <td>{row.attempts}</td>
+                      <td>{row.mastery_score}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </section>
       </div>
     </main>

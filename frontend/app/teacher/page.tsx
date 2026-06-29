@@ -18,14 +18,19 @@ export default function TeacherPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/dashboard">Student</a>
             <a className="btn secondary" href="/parent">Parent</a>
+            <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
+
+        <section className="notice" style={{ marginBottom: 18 }}>
+          Phase 3 database tables now support profiles, attempts, mastery, classes, and memberships. Teacher class creation UI is the next build slice.
+        </section>
 
         <section className="grid grid3">
           <div className="card">
             <h2>Class mastery</h2>
             <p className="questionText" style={{ fontSize: 36 }}>71%</p>
-            <p className="muted">Average across the current demo class.</p>
+            <p className="muted">Demo data until real class membership is wired.</p>
           </div>
           <div className="card">
             <h2>Priority skill</h2>
@@ -33,8 +38,8 @@ export default function TeacherPage() {
             <p className="muted">Most common next intervention.</p>
           </div>
           <div className="card">
-            <h2>Assignment idea</h2>
-            <p className="muted">Set 8 core quadratic questions + 2 reflection prompts.</p>
+            <h2>Database ready</h2>
+            <p className="muted">Supabase tables and RLS are ready after running the Phase 3 SQL file.</p>
           </div>
         </section>
 
@@ -60,10 +65,6 @@ export default function TeacherPage() {
               ))}
             </tbody>
           </table>
-        </section>
-
-        <section className="notice" style={{ marginTop: 18 }}>
-          Teacher note: this page is a working MVP shell. The next production step is connecting real Supabase classes, assignments, and submissions.
         </section>
       </div>
     </main>

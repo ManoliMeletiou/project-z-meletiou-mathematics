@@ -6,12 +6,13 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-2-auth-persistence-shell',
+    version: 'phase-3-database-persistence-ui',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      questionFallbackEnabled: true
+      questionFallbackEnabled: true,
+      databaseMigrationRequired: 'Run supabase/project_z_phase3_schema.sql once in Supabase SQL Editor'
     },
     routes: ['/', '/auth', '/account', '/dashboard', '/teacher', '/parent', '/api/question', '/api/tutor', '/api/health']
   });
