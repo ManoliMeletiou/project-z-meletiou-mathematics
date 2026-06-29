@@ -12,7 +12,7 @@ export function initializeMastery(): MasteryState {
     correct: 0,
     easeFactor: 2.5,
     interval: 0,
-    nextReviewDate: new Date().toISOString(),
+    nextReviewDate: new Date().toISOString()
   };
 }
 
@@ -43,6 +43,6 @@ export function updateMastery(state: MasteryState, isCorrect: boolean): MasteryS
     correct,
     easeFactor,
     interval,
-    nextReviewDate: nextDate.toISOString(),
+    nextReviewDate: nextDate.toISOString()
   };
 }

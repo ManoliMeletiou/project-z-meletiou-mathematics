@@ -5,7 +5,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Project Z',
-  description: 'AI\u2011powered mathematics learning platform.',
+  description: 'AI‑powered mathematics learning platform.',
 };
 
 export default function RootLayout({

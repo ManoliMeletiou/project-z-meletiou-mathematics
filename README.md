@@ -1,6 +1,6 @@
 # Project Z: Meletiou Mathematics Platform
 
-Project Z is an AI‑powered mathematics learning ecosystem built with a Next.js frontend, a Python FastAPI backend, and Supabase for authentication and data storage. It is designed to outperform existing math platforms by providing infinite procedurally generated questions, adaptive mastery tracking, spaced repetition scheduling, and Socratic hints powered by AI.
+Project Z is an AI‑powered mathematics learning ecosystem built with a Next.js frontend, a Python FastAPI backend, and Supabase for authentication and data storage.  It is designed to outperform existing math platforms by providing infinite procedurally generated questions, adaptive mastery tracking, spaced repetition scheduling, and Socratic hints powered by AI.
 
 ## Structure
 
@@ -50,7 +50,7 @@ npm install
 npm run dev
 ```
 
-3. Create a Supabase project and run `supabase_schema.sql` to set up the tables and RLS policies. Copy the URL and anon key into a `.env` file based on `.env.example`.
+3. Create a Supabase project and run `supabase_schema.sql` to set up the tables and RLS policies.  Copy the URL and anon key into a `.env` file based on `.env.example`.
 
 4. Configure `PYTHON_ENGINE_URL` in `.env` to point at the running FastAPI service.
 
