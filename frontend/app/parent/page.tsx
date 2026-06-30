@@ -2,12 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { canAccessPortal, getCurrentProfile, portalHomeForRole, ProjectZRole } from '../../lib/projectZAuth';
-import { ChildMastery, fetchChildMastery, fetchMyChildren, linkChildByEmail, ParentChild } from '../../lib/projectZParent';
+import {
+  ChildMastery,
+  fetchChildMastery,
+  fetchMyChildren,
+  linkChildByEmailAndCode,
+  ParentChild
+} from '../../lib/projectZParent';
 
 export default function ParentPortalPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
   const [email, setEmail] = useState<string | null>(null);
   const [childEmail, setChildEmail] = useState('');
+  const [linkCode, setLinkCode] = useState('');
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [mastery, setMastery] = useState<ChildMastery[]>([]);
   const [selectedChildId, setSelectedChildId] = useState('');
@@ -53,7 +60,7 @@ export default function ParentPortalPage() {
     }
 
     setStatus('Linking child account...');
-    const result = await linkChildByEmail(childEmail);
+    const result = await linkChildByEmailAndCode(childEmail, linkCode);
 
     if (!result.ok) {
       setStatus(`Could not link child: ${result.reason}`);
@@ -61,6 +68,7 @@ export default function ParentPortalPage() {
     }
 
     setChildEmail('');
+    setLinkCode('');
     setStatus('Child linked.');
     await loadPortal();
   }
@@ -126,13 +134,27 @@ export default function ParentPortalPage() {
             <section className="grid grid2">
               <div className="card">
                 <h2>Link my child</h2>
-                <p className="muted">Enter the email address used by your child’s student account.</p>
-                <input
-                  className="input"
-                  value={childEmail}
-                  onChange={(event) => setChildEmail(event.target.value)}
-                  placeholder="student@example.com"
-                />
+                <p className="muted">
+                  Ask your child to open Student Portal and generate a parent access code. Enter their student email and that code here.
+                </p>
+                <label className="label">
+                  Student email
+                  <input
+                    className="input"
+                    value={childEmail}
+                    onChange={(event) => setChildEmail(event.target.value)}
+                    placeholder="student@example.com"
+                  />
+                </label>
+                <label className="label">
+                  Parent access code
+                  <input
+                    className="input"
+                    value={linkCode}
+                    onChange={(event) => setLinkCode(event.target.value.toUpperCase())}
+                    placeholder="8 character code"
+                  />
+                </label>
                 <button className="btn blue" onClick={handleLinkChild} style={{ marginTop: 12 }}>
                   Link child
                 </button>

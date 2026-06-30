@@ -2,12 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { canAccessPortal, getCurrentProfile, portalHomeForRole, ProjectZRole } from '../../lib/projectZAuth';
-import { fetchMyChildren, ParentChild } from '../../lib/projectZParent';
+import {
+  fetchActiveParentLinkCodes,
+  fetchMyChildren,
+  generateParentLinkCode,
+  ParentChild,
+  ParentLinkCode
+} from '../../lib/projectZParent';
 
 export default function StudentPortalPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
   const [email, setEmail] = useState<string | null>(null);
   const [children, setChildren] = useState<ParentChild[]>([]);
+  const [codes, setCodes] = useState<ParentLinkCode[]>([]);
   const [status, setStatus] = useState('Student portal loads when signed in.');
 
   async function loadPortal() {
@@ -33,6 +40,8 @@ export default function StudentPortalPage() {
     }
 
     if (profile.role === 'student') {
+      const activeCodes = (await fetchActiveParentLinkCodes()) as ParentLinkCode[];
+      setCodes(activeCodes);
       setStatus('Student tools loaded.');
       return;
     }
@@ -43,6 +52,24 @@ export default function StudentPortalPage() {
   useEffect(() => {
     loadPortal();
   }, []);
+
+  async function createParentCode() {
+    if (role !== 'student') {
+      setStatus('Only student accounts can generate a parent access code.');
+      return;
+    }
+
+    setStatus('Generating parent access code...');
+    const result = await generateParentLinkCode();
+
+    if (!result.ok) {
+      setStatus(`Could not generate code: ${result.reason}`);
+      return;
+    }
+
+    setStatus('Parent access code generated. Share it only with your parent/guardian.');
+    await loadPortal();
+  }
 
   if (!canAccessPortal(role, 'student') && role !== 'guest') {
     return (
@@ -90,20 +117,49 @@ export default function StudentPortalPage() {
         )}
 
         {role === 'student' && (
-          <section className="grid grid3">
-            <a className="card" href="/dashboard">
-              <h2>Practice</h2>
-              <p className="muted">Answer questions, get hints, and build mastery.</p>
-            </a>
-            <a className="card" href="/assignments">
-              <h2>My assignments</h2>
-              <p className="muted">Download teacher documents and upload your return files.</p>
-            </a>
-            <a className="card" href="/classes">
-              <h2>My classes</h2>
-              <p className="muted">Join a class using your teacher's class code.</p>
-            </a>
-          </section>
+          <>
+            <section className="grid grid3">
+              <a className="card" href="/dashboard">
+                <h2>Practice</h2>
+                <p className="muted">Answer questions, get hints, and build mastery.</p>
+              </a>
+              <a className="card" href="/assignments">
+                <h2>My assignments</h2>
+                <p className="muted">Download teacher documents and upload your return files.</p>
+              </a>
+              <a className="card" href="/classes">
+                <h2>My classes</h2>
+                <p className="muted">Join a class using your teacher's class code.</p>
+              </a>
+            </section>
+
+            <section className="card" style={{ marginTop: 18 }}>
+              <h2>Parent access code</h2>
+              <p className="muted">
+                Generate a code and share it with your parent/guardian. A parent needs your student email and this code to link to your progress.
+              </p>
+              <button className="btn blue" onClick={createParentCode}>Generate parent access code</button>
+
+              {codes.length > 0 && (
+                <table className="table" style={{ marginTop: 18 }}>
+                  <thead>
+                    <tr>
+                      <th>Code</th>
+                      <th>Expires</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {codes.map((code) => (
+                      <tr key={code.code}>
+                        <td><strong>{code.code}</strong></td>
+                        <td>{new Date(code.expires_at).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </section>
+          </>
         )}
 
         {role === 'teacher' && (
@@ -127,7 +183,7 @@ export default function StudentPortalPage() {
           <section className="card">
             <h2>My child/student view</h2>
             {children.length === 0 ? (
-              <p className="muted">No linked child yet. Go to the Parent Portal and link your child by student email.</p>
+              <p className="muted">No linked child yet. Go to the Parent Portal and link your child using their student email and parent access code.</p>
             ) : (
               <table className="table">
                 <thead>
