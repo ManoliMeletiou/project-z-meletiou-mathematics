@@ -121,6 +121,7 @@ export default function QualityPage() {
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/generate">Generate</a>
+            <a className="btn secondary" href="/ai-test">AI Test</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

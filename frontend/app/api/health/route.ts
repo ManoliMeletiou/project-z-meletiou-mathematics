@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-18-real-ai-generator-gateway',
+    version: 'phase-20-test-harden-real-ai-generation',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -14,13 +14,15 @@ export async function GET() {
       realAiGeneratorEndpointConfigured: Boolean(process.env.AI_GENERATOR_ENDPOINT),
       realAiGeneratorKeyConfigured: Boolean(process.env.AI_GENERATOR_API_KEY),
       realAiGeneratorModelConfigured: Boolean(process.env.AI_GENERATOR_MODEL),
+      aiGenerationSelfTestEndpoint: true,
+      aiGenerationTeacherTestPage: true,
+      strictJsonSelfTest: true,
+      requiredFieldValidation: true,
+      duplicateOptionValidation: true,
       fallbackTemplatesEnabled: true,
       qualityGatedGeneration: true,
-      stagedCandidatesBeforePromotion: true,
-      blockedQuestionsCannotGoLive: true,
-      teacherOnlyPromotion: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/generate', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/generate', '/ai-test', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
   });
 }

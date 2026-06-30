@@ -60,7 +60,8 @@ export default function GeneratePage() {
   async function reject(id: string) { setBusy(true); const r = await rejectGeneratedQuestion(id); setStatus(r.ok ? 'Candidate rejected.' : `Could not reject: ${r.reason}`); await loadPage(courseCode); setBusy(false); }
 
   return <main className="page"><div className="container">
-    <nav className="nav"><div className="brand"><strong>Question Generation Lab</strong><span>{email || 'Sign in'} - role: {role}</span></div><div className="navLinks"><a className="btn secondary" href="/">Home</a><a className="btn secondary" href="/teacher">Teacher Portal</a><a className="btn secondary" href="/quality">Quality</a><a className="btn secondary" href="/reports">Reports</a><a className="btn secondary" href="/account">Account</a></div></nav>
+    <nav className="nav"><div className="brand"><strong>Question Generation Lab</strong><span>{email || 'Sign in'} - role: {role}</span></div><div className="navLinks"><a className="btn secondary" href="/">Home</a><a className="btn secondary" href="/teacher">Teacher Portal</a><a className="btn secondary" href="/quality">Quality</a>
+            <a className="btn secondary" href="/ai-test">AI Test</a><a className="btn secondary" href="/reports">Reports</a><a className="btn secondary" href="/account">Account</a></div></nav>
     <section className="notice" style={{ marginBottom: 18 }}><strong>Status:</strong> {status}</section>
     {role === 'guest' && <section className="card"><h2>Sign in required</h2><p className="muted">Sign in as a teacher to generate questions.</p><a className="btn blue" href="/auth">Sign in</a></section>}
     {role !== 'guest' && role !== 'teacher' && <section className="card"><h2>Teacher-only generation</h2><p className="muted">Students and parents cannot generate or promote questions.</p></section>}
