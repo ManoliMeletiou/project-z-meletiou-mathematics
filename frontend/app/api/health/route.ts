@@ -6,19 +6,18 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-24-tutor-evidence-to-mastery',
+    version: 'phase-25-teacher-review-tutor-evidence',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      tutorEvidenceTable: true,
-      automaticTutorEvidenceTrigger: true,
+      teacherTutorEvidenceReview: true,
+      teacherClassScopedTutorEvidence: true,
+      approveIgnoreActionNeededWorkflow: true,
+      teacherJudgementOverAiEvidence: true,
       tutorEvidenceToMasterySignal: true,
-      tutorEvidenceDashboard: true,
-      manualTutorEvidenceRecording: true,
-      guidedTutorMode: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
   });
 }
