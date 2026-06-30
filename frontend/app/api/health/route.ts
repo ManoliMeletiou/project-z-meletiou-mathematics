@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-22-ai-usage-dashboard',
+    version: 'phase-23c-student-ai-tutor-safety-memory-nav-fix',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -14,18 +14,16 @@ export async function GET() {
       realAiGeneratorEndpointConfigured: Boolean(process.env.AI_GENERATOR_ENDPOINT),
       realAiGeneratorKeyConfigured: Boolean(process.env.AI_GENERATOR_API_KEY),
       realAiGeneratorModelConfigured: Boolean(process.env.AI_GENERATOR_MODEL),
-      teacherAuthRequiredForGeneration: true,
-      studentsParentsBlockedFromCostlyAi: true,
-      hourlyTeacherGenerationLimit: 50,
-      dailyTeacherGenerationLimit: 200,
-      aiUsageLogging: true,
-      aiUsageDashboard: true,
-      aiAllowanceVisibleToTeacher: true,
-      aiRecentLogsVisibleToTeacher: true,
-      fallbackTemplatesEnabled: true,
-      qualityGatedGeneration: true,
+      studentTutorPage: true,
+      guidedTutorMode: true,
+      answerWithholdingForAnswerGrabbing: true,
+      tutorInteractionMemory: true,
+      tutorHourlyLimit: 60,
+      studentTeacherOnlyTutor: true,
+      fallbackTutorEnabled: true,
+      studentNavJsxFixed: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
   });
 }

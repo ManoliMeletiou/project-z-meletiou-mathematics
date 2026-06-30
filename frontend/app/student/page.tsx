@@ -95,15 +95,13 @@ export default function StudentPortalPage() {
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
-            {role === 'student' && <a className="btn secondary" href="/curriculum">Curriculum</a>}
-            {role === 'student' && <a className="btn secondary" href="/diagnostic">Diagnostic</a>}
-            {role === 'student' && <a className="btn secondary" href="/recommended">Recommended</a>}
-            {role === 'student' && <a className="btn secondary" href="/path">Skill Path</a>}
-            {role === 'student' && <a className="btn secondary" href="/dashboard">Practice</a>}
-            {role === 'student' && <a className="btn secondary" href="/assignments">My Assignments</a>}
-            {role === 'student' && <a className="btn secondary" href="/classes">Join Class</a>}
-            {role === 'teacher' && <a className="btn secondary" href="/teacher">Teacher Portal</a>}
-            {role === 'parent' && <a className="btn secondary" href="/parent">Parent Portal</a>}
+            <a className="btn secondary" href="/student">Student Portal</a>
+            <a className="btn secondary" href="/curriculum">Curriculum</a>
+            <a className="btn secondary" href="/diagnostic">Diagnostic</a>
+            <a className="btn secondary" href="/recommended">Recommended</a>
+            <a className="btn secondary" href="/path">Skill Path</a>
+            <a className="btn secondary" href="/assignments">Assignments</a>
+            <a className="btn secondary" href="/tutor">Tutor</a>
             <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
