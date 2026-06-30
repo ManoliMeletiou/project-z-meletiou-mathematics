@@ -10,6 +10,23 @@ export type ProjectZClass = {
   member_count?: number;
 };
 
+export type ProjectZRosterRow = {
+  student_id: string;
+  email: string;
+  display_name: string;
+  joined_at: string;
+  attempts: number;
+  correct: number;
+  average_mastery: number;
+};
+
+export type ProjectZClassMasteryRow = {
+  skill_id: string;
+  total_attempts: number;
+  total_correct: number;
+  average_mastery: number;
+};
+
 export async function createTeacherClass(name: string, course: string, yearGroup: string) {
   if (!supabase) return { ok: false, reason: 'Supabase client unavailable' };
   const { data: userData } = await supabase.auth.getUser();
@@ -48,6 +65,28 @@ export async function fetchStudentClasses() {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return [];
   const { data, error } = await supabase.rpc('project_z_my_student_classes');
+  if (error) return [];
+  return data || [];
+}
+
+export async function fetchClassRoster(classId: string) {
+  if (!supabase) return [];
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return [];
+  const { data, error } = await supabase.rpc('project_z_teacher_class_roster', {
+    p_class_id: classId
+  });
+  if (error) return [];
+  return data || [];
+}
+
+export async function fetchClassMastery(classId: string) {
+  if (!supabase) return [];
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return [];
+  const { data, error } = await supabase.rpc('project_z_teacher_class_mastery', {
+    p_class_id: classId
+  });
   if (error) return [];
   return data || [];
 }
