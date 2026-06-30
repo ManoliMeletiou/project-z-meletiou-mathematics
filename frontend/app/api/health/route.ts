@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-13-recommended-practice-engine',
+    version: 'phase-14-duolingo-style-skill-path',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -14,11 +14,13 @@ export async function GET() {
       questionFallbackEnabled: true,
       adaptiveDiagnosticEngine: true,
       recommendedPracticeEngine: true,
-      recommendationsUseMasteryConfidenceEvidence: true,
-      shuffledPracticeAnswerOptions: true,
-      masteryUpdatesFromPractice: true,
-      parentTeacherReportFoundation: true
+      gameStyleSkillPath: true,
+      prerequisiteBasedLocks: true,
+      masteryConfidenceEvidenceStatuses: true,
+      xpFoundation: true,
+      streakFoundation: true,
+      bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/curriculum', '/diagnostic', '/recommended', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });
 }

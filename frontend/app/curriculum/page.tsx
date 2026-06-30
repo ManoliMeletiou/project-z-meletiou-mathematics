@@ -103,9 +103,7 @@ export default function CurriculumPage() {
             <a className="btn secondary" href="/">Home</a>
             {role === 'student' && <a className="btn secondary" href="/diagnostic">Diagnostic</a>}
             {role === 'student' && <a className="btn secondary" href="/recommended">Recommended</a>}
-            {role === 'student' && <a className="btn secondary" href="/student">Student Portal</a>}
-            {role === 'teacher' && <a className="btn secondary" href="/teacher">Teacher Portal</a>}
-            {role === 'parent' && <a className="btn secondary" href="/parent">Parent Portal</a>}
+            {role === 'student' && <a className="btn secondary" href="/path">Skill Path</a>}
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
