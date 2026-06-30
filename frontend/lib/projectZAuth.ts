@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient';
 
 export type ProjectZRole = 'student' | 'teacher' | 'parent' | 'guest';
+export type PortalName = 'student' | 'teacher' | 'parent';
 
 export type ProjectZProfile = {
   id: string;
@@ -43,4 +44,18 @@ export async function getCurrentProfile() {
     role: ((profile?.role as ProjectZRole) || 'student') as ProjectZRole,
     email: user.email || profile?.email || null
   };
+}
+
+export function canAccessPortal(role: ProjectZRole, portal: PortalName) {
+  if (role === 'teacher') return true;
+  if (role === 'student') return portal === 'student';
+  if (role === 'parent') return portal === 'parent' || portal === 'student';
+  return false;
+}
+
+export function portalHomeForRole(role: ProjectZRole) {
+  if (role === 'teacher') return '/teacher';
+  if (role === 'parent') return '/parent';
+  if (role === 'student') return '/student';
+  return '/auth';
 }

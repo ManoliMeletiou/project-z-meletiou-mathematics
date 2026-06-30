@@ -6,13 +6,15 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-8-separated-role-portals',
+    version: 'phase-9-role-access-parent-child-links',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
-      rolePortalsSeparated: true
+      studentCannotAccessTeacherOrParent: true,
+      parentCanAccessOwnChildStudentViewOnly: true,
+      teacherCanAccessStudentAndParentViews: true
     },
     routes: ['/', '/student', '/teacher', '/parent', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });

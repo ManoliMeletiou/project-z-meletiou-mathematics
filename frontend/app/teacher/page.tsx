@@ -73,7 +73,7 @@ export default function TeacherPage() {
         <nav className="nav">
           <div className="brand">
             <strong>Teacher Dashboard</strong>
-            <span>Real class roster and analytics</span>
+            <span>Teacher-only controls, rosters, analytics, assignments, and reports</span>
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
