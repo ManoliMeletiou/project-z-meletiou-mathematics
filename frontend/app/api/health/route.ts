@@ -6,14 +6,14 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-7-assignment-documents-returns',
+    version: 'phase-8-separated-role-portals',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
-      phase7DatabaseMigrationRequired: 'Run supabase/project_z_phase7_assignment_files.sql once in Supabase SQL Editor'
+      rolePortalsSeparated: true
     },
-    routes: ['/', '/auth', '/account', '/dashboard', '/teacher', '/classes', '/assignments', '/parent', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });
 }

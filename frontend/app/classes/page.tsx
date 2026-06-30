@@ -41,7 +41,7 @@ export default function ClassesPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/dashboard">Dashboard</a>
-            <a className="btn secondary" href="/teacher">Teacher</a>
+            <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

@@ -30,6 +30,7 @@ export default function HomePage() {
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/auth">Sign in</a>
+            <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/classes">Join Class</a>
             <a className="btn blue" href="/dashboard">Start Practice</a>
           </div>

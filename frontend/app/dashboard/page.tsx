@@ -210,8 +210,8 @@ export default function DashboardPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/account">Account</a>
-            <a className="btn secondary" href="/teacher">Teacher</a>
-            <a className="btn secondary" href="/parent">Parent</a>
+            <a className="btn secondary" href="/student">Student Portal</a>
+            <a className="btn secondary" href="/assignments">Assignments</a>
           </div>
         </nav>
 
