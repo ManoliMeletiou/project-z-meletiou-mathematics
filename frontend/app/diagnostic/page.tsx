@@ -219,6 +219,7 @@ export default function DiagnosticPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/curriculum">Curriculum</a>
+            <a className="btn secondary" href="/recommended">Recommended</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

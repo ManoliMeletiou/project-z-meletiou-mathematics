@@ -97,6 +97,7 @@ export default function StudentPortalPage() {
             <a className="btn secondary" href="/">Home</a>
             {role === 'student' && <a className="btn secondary" href="/curriculum">Curriculum</a>}
             {role === 'student' && <a className="btn secondary" href="/diagnostic">Diagnostic</a>}
+            {role === 'student' && <a className="btn secondary" href="/recommended">Recommended</a>}
             {role === 'student' && <a className="btn secondary" href="/dashboard">Practice</a>}
             {role === 'student' && <a className="btn secondary" href="/assignments">My Assignments</a>}
             {role === 'student' && <a className="btn secondary" href="/classes">Join Class</a>}
@@ -129,6 +130,11 @@ export default function StudentPortalPage() {
               <a className="card" href="/diagnostic">
                 <h2>Diagnostic</h2>
                 <p className="muted">Find your strong and weak skills with adaptive questions.</p>
+              </a>
+
+              <a className="card" href="/recommended">
+                <h2>Recommended practice</h2>
+                <p className="muted">Practise the weak skills identified by your diagnostic.</p>
               </a>
 
               <a className="card" href="/dashboard">
