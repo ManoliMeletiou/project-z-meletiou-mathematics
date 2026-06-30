@@ -115,6 +115,7 @@ export default function AiTestPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/generate">Generate</a>
+            <a className="btn secondary" href="/ai-usage">AI Usage</a>
             <a className="btn secondary" href="/quality">Quality</a>
             <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>

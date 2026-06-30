@@ -144,6 +144,7 @@ export default function TeacherPage() {
             <a className="btn secondary" href="/quality">Quality</a>
             <a className="btn secondary" href="/generate">Generate</a>
             <a className="btn secondary" href="/ai-test">AI Test</a>
+            <a className="btn secondary" href="/ai-usage">AI Usage</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
