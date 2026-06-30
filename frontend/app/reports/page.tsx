@@ -145,6 +145,7 @@ export default function ReportsPage() {
             {role === 'student' && <a className="btn secondary" href="/path">Skill Path</a>}
             {role === 'teacher' && <a className="btn secondary" href="/teacher">Teacher Portal</a>}
             {role === 'parent' && <a className="btn secondary" href="/parent">Parent Portal</a>}
+            <a className="btn secondary" href="/quality">Quality</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

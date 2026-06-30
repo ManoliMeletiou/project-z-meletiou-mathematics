@@ -6,20 +6,20 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-15-teacher-parent-reports-upgrade',
+    version: 'phase-16-accuracy-question-quality-engine',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      studentReports: true,
-      teacherClassReports: true,
-      parentLinkedChildReports: true,
-      roleRestrictedReportAccess: true,
-      diagnosticPracticePathCombinedReports: true,
-      evidenceAwareReporting: true,
-      weakSkillsAndNextSteps: true,
+      questionQualityAudit: true,
+      duplicateOptionDetection: true,
+      lengthOutlierDetection: true,
+      answerPositionDistributionAudit: true,
+      storedAnswerOptionShuffle: true,
+      teacherQualityReviewPage: true,
+      mypCriteriaBCDQualityControls: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });
 }
