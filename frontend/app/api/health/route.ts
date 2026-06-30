@@ -6,18 +6,17 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-12-adaptive-diagnostic-engine',
+    version: 'phase-12b-shuffled-diagnostic-options',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
       adaptiveDiagnosticEngine: true,
-      enoughEvidenceBeforeConclusion: true,
-      skillMasteryPercentages: true,
-      shuffledSkillQuestions: true,
-      mypCriteriaAToDStructuredAutoMarking: true,
-      dpStandardHigherAAAI: true
+      shuffledDiagnosticAnswerOptions: true,
+      hiddenOriginalAnswerMapping: true,
+      studentSeesRandomCorrectPosition: true,
+      mypCriteriaAToDStructuredAutoMarking: true
     },
     routes: ['/', '/student', '/teacher', '/parent', '/curriculum', '/diagnostic', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
   CourseCatalogRow,
@@ -20,6 +20,43 @@ import {
   submitDiagnosticAnswer
 } from '../../lib/projectZDiagnostic';
 
+type DisplayOption = {
+  displayKey: 'A' | 'B' | 'C' | 'D';
+  originalKey: 'A' | 'B' | 'C' | 'D';
+  text: string;
+};
+
+type DisplayResult = DiagnosticAnswerResult & {
+  selected_display_option?: string;
+  correct_display_option?: string;
+};
+
+const DISPLAY_KEYS = ['A', 'B', 'C', 'D'] as const;
+const ORIGINAL_KEYS = ['A', 'B', 'C', 'D'] as const;
+
+function shuffleArray<T>(items: T[]) {
+  const copy = [...items];
+
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
+  }
+
+  return copy;
+}
+
+function buildDisplayOptions(question: DiagnosticQuestion | null): DisplayOption[] {
+  if (!question || question.done || !question.options) return [];
+
+  const shuffledOriginalKeys = shuffleArray([...ORIGINAL_KEYS]);
+
+  return shuffledOriginalKeys.map((originalKey, index) => ({
+    displayKey: DISPLAY_KEYS[index],
+    originalKey,
+    text: question.options?.[originalKey] || ''
+  }));
+}
+
 export default function DiagnosticPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
   const [email, setEmail] = useState<string | null>(null);
@@ -28,7 +65,8 @@ export default function DiagnosticPage() {
   const [courseCode, setCourseCode] = useState('myp_standard');
   const [session, setSession] = useState<DiagnosticSession | null>(null);
   const [question, setQuestion] = useState<DiagnosticQuestion | null>(null);
-  const [lastResult, setLastResult] = useState<DiagnosticAnswerResult | null>(null);
+  const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>([]);
+  const [lastResult, setLastResult] = useState<DisplayResult | null>(null);
   const [summary, setSummary] = useState<DiagnosticSummaryRow[]>([]);
   const [status, setStatus] = useState('Diagnostic loads when a student signs in.');
 
@@ -60,6 +98,11 @@ export default function DiagnosticPage() {
     loadPage();
   }, []);
 
+  function setQuestionWithShuffle(nextQuestion: DiagnosticQuestion) {
+    setQuestion(nextQuestion);
+    setDisplayOptions(buildDisplayOptions(nextQuestion));
+  }
+
   async function chooseCourse(nextCourseCode: string) {
     setCourseCode(nextCourseCode);
 
@@ -72,6 +115,7 @@ export default function DiagnosticPage() {
 
       setSelectedCourse(null);
       setQuestion(null);
+      setDisplayOptions([]);
       setLastResult(null);
       setStatus('Course selected. Start the diagnostic when ready.');
       await loadPage();
@@ -103,11 +147,11 @@ export default function DiagnosticPage() {
       return;
     }
 
-    setQuestion(nextResult.data);
+    setQuestionWithShuffle(nextResult.data);
     setStatus('Diagnostic started. Answer the question.');
   }
 
-  async function answer(option: 'A' | 'B' | 'C' | 'D') {
+  async function answer(displayOption: DisplayOption) {
     if (!session || !question?.question_id) {
       setStatus('Start a diagnostic first.');
       return;
@@ -115,14 +159,22 @@ export default function DiagnosticPage() {
 
     setStatus('Checking answer...');
 
-    const result = await submitDiagnosticAnswer(session.id, question.question_id, option);
+    // Submit the original hidden option key so marking stays accurate even though
+    // the displayed A/B/C/D labels are shuffled for the student.
+    const result = await submitDiagnosticAnswer(session.id, question.question_id, displayOption.originalKey);
 
     if (!result.ok || !result.data) {
       setStatus(`Could not submit answer: ${result.reason}`);
       return;
     }
 
-    setLastResult(result.data);
+    const correctDisplayOption = displayOptions.find((option) => option.originalKey === result.data.correct_option);
+
+    setLastResult({
+      ...result.data,
+      selected_display_option: displayOption.displayKey,
+      correct_display_option: correctDisplayOption?.displayKey
+    });
 
     const summaryRows = await fetchDiagnosticSummary();
     setSummary(summaryRows);
@@ -134,19 +186,26 @@ export default function DiagnosticPage() {
       return;
     }
 
-    setQuestion(nextResult.data);
+    setQuestionWithShuffle(nextResult.data);
 
     if (nextResult.data.done) {
       setStatus(nextResult.data.message || 'Diagnostic completed.');
     } else {
-      setStatus('Answer recorded. Next adaptive question loaded.');
+      setStatus('Answer recorded. Next adaptive question loaded with shuffled answer options.');
     }
   }
 
   const selectedCourseName = courses.find((course) => course.course_code === courseCode)?.display_name || selectedCourse?.display_name || courseCode;
 
-  const weakSkills = summary.filter((row) => row.strength_band === 'Weak').slice(0, 5);
-  const strongSkills = summary.filter((row) => row.strength_band === 'Strong').slice(0, 5);
+  const weakSkills = useMemo(
+    () => summary.filter((row) => row.strength_band === 'Weak').slice(0, 5),
+    [summary]
+  );
+
+  const strongSkills = useMemo(
+    () => summary.filter((row) => row.strength_band === 'Strong').slice(0, 5),
+    [summary]
+  );
 
   return (
     <main className="page">
@@ -216,6 +275,7 @@ export default function DiagnosticPage() {
                   The app asks questions from different skills until it has enough evidence. Mastery is capped, so students do not easily reach 100 percent.
                 </p>
                 <ul>
+                  <li>Answer choices shuffle every question.</li>
                   <li>Questions shuffle, but the skill stays tracked.</li>
                   <li>MYP Criteria A-D can be diagnosed.</li>
                   <li>Wrong answers represent realistic misconceptions.</li>
@@ -248,9 +308,9 @@ export default function DiagnosticPage() {
 
                   <h3>{question.prompt}</h3>
 
-                  {(['A', 'B', 'C', 'D'] as const).map((key) => (
-                    <button key={key} className="btn secondary" onClick={() => answer(key)} style={{ textAlign: 'left' }}>
-                      <strong>{key}.</strong> {question.options?.[key]}
+                  {displayOptions.map((option) => (
+                    <button key={`${question.question_id}-${option.displayKey}`} className="btn secondary" onClick={() => answer(option)} style={{ textAlign: 'left' }}>
+                      <strong>{option.displayKey}.</strong> {option.text}
                     </button>
                   ))}
                 </div>
@@ -261,13 +321,13 @@ export default function DiagnosticPage() {
               <section className="card" style={{ marginTop: 18 }}>
                 <h2>{lastResult.correct ? 'Correct' : 'Not yet correct'}</h2>
                 <p>
-                  <strong>Your answer:</strong> {lastResult.selected_option}
+                  <strong>Your answer:</strong> {lastResult.selected_display_option || lastResult.selected_option}
                   <br />
-                  <strong>Correct answer:</strong> {lastResult.correct_option}
+                  <strong>Correct answer:</strong> {lastResult.correct_display_option || lastResult.correct_option}
                 </p>
                 <p className="muted">{lastResult.explanation}</p>
                 <p>
-                  <strong>Skill mastery:</strong> {lastResult.mastery_percent}% 
+                  <strong>Skill mastery:</strong> {lastResult.mastery_percent}%
                   <br />
                   <span className="muted">Evidence: {lastResult.correct_count}/{lastResult.evidence_count}, confidence {lastResult.confidence_percent}%</span>
                 </p>
