@@ -6,13 +6,15 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-9-role-access-parent-child-links',
+    version: 'phase-9b-hard-teacher-access-gate',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
-      studentCannotAccessTeacherOrParent: true,
+      teacherPortalHardGate: true,
+      studentCannotAccessTeacherPortal: true,
+      parentCannotAccessTeacherPortal: true,
       parentCanAccessOwnChildStudentViewOnly: true,
       teacherCanAccessStudentAndParentViews: true
     },
