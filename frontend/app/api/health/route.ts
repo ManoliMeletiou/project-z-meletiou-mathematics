@@ -6,14 +6,14 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-5-teacher-roster-analytics',
+    version: 'phase-6-assignments-submissions',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
-      phase5DatabaseMigrationRequired: 'Run supabase/project_z_phase5_teacher_roster.sql once in Supabase SQL Editor'
+      phase6DatabaseMigrationRequired: 'Run supabase/project_z_phase6_assignments.sql once in Supabase SQL Editor'
     },
-    routes: ['/', '/auth', '/account', '/dashboard', '/teacher', '/classes', '/parent', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/auth', '/account', '/dashboard', '/teacher', '/classes', '/assignments', '/parent', '/api/question', '/api/tutor', '/api/health']
   });
 }
