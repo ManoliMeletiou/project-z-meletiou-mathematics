@@ -95,6 +95,7 @@ export default function StudentPortalPage() {
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
+            {role === 'student' && <a className="btn secondary" href="/curriculum">Curriculum</a>}
             {role === 'student' && <a className="btn secondary" href="/dashboard">Practice</a>}
             {role === 'student' && <a className="btn secondary" href="/assignments">My Assignments</a>}
             {role === 'student' && <a className="btn secondary" href="/classes">Join Class</a>}
@@ -119,14 +120,21 @@ export default function StudentPortalPage() {
         {role === 'student' && (
           <>
             <section className="grid grid3">
+              <a className="card" href="/curriculum">
+                <h2>Curriculum map</h2>
+                <p className="muted">Choose MYP Standard, MYP Extended, DP AA Standard, DP AI Standard, DP AA Higher, or DP AI Higher.</p>
+              </a>
+
               <a className="card" href="/dashboard">
                 <h2>Practice</h2>
                 <p className="muted">Answer questions, get hints, and build mastery.</p>
               </a>
+
               <a className="card" href="/assignments">
                 <h2>My assignments</h2>
                 <p className="muted">Download teacher documents and upload your return files.</p>
               </a>
+
               <a className="card" href="/classes">
                 <h2>My classes</h2>
                 <p className="muted">Join a class using your teacher's class code.</p>
@@ -168,10 +176,17 @@ export default function StudentPortalPage() {
               <h2>Teacher oversight</h2>
               <p className="muted">View classes, rosters, reports, and student progress from the teacher portal.</p>
             </a>
+
+            <a className="card" href="/curriculum">
+              <h2>Curriculum preview</h2>
+              <p className="muted">Preview the curriculum and skill map.</p>
+            </a>
+
             <a className="card" href="/dashboard">
               <h2>Practice preview</h2>
               <p className="muted">Preview the student practice experience for testing.</p>
             </a>
+
             <a className="card" href="/assignments">
               <h2>Assignment management</h2>
               <p className="muted">Create assignments and review submissions.</p>

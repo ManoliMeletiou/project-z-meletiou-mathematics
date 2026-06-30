@@ -6,16 +6,20 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-10-secure-parent-links-role-redirects',
+    version: 'phase-11-curriculum-criteria-skill-graph',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
-      secureParentChildLinking: true,
-      studentGeneratedParentCodeRequired: true,
-      automaticRoleRedirectAfterLogin: true
+      mypStandardAndExtended: true,
+      mypCriteriaAToD: true,
+      mypCriteriaBCDStructuredAutoMarking: true,
+      dpStandardHigherThenAAAI: true,
+      adaptiveDiagnosticFoundation: true,
+      masteryPercentFoundation: true,
+      gamePathFoundation: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/curriculum', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });
 }
