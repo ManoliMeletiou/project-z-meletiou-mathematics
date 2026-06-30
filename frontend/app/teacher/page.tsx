@@ -142,6 +142,7 @@ export default function TeacherPage() {
             <a className="btn secondary" href="/parent">Parent Reports</a>
             <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/quality">Quality</a>
+            <a className="btn secondary" href="/generate">Generate</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
