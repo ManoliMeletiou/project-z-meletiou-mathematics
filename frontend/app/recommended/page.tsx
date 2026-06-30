@@ -186,6 +186,7 @@ export default function RecommendedPracticePage() {
             <a className="btn secondary" href="/diagnostic">Diagnostic</a>
             <a className="btn secondary" href="/curriculum">Curriculum</a>
             <a className="btn secondary" href="/path">Skill Path</a>
+            <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

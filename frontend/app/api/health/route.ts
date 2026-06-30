@@ -6,21 +6,20 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-14-duolingo-style-skill-path',
+    version: 'phase-15-teacher-parent-reports-upgrade',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      questionFallbackEnabled: true,
-      adaptiveDiagnosticEngine: true,
-      recommendedPracticeEngine: true,
-      gameStyleSkillPath: true,
-      prerequisiteBasedLocks: true,
-      masteryConfidenceEvidenceStatuses: true,
-      xpFoundation: true,
-      streakFoundation: true,
+      studentReports: true,
+      teacherClassReports: true,
+      parentLinkedChildReports: true,
+      roleRestrictedReportAccess: true,
+      diagnosticPracticePathCombinedReports: true,
+      evidenceAwareReporting: true,
+      weakSkillsAndNextSteps: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });
 }

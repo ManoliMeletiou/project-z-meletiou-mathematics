@@ -104,6 +104,7 @@ export default function CurriculumPage() {
             {role === 'student' && <a className="btn secondary" href="/diagnostic">Diagnostic</a>}
             {role === 'student' && <a className="btn secondary" href="/recommended">Recommended</a>}
             {role === 'student' && <a className="btn secondary" href="/path">Skill Path</a>}
+            <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

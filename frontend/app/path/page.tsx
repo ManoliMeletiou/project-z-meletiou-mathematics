@@ -104,6 +104,7 @@ export default function SkillPathPage() {
             <a className="btn secondary" href="/curriculum">Curriculum</a>
             <a className="btn secondary" href="/diagnostic">Diagnostic</a>
             <a className="btn secondary" href="/recommended">Recommended</a>
+            <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

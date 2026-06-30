@@ -104,6 +104,7 @@ export default function StudentPortalPage() {
             {role === 'student' && <a className="btn secondary" href="/classes">Join Class</a>}
             {role === 'teacher' && <a className="btn secondary" href="/teacher">Teacher Portal</a>}
             {role === 'parent' && <a className="btn secondary" href="/parent">Parent Portal</a>}
+            <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

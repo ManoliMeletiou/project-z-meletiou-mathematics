@@ -140,6 +140,7 @@ export default function TeacherPage() {
             <a className="btn secondary" href="/assignments">Assignments</a>
             <a className="btn secondary" href="/student">Student View</a>
             <a className="btn secondary" href="/parent">Parent Reports</a>
+            <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
