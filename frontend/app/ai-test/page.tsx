@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
+import { supabase } from '../../lib/supabaseClient';
 
 type GenerationStatus = {
   ok: boolean;
@@ -72,7 +73,20 @@ export default function AiTestPage() {
     setBusy(true);
     setStatus('Running real AI generator self-test...');
 
-    const response = await fetch('/api/generation-self-test');
+    const { data: sessionData } = await supabase!.auth.getSession();
+    const token = sessionData.session?.access_token;
+
+    if (!token) {
+      setStatus('Sign in as a teacher first.');
+      setBusy(false);
+      return;
+    }
+
+    const response = await fetch('/api/generation-self-test', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       setStatus('Self-test request failed.');
       setBusy(false);

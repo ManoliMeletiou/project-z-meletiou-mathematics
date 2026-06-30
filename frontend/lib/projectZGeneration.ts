@@ -24,6 +24,7 @@ export type GeneratedQuestionCandidate = {
   correct_option: 'A' | 'B' | 'C' | 'D';
   explanation: string;
   source: string;
+  generation_mode?: string;
 };
 
 export type StagedCandidate = GeneratedQuestionCandidate & {
@@ -36,21 +37,48 @@ export type StagedCandidate = GeneratedQuestionCandidate & {
   created_at: string;
 };
 
+export type GenerationStatus = {
+  ok: boolean;
+  configured: boolean;
+  endpointConfigured: boolean;
+  apiKeyConfigured: boolean;
+  modelConfigured: boolean;
+  model: string | null;
+  provider: string;
+  fallbackEnabled: boolean;
+};
+
+export async function fetchGenerationStatus() {
+  const response = await fetch('/api/generation-status');
+  if (!response.ok) return null as GenerationStatus | null;
+  return (await response.json()) as GenerationStatus;
+}
+
+
 export async function fetchGenerationCourses() {
   if (!supabase) return [] as any[];
+
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return [] as any[];
+
   const { data, error } = await supabase.rpc('project_z_curriculum_courses');
+
   if (error) return [] as any[];
-  return (data || []).filter((course: any) => course.is_selectable);
+  return (data || []) as any[];
 }
 
 export async function fetchGenerationSkills(courseCode: string) {
   if (!supabase) return [] as GenerationSkill[];
+
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return [] as GenerationSkill[];
-  const { data, error } = await supabase.rpc('project_z_curriculum_skill_map', { p_course_code: courseCode });
+
+  const { data, error } = await supabase.rpc('project_z_curriculum_skill_map', {
+    p_course_code: courseCode
+  });
+
   if (error) return [] as GenerationSkill[];
+
   return (data || []).map((row: any) => ({
     course_skill_code: row.course_skill_code,
     course_code: row.course_code,
@@ -69,18 +97,39 @@ export async function generateQualityCandidate(payload: {
   skill_description: string;
   assessment_criterion: string | null;
   difficulty_band: number;
+  desired_question_type?: string;
 }) {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' };
+
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  if (!token) return { ok: false, reason: 'Sign in first' };
+
   const response = await fetch('/api/generate-quality-question', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
   });
-  if (!response.ok) return { ok: false, reason: await response.text() };
-  return { ok: true, data: await response.json() as GeneratedQuestionCandidate };
+
+  if (!response.ok) {
+    const text = await response.text();
+    return { ok: false, reason: text || 'Generation request failed' };
+  }
+
+  const data = await response.json();
+  return { ok: true, data: data as GeneratedQuestionCandidate };
 }
 
 export async function stageGeneratedQuestion(candidate: GeneratedQuestionCandidate) {
   if (!supabase) return { ok: false, reason: 'Supabase client unavailable' };
+
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return { ok: false, reason: 'Sign in first' };
+
   const { data, error } = await supabase.rpc('project_z_stage_generated_question', {
     p_course_code: candidate.course_code,
     p_course_skill_code: candidate.course_skill_code,
@@ -96,29 +145,51 @@ export async function stageGeneratedQuestion(candidate: GeneratedQuestionCandida
     p_explanation: candidate.explanation,
     p_source: candidate.source
   });
+
   if (error) return { ok: false, reason: error.message };
   return { ok: true, data };
 }
 
 export async function fetchGenerationCandidates(courseCode?: string) {
   if (!supabase) return [] as StagedCandidate[];
+
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return [] as StagedCandidate[];
-  const { data, error } = await supabase.rpc('project_z_generation_candidates', { p_course_code: courseCode || null });
+
+  const { data, error } = await supabase.rpc('project_z_generation_candidates', {
+    p_course_code: courseCode || null
+  });
+
   if (error) return [] as StagedCandidate[];
   return (data || []) as StagedCandidate[];
 }
 
-export async function promoteGeneratedQuestion(candidateId: string) {
+export async function promoteGeneratedQuestion(candidateId: string, notes?: string) {
   if (!supabase) return { ok: false, reason: 'Supabase client unavailable' };
-  const { data, error } = await supabase.rpc('project_z_promote_generated_question', { p_candidate_id: candidateId, p_teacher_notes: 'Promoted from Phase 17 generation lab.' });
+
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return { ok: false, reason: 'Sign in first' };
+
+  const { data, error } = await supabase.rpc('project_z_promote_generated_question', {
+    p_candidate_id: candidateId,
+    p_teacher_notes: notes || null
+  });
+
   if (error) return { ok: false, reason: error.message };
   return { ok: true, data };
 }
 
-export async function rejectGeneratedQuestion(candidateId: string) {
+export async function rejectGeneratedQuestion(candidateId: string, notes?: string) {
   if (!supabase) return { ok: false, reason: 'Supabase client unavailable' };
-  const { data, error } = await supabase.rpc('project_z_reject_generated_question', { p_candidate_id: candidateId, p_teacher_notes: 'Rejected from Phase 17 generation lab.' });
+
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return { ok: false, reason: 'Sign in first' };
+
+  const { data, error } = await supabase.rpc('project_z_reject_generated_question', {
+    p_candidate_id: candidateId,
+    p_teacher_notes: notes || null
+  });
+
   if (error) return { ok: false, reason: error.message };
   return { ok: true, data };
 }

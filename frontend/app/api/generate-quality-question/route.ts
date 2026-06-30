@@ -27,11 +27,95 @@ type Candidate = {
 
 const OPTION_KEYS = ['A', 'B', 'C', 'D'] as const;
 
+function env() {
+  return {
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    aiEndpoint: process.env.AI_GENERATOR_ENDPOINT || '',
+    aiApiKey: process.env.AI_GENERATOR_API_KEY || '',
+    aiModel: process.env.AI_GENERATOR_MODEL || ''
+  };
+}
+
+function getBearerToken(request: Request) {
+  const header = request.headers.get('authorization') || '';
+  if (!header.toLowerCase().startsWith('bearer ')) return '';
+  return header.slice(7).trim();
+}
+
+async function callSupabaseRpc(token: string, name: string, body: Record<string, unknown>) {
+  const { supabaseUrl, supabaseAnonKey } = env();
+
+  const response = await fetch(`${supabaseUrl}/rest/v1/rpc/${name}`, {
+    method: 'POST',
+    headers: {
+      apikey: supabaseAnonKey,
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Supabase RPC ${name} failed: ${response.status} ${text}`);
+  }
+
+  return response.json();
+}
+
+async function verifyTeacher(request: Request) {
+  const { supabaseUrl, supabaseAnonKey } = env();
+  const token = getBearerToken(request);
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return { ok: false, status: 500, token: '', message: 'Supabase environment is not configured.' };
+  }
+
+  if (!token) {
+    return { ok: false, status: 401, token: '', message: 'Missing teacher sign-in token.' };
+  }
+
+  const userResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    headers: {
+      apikey: supabaseAnonKey,
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!userResponse.ok) {
+    return { ok: false, status: 401, token: '', message: 'Invalid or expired sign-in token.' };
+  }
+
+  const user = await userResponse.json();
+
+  const profileResponse = await fetch(`${supabaseUrl}/rest/v1/project_z_profiles?id=eq.${user.id}&select=role,email`, {
+    headers: {
+      apikey: supabaseAnonKey,
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json'
+    }
+  });
+
+  if (!profileResponse.ok) {
+    return { ok: false, status: 403, token: '', message: 'Could not verify teacher profile.' };
+  }
+
+  const profiles = await profileResponse.json();
+  const profile = profiles?.[0];
+
+  if (profile?.role !== 'teacher') {
+    return { ok: false, status: 403, token: '', message: 'Only teachers can use AI question generation.' };
+  }
+
+  return { ok: true, status: 200, token, message: 'Teacher verified.' };
+}
+
 function shuffle<T>(items: T[]) {
   const copy = [...items];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
   }
   return copy;
 }
@@ -77,7 +161,7 @@ function fallbackCandidate(payload: GeneratePayload): Candidate {
       prompt: `For ${skill}, which response best demonstrates Criterion B investigation and pattern reasoning?`,
       ...options,
       explanation: 'The strongest Criterion B response identifies a pattern, gives a general rule, and justifies or tests that rule.',
-      source: 'phase18_fallback_template',
+      source: 'phase21_fallback_template',
       generation_mode: 'fallback_template'
     };
   }
@@ -101,7 +185,7 @@ function fallbackCandidate(payload: GeneratePayload): Candidate {
       prompt: `For ${skill}, which response would receive the strongest Criterion C communication mark?`,
       ...options,
       explanation: 'The best Criterion C response communicates using precise terminology, notation, structure, and a clear conclusion.',
-      source: 'phase18_fallback_template',
+      source: 'phase21_fallback_template',
       generation_mode: 'fallback_template'
     };
   }
@@ -125,7 +209,7 @@ function fallbackCandidate(payload: GeneratePayload): Candidate {
       prompt: `For ${skill}, which response best satisfies Criterion D real-life application and reflection?`,
       ...options,
       explanation: 'A strong Criterion D response interprets mathematics in context, evaluates reasonableness, and recognises model limitations.',
-      source: 'phase18_fallback_template',
+      source: 'phase21_fallback_template',
       generation_mode: 'fallback_template'
     };
   }
@@ -145,7 +229,7 @@ function fallbackCandidate(payload: GeneratePayload): Candidate {
     prompt: `For ${skill}, calculate the value of ${a} × ${b} - ${c}.`,
     ...options,
     explanation: `Multiply first: ${a} × ${b} = ${a * b}. Then subtract ${c}, giving ${correctValue}.`,
-    source: 'phase18_fallback_template',
+    source: 'phase21_fallback_template',
     generation_mode: 'fallback_template'
   };
 }
@@ -175,17 +259,15 @@ function normaliseAiCandidate(payload: GeneratePayload, raw: any): Candidate {
     option_d: String(raw.option_d || '').trim(),
     correct_option: correctOption,
     explanation: String(raw.explanation || '').trim(),
-    source: 'phase18_real_ai_gateway',
+    source: 'phase21_real_ai_gateway',
     generation_mode: 'real_ai'
   };
 }
 
 async function callAiGenerator(payload: GeneratePayload): Promise<Candidate | null> {
-  const endpoint = process.env.AI_GENERATOR_ENDPOINT;
-  const apiKey = process.env.AI_GENERATOR_API_KEY;
-  const model = process.env.AI_GENERATOR_MODEL;
+  const { aiEndpoint, aiApiKey, aiModel } = env();
 
-  if (!endpoint || !apiKey || !model) return null;
+  if (!aiEndpoint || !aiApiKey || !aiModel) return null;
 
   const systemPrompt = [
     'You generate high-quality mathematics assessment questions for Project Z / Meletiou Mathematics.',
@@ -208,14 +290,14 @@ async function callAiGenerator(payload: GeneratePayload): Promise<Candidate | nu
     difficulty_band: payload.difficulty_band || 1
   });
 
-  const response = await fetch(endpoint, {
+  const response = await fetch(aiEndpoint, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${aiApiKey}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model,
+      model: aiModel,
       temperature: 0.35,
       response_format: { type: 'json_object' },
       messages: [
@@ -237,27 +319,84 @@ async function callAiGenerator(payload: GeneratePayload): Promise<Candidate | nu
 }
 
 export async function POST(request: Request) {
+  const verification = await verifyTeacher(request);
+
+  if (!verification.ok) {
+    return Response.json({ error: verification.message }, { status: verification.status });
+  }
+
   try {
+    const allowance = await callSupabaseRpc(verification.token, 'project_z_ai_generation_allowance', {});
+
+    if (!allowance?.allowed) {
+      await callSupabaseRpc(verification.token, 'project_z_log_ai_generation', {
+        p_action: 'generate_question',
+        p_status: 'blocked_by_rate_limit',
+        p_generation_mode: null,
+        p_model: env().aiModel || null,
+        p_course_code: null,
+        p_course_skill_code: null,
+        p_quality_score: null,
+        p_input_summary: 'AI generation blocked before model call.',
+        p_error_message: allowance?.reason || 'AI generation limit reached.'
+      });
+
+      return Response.json(
+        {
+          error: allowance?.reason || 'AI generation limit reached.',
+          allowance
+        },
+        { status: 429 }
+      );
+    }
+
     const payload = (await request.json()) as GeneratePayload;
 
     if (!payload.course_code || !payload.course_skill_code) {
       return Response.json({ error: 'Missing course or skill code' }, { status: 400 });
     }
 
+    let candidate: Candidate;
+
     try {
       const aiCandidate = await callAiGenerator(payload);
-      if (aiCandidate) return Response.json(aiCandidate);
+      candidate = aiCandidate || fallbackCandidate(payload);
     } catch (error) {
-      const fallback = fallbackCandidate(payload);
-      return Response.json({
-        ...fallback,
+      candidate = {
+        ...fallbackCandidate(payload),
         generation_mode: 'fallback_after_ai_error',
-        explanation: `${fallback.explanation} AI generation failed, so the safe fallback generator was used.`
-      });
+        explanation: `${fallbackCandidate(payload).explanation} AI generation failed, so the safe fallback generator was used.`
+      };
     }
 
-    return Response.json(fallbackCandidate(payload));
+    await callSupabaseRpc(verification.token, 'project_z_log_ai_generation', {
+      p_action: 'generate_question',
+      p_status: 'success',
+      p_generation_mode: candidate.generation_mode || null,
+      p_model: env().aiModel || 'fallback-template',
+      p_course_code: candidate.course_code,
+      p_course_skill_code: candidate.course_skill_code,
+      p_quality_score: null,
+      p_input_summary: `${candidate.assessment_criterion || 'A'} | ${candidate.question_type} | ${candidate.prompt}`.slice(0, 1000),
+      p_error_message: null
+    });
+
+    return Response.json(candidate);
   } catch (error) {
+    try {
+      await callSupabaseRpc(verification.token, 'project_z_log_ai_generation', {
+        p_action: 'generate_question',
+        p_status: 'server_error',
+        p_generation_mode: null,
+        p_model: env().aiModel || null,
+        p_course_code: null,
+        p_course_skill_code: null,
+        p_quality_score: null,
+        p_input_summary: null,
+        p_error_message: error instanceof Error ? error.message : 'Unknown generation error'
+      });
+    } catch {}
+
     return Response.json(
       { error: error instanceof Error ? error.message : 'Generation failed' },
       { status: 500 }

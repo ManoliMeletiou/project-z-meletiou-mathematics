@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-20-test-harden-real-ai-generation',
+    version: 'phase-21b-ai-cost-safety-rate-limits-50-per-hour',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -14,11 +14,12 @@ export async function GET() {
       realAiGeneratorEndpointConfigured: Boolean(process.env.AI_GENERATOR_ENDPOINT),
       realAiGeneratorKeyConfigured: Boolean(process.env.AI_GENERATOR_API_KEY),
       realAiGeneratorModelConfigured: Boolean(process.env.AI_GENERATOR_MODEL),
-      aiGenerationSelfTestEndpoint: true,
-      aiGenerationTeacherTestPage: true,
-      strictJsonSelfTest: true,
-      requiredFieldValidation: true,
-      duplicateOptionValidation: true,
+      teacherAuthRequiredForGeneration: true,
+      studentsParentsBlockedFromCostlyAi: true,
+      hourlyTeacherGenerationLimit: 50,
+      dailyTeacherGenerationLimit: 200,
+      aiUsageLogging: true,
+      selfTestProtectedByTeacherAuth: true,
       fallbackTemplatesEnabled: true,
       qualityGatedGeneration: true,
       bestAccuracyOverDecoration: true
