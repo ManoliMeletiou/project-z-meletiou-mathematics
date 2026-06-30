@@ -6,20 +6,21 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-16-accuracy-question-quality-engine',
+    version: 'phase-18-real-ai-generator-gateway',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      questionQualityAudit: true,
-      duplicateOptionDetection: true,
-      lengthOutlierDetection: true,
-      answerPositionDistributionAudit: true,
-      storedAnswerOptionShuffle: true,
-      teacherQualityReviewPage: true,
-      mypCriteriaBCDQualityControls: true,
+      realAiGeneratorEndpointConfigured: Boolean(process.env.AI_GENERATOR_ENDPOINT),
+      realAiGeneratorKeyConfigured: Boolean(process.env.AI_GENERATOR_API_KEY),
+      realAiGeneratorModelConfigured: Boolean(process.env.AI_GENERATOR_MODEL),
+      fallbackTemplatesEnabled: true,
+      qualityGatedGeneration: true,
+      stagedCandidatesBeforePromotion: true,
+      blockedQuestionsCannotGoLive: true,
+      teacherOnlyPromotion: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/reports', '/quality', '/generate', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/tutor', '/api/health']
   });
 }
