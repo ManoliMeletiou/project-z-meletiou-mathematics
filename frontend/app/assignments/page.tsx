@@ -12,20 +12,36 @@ import {
   submitAssignment,
   TeacherAssignment
 } from '../../lib/projectZAssignments';
+import {
+  AssignmentFile,
+  createFileDownloadUrl,
+  fetchAssignmentFiles,
+  uploadAssignmentDocument,
+  uploadStudentReturn
+} from '../../lib/projectZFiles';
 
 export default function AssignmentsPage() {
   const [classes, setClasses] = useState<ProjectZClass[]>([]);
   const [teacherAssignments, setTeacherAssignments] = useState<TeacherAssignment[]>([]);
   const [studentAssignments, setStudentAssignments] = useState<StudentAssignment[]>([]);
   const [submissions, setSubmissions] = useState<AssignmentSubmission[]>([]);
+  const [assignmentFiles, setAssignmentFiles] = useState<AssignmentFile[]>([]);
   const [selectedClassId, setSelectedClassId] = useState('');
   const [selectedAssignmentId, setSelectedAssignmentId] = useState('');
   const [title, setTitle] = useState('Quadratic factorising practice');
-  const [instructions, setInstructions] = useState('Complete the assigned practice and submit your answer.');
+  const [instructions, setInstructions] = useState('Download the document, complete your work, and upload your return file.');
   const [skillId, setSkillId] = useState('quad_fact');
   const [difficulty, setDifficulty] = useState(2);
   const [answer, setAnswer] = useState('');
+  const [teacherFile, setTeacherFile] = useState<File | null>(null);
+  const [studentFiles, setStudentFiles] = useState<Record<string, File | null>>({});
   const [status, setStatus] = useState('Assignments load from Supabase when signed in.');
+
+  async function loadFiles(assignmentId: string) {
+    if (!assignmentId) return;
+    const rows = (await fetchAssignmentFiles(assignmentId)) as AssignmentFile[];
+    setAssignmentFiles(rows);
+  }
 
   async function loadAll() {
     const classRows = (await fetchTeacherClasses()) as ProjectZClass[];
@@ -40,13 +56,15 @@ export default function AssignmentsPage() {
       setSelectedClassId(classRows[0].id);
     }
 
-    if (teacherRows.length > 0 && !selectedAssignmentId) {
-      setSelectedAssignmentId(teacherRows[0].id);
-      const submissionRows = (await fetchAssignmentSubmissions(teacherRows[0].id)) as AssignmentSubmission[];
+    const firstAssignmentId = selectedAssignmentId || teacherRows[0]?.id || studentRows[0]?.id || '';
+    if (firstAssignmentId) {
+      setSelectedAssignmentId(firstAssignmentId);
+      const submissionRows = (await fetchAssignmentSubmissions(firstAssignmentId)) as AssignmentSubmission[];
       setSubmissions(submissionRows);
+      await loadFiles(firstAssignmentId);
     }
 
-    setStatus('Assignments loaded from Supabase.');
+    setStatus('Assignments and files loaded from Supabase.');
   }
 
   useEffect(() => {
@@ -72,9 +90,61 @@ export default function AssignmentsPage() {
     await loadAll();
   }
 
+  async function openAssignment(assignmentId: string) {
+    setSelectedAssignmentId(assignmentId);
+    const rows = (await fetchAssignmentSubmissions(assignmentId)) as AssignmentSubmission[];
+    setSubmissions(rows);
+    await loadFiles(assignmentId);
+  }
+
+  async function handleTeacherFileUpload() {
+    if (!selectedAssignmentId) {
+      setStatus('Open an assignment first.');
+      return;
+    }
+
+    if (!teacherFile) {
+      setStatus('Choose a teacher document first.');
+      return;
+    }
+
+    setStatus('Uploading teacher document...');
+    const result = await uploadAssignmentDocument(selectedAssignmentId, teacherFile);
+
+    if (!result.ok) {
+      setStatus(`Could not upload document: ${result.reason}`);
+      return;
+    }
+
+    setTeacherFile(null);
+    setStatus('Teacher document uploaded.');
+    await loadFiles(selectedAssignmentId);
+  }
+
+  async function handleStudentReturnUpload(assignmentId: string) {
+    const file = studentFiles[assignmentId];
+
+    if (!file) {
+      setStatus('Choose a return file first.');
+      return;
+    }
+
+    setStatus('Uploading student return file...');
+    const result = await uploadStudentReturn(assignmentId, file);
+
+    if (!result.ok) {
+      setStatus(`Could not upload return file: ${result.reason}`);
+      return;
+    }
+
+    setStudentFiles((current) => ({ ...current, [assignmentId]: null }));
+    setStatus('Student return file uploaded.');
+    await openAssignment(assignmentId);
+  }
+
   async function handleSubmitAssignment(assignmentId: string) {
-    setStatus('Submitting assignment...');
-    const result = await submitAssignment(assignmentId, answer);
+    setStatus('Submitting text response...');
+    const result = await submitAssignment(assignmentId, answer || 'Submitted with file upload.');
 
     if (!result.ok) {
       setStatus(`Could not submit assignment: ${result.reason}`);
@@ -82,15 +152,25 @@ export default function AssignmentsPage() {
     }
 
     setAnswer('');
-    setStatus('Assignment submitted.');
+    setStatus('Text response submitted.');
     await loadAll();
   }
 
-  async function openSubmissions(assignmentId: string) {
-    setSelectedAssignmentId(assignmentId);
-    const rows = (await fetchAssignmentSubmissions(assignmentId)) as AssignmentSubmission[];
-    setSubmissions(rows);
+  async function downloadFile(file: AssignmentFile) {
+    setStatus('Creating download link...');
+    const result = await createFileDownloadUrl(file.file_path);
+
+    if (!result.ok || !result.url) {
+      setStatus(`Could not download file: ${result.reason}`);
+      return;
+    }
+
+    window.open(result.url, '_blank', 'noopener,noreferrer');
+    setStatus(`Download opened for ${file.file_name}.`);
   }
+
+  const teacherFiles = assignmentFiles.filter((file) => file.kind === 'teacher_attachment');
+  const returnFiles = assignmentFiles.filter((file) => file.kind === 'student_return');
 
   return (
     <main className="page">
@@ -98,7 +178,7 @@ export default function AssignmentsPage() {
         <nav className="nav">
           <div className="brand">
             <strong>Assignments</strong>
-            <span>Teacher assignment creation and student submissions</span>
+            <span>Documents, downloads, submissions, and student return files</span>
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
@@ -175,7 +255,7 @@ export default function AssignmentsPage() {
                   {teacherAssignments.map((row) => (
                     <tr key={row.id}>
                       <td>
-                        <button className="btn secondary" onClick={() => openSubmissions(row.id)} style={{ padding: '8px 12px', marginBottom: 8 }}>
+                        <button className="btn secondary" onClick={() => openAssignment(row.id)} style={{ padding: '8px 12px', marginBottom: 8 }}>
                           Open
                         </button>
                         <br />
@@ -189,6 +269,14 @@ export default function AssignmentsPage() {
                 </tbody>
               </table>
             )}
+
+            <hr />
+            <h3>Upload teacher document</h3>
+            <p className="muted">Open an assignment, choose a document, then upload it for students to download.</p>
+            <input className="input" type="file" onChange={(event) => setTeacherFile(event.target.files?.[0] || null)} />
+            <button className="btn blue" onClick={handleTeacherFileUpload} style={{ marginTop: 12 }}>
+              Upload document
+            </button>
           </div>
         </section>
 
@@ -204,7 +292,7 @@ export default function AssignmentsPage() {
                   value={answer}
                   onChange={(event) => setAnswer(event.target.value)}
                   rows={3}
-                  placeholder="Write your answer here, then submit under the correct assignment."
+                  placeholder="Optional text response. You can also upload a return file below."
                 />
 
                 <table className="table">
@@ -212,7 +300,7 @@ export default function AssignmentsPage() {
                     <tr>
                       <th>Assignment</th>
                       <th>Class</th>
-                      <th>Status</th>
+                      <th>Submit</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -221,12 +309,30 @@ export default function AssignmentsPage() {
                         <td>
                           <strong>{row.title}</strong><br />
                           <span className="muted">{row.instructions}</span><br />
-                          <button className="btn blue" onClick={() => handleSubmitAssignment(row.id)} style={{ marginTop: 8 }}>
-                            Submit
-                          </button>
+                          <span className="muted">{row.submitted ? 'Text submitted' : 'No text submission yet'}</span>
                         </td>
                         <td>{row.class_name}</td>
-                        <td>{row.submitted ? 'Submitted' : 'Not submitted'}</td>
+                        <td>
+                          <button className="btn secondary" onClick={() => openAssignment(row.id)} style={{ marginBottom: 8 }}>
+                            Open files
+                          </button>
+                          <br />
+                          <button className="btn blue" onClick={() => handleSubmitAssignment(row.id)} style={{ marginBottom: 8 }}>
+                            Submit text
+                          </button>
+                          <br />
+                          <input
+                            className="input"
+                            type="file"
+                            onChange={(event) => setStudentFiles((current) => ({
+                              ...current,
+                              [row.id]: event.target.files?.[0] || null
+                            }))}
+                          />
+                          <button className="btn blue" onClick={() => handleStudentReturnUpload(row.id)} style={{ marginTop: 8 }}>
+                            Upload return file
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -236,9 +342,68 @@ export default function AssignmentsPage() {
           </div>
 
           <div className="card">
-            <h2>Submissions</h2>
+            <h2>Files for opened assignment</h2>
+
+            <h3>Teacher documents</h3>
+            {teacherFiles.length === 0 ? (
+              <p className="muted">No teacher documents uploaded yet.</p>
+            ) : (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>File</th>
+                    <th>Uploaded by</th>
+                    <th>Download</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teacherFiles.map((file) => (
+                    <tr key={file.id}>
+                      <td>{file.file_name}</td>
+                      <td>{file.uploader_name}</td>
+                      <td>
+                        <button className="btn secondary" onClick={() => downloadFile(file)}>Download</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+
+            <hr />
+            <h3>Student return files</h3>
+            {returnFiles.length === 0 ? (
+              <p className="muted">No student return files uploaded yet.</p>
+            ) : (
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>File</th>
+                    <th>Student</th>
+                    <th>Download</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {returnFiles.map((file) => (
+                    <tr key={file.id}>
+                      <td>{file.file_name}</td>
+                      <td>
+                        {file.uploader_name}<br />
+                        <span className="muted">{file.uploader_email}</span>
+                      </td>
+                      <td>
+                        <button className="btn secondary" onClick={() => downloadFile(file)}>Download</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+
+            <hr />
+            <h3>Text submissions</h3>
             {submissions.length === 0 ? (
-              <p className="muted">No submissions loaded for the selected assignment.</p>
+              <p className="muted">No text submissions loaded for the selected assignment.</p>
             ) : (
               <table className="table">
                 <thead>

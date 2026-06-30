@@ -6,13 +6,13 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-6-assignments-submissions',
+    version: 'phase-7-assignment-documents-returns',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
-      phase6DatabaseMigrationRequired: 'Run supabase/project_z_phase6_assignments.sql once in Supabase SQL Editor'
+      phase7DatabaseMigrationRequired: 'Run supabase/project_z_phase7_assignment_files.sql once in Supabase SQL Editor'
     },
     routes: ['/', '/auth', '/account', '/dashboard', '/teacher', '/classes', '/assignments', '/parent', '/api/question', '/api/tutor', '/api/health']
   });
