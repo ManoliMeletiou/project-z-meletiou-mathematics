@@ -6,20 +6,19 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-11-curriculum-criteria-skill-graph',
+    version: 'phase-12-adaptive-diagnostic-engine',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
       questionFallbackEnabled: true,
-      mypStandardAndExtended: true,
-      mypCriteriaAToD: true,
-      mypCriteriaBCDStructuredAutoMarking: true,
-      dpStandardHigherThenAAAI: true,
-      adaptiveDiagnosticFoundation: true,
-      masteryPercentFoundation: true,
-      gamePathFoundation: true
+      adaptiveDiagnosticEngine: true,
+      enoughEvidenceBeforeConclusion: true,
+      skillMasteryPercentages: true,
+      shuffledSkillQuestions: true,
+      mypCriteriaAToDStructuredAutoMarking: true,
+      dpStandardHigherAAAI: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/curriculum', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/curriculum', '/diagnostic', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/tutor', '/api/health']
   });
 }

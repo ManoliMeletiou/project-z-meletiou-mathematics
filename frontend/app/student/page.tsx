@@ -96,6 +96,7 @@ export default function StudentPortalPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             {role === 'student' && <a className="btn secondary" href="/curriculum">Curriculum</a>}
+            {role === 'student' && <a className="btn secondary" href="/diagnostic">Diagnostic</a>}
             {role === 'student' && <a className="btn secondary" href="/dashboard">Practice</a>}
             {role === 'student' && <a className="btn secondary" href="/assignments">My Assignments</a>}
             {role === 'student' && <a className="btn secondary" href="/classes">Join Class</a>}
@@ -123,6 +124,11 @@ export default function StudentPortalPage() {
               <a className="card" href="/curriculum">
                 <h2>Curriculum map</h2>
                 <p className="muted">Choose MYP Standard, MYP Extended, DP AA Standard, DP AI Standard, DP AA Higher, or DP AI Higher.</p>
+              </a>
+
+              <a className="card" href="/diagnostic">
+                <h2>Diagnostic</h2>
+                <p className="muted">Find your strong and weak skills with adaptive questions.</p>
               </a>
 
               <a className="card" href="/dashboard">
