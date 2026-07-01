@@ -137,6 +137,7 @@ export default function TeacherPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/assignment-lifecycle">Lifecycle</a>
             <a className="btn secondary" href="/">Home</a>
+            <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/curriculum">Curriculum</a>
             <a className="btn secondary" href="/assignments">Assignments</a>
             <a className="btn secondary" href="/student">Student View</a>

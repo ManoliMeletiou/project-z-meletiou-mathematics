@@ -104,6 +104,7 @@ export default function ParentPortalPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/parent-dashboard">Dashboard</a>
             <a className="btn secondary" href="/">Home</a>
+            <a className="btn secondary" href="/home">Smart Home</a>
             {role === 'teacher' && <a className="btn secondary" href="/teacher">Teacher Portal</a>}
             {role === 'parent' && <a className="btn secondary" href="/student">Child Student View</a>}
             <a className="btn secondary" href="/reports">Reports</a>

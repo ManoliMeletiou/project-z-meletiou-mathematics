@@ -91,6 +91,7 @@ export default function AssignmentLifecyclePage() {
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
+            <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/assignment-recommendations">Recommendations</a>
             <a className="btn secondary" href="/generated-assignments">Generated</a>

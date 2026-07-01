@@ -96,6 +96,7 @@ export default function StudentPortalPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/student-dashboard">Dashboard</a>
             <a className="btn secondary" href="/">Home</a>
+            <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/curriculum">Curriculum</a>
             <a className="btn secondary" href="/diagnostic">Diagnostic</a>

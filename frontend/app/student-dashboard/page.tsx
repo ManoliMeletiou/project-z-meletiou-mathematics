@@ -145,6 +145,7 @@ export default function StudentDashboardPage() {
           </div>
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
+            <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/student-generated-assignments">Assignments</a>
             <a className="btn secondary" href="/student-memorandum">Memo</a>
