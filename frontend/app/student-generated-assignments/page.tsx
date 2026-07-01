@@ -142,6 +142,7 @@ export default function StudentGeneratedAssignmentsPage() {
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn secondary" href="/student-dashboard">Dashboard</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/assignments">Assignments</a>
