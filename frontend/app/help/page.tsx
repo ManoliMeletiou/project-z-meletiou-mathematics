@@ -56,6 +56,7 @@ export default function ProjectZHelpPage() {
             <a className="btn secondary" href="/quest-studio">Studio</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/mobile-preview">Mobile</a>
             <a className="btn secondary" href="/auth">Sign in</a>
             <a className="btn secondary" href="/account">Account</a>

@@ -92,6 +92,7 @@ export default function AssignmentLifecyclePage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/mobile-preview">Mobile</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/teacher-engagement-insights">Engagement</a>

@@ -126,6 +126,7 @@ export default function QuestStudioPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/student-dashboard">Dashboard</a>
             <a className="btn secondary" href="/student-quest">Quest</a>
             <a className="btn secondary" href="/student-generated-assignments">Assignments</a>

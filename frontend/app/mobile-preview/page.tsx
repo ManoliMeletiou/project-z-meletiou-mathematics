@@ -52,6 +52,7 @@ export default function MobilePreviewPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/student-dashboard">Student</a>
             <a className="btn secondary" href="/student-quest">Quest</a>
             <a className="btn secondary" href="/quest-studio">Studio</a>

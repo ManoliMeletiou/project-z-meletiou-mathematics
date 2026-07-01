@@ -131,6 +131,7 @@ export default function TeacherEngagementInsightsPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/assignment-lifecycle">Lifecycle</a>
             <a className="btn secondary" href="/teacher-submission-review">Submissions</a>

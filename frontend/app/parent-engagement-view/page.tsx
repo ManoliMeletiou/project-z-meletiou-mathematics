@@ -121,6 +121,7 @@ export default function ParentEngagementViewPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/parent-dashboard">Parent Dashboard</a>
             <a className="btn secondary" href="/parent-learning-report">Learning Report</a>
             <a className="btn secondary" href="/export-reports">Reports</a>
