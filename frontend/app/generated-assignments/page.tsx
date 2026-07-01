@@ -124,6 +124,7 @@ export default function GeneratedAssignmentsPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/assignment-recommendations">Recommendations</a>
             <a className="btn secondary" href="/assignment-audit">Quality Audit</a>
+            <a className="btn secondary" href="/teacher-submission-review">Submission Review</a>
             <a className="btn secondary" href="/assignments">Assignments</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/account">Account</a>

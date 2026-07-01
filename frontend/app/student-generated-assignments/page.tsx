@@ -147,6 +147,7 @@ export default function StudentGeneratedAssignmentsPage() {
             <a className="btn secondary" href="/assignments">Assignments</a>
             <a className="btn secondary" href="/path">Skill Path</a>
             <a className="btn secondary" href="/tutor">Tutor</a>
+            <a className="btn secondary" href="/student-memorandum">Memorandum</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
