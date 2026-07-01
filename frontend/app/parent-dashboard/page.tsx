@@ -151,6 +151,7 @@ export default function ParentDashboardPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/mobile-preview">Mobile</a>
             <a className="btn secondary" href="/parent">Parent Portal</a>
             <a className="btn secondary" href="/parent-learning-report">Learning Report</a>
             <a className="btn secondary" href="/export-reports">Export Reports</a>

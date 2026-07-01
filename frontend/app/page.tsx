@@ -82,6 +82,7 @@ export default function ProjectZHomePage() {
           <div className="navLinks">
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/help">Help</a>
+            <a className="btn secondary" href="/mobile-preview">Mobile</a>
             <a className="btn secondary" href="/auth">Sign in</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
