@@ -6,20 +6,20 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-26-parent-learning-report-upgrade',
+    version: 'phase-27-exportable-pdf-reports',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      parentLearningReport: true,
-      parentSafeSummary: true,
-      rawTutorChatsHiddenFromParents: true,
-      teacherPrivateNotesHiddenFromParents: true,
-      parentLinkedChildOnlyAccess: true,
-      strengthsAndNeedsPracticeVisible: true,
-      tutorSupportSummaryVisible: true,
+      exportReportsPage: true,
+      parentSafePdfReports: true,
+      teacherInternalPdfReports: true,
+      browserPrintSaveAsPdf: true,
+      reportSummaryCopy: true,
+      rawTutorChatsNotIncludedInExports: true,
+      teacherJudgementOverAiEvidence: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/parent-learning-report', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/parent-learning-report', '/export-reports', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
   });
 }
