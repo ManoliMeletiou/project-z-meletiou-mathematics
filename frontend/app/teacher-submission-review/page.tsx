@@ -168,6 +168,7 @@ export default function TeacherSubmissionReviewPage() {
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/generated-assignments">Generated Assignments</a>
             <a className="btn secondary" href="/assignment-audit">Quality Audit</a>
+            <a className="btn secondary" href="/teacher-corrections-review">Corrections Review</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>

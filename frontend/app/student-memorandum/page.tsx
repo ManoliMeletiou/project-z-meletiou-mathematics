@@ -91,6 +91,7 @@ export default function StudentMemorandumPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/student-generated-assignments">Generated Assignments</a>
+            <a className="btn secondary" href="/student-corrections">Corrections</a>
             <a className="btn secondary" href="/tutor">Tutor</a>
             <a className="btn secondary" href="/account">Account</a>
           </div>
