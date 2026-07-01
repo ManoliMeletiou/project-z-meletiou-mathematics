@@ -87,6 +87,7 @@ export default function ParentLearningReportPage() {
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn secondary" href="/parent-dashboard">Dashboard</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/parent">Parent Portal</a>
             <a className="btn secondary" href="/reports">Reports</a>
