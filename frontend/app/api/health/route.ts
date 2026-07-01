@@ -6,22 +6,22 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-29-one-click-30-question-assignments',
+    version: 'phase-30-assignment-quality-audit-regeneration',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      oneClickAssignmentCreation: true,
-      minimumQuestionsPerGeneratedAssignment: 30,
-      skillLockedGeneration: true,
-      courseLevelAwareGeneration: true,
-      teacherOnlyCreation: true,
-      generatedAssignmentReviewPage: true,
-      plausibleMcqDistractorsRequired: true,
-      correctOptionDistributionRequired: true,
-      noOffSkillQuestionsRule: true,
+      assignmentQualityAuditPage: true,
+      automaticQuestionQualityChecks: true,
+      teacherApprovalFlagging: true,
+      singleQuestionRegeneration: true,
+      bulkFlaggedRegenerationLimitedToFive: true,
+      sameSkillRegeneration: true,
+      sameCriterionAndDifficultyRegeneration: true,
+      minimumThirtyQuestionsPreserved: true,
+      auditHistoryLogs: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/parent-learning-report', '/export-reports', '/assignment-recommendations', '/generated-assignments', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/create-assignment-from-recommendation', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/parent-learning-report', '/export-reports', '/assignment-recommendations', '/generated-assignments', '/assignment-audit', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/create-assignment-from-recommendation', '/api/regenerate-assignment-question', '/api/health']
   });
 }
