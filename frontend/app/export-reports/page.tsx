@@ -180,7 +180,7 @@ export default function ExportReportsPage() {
   const tutorSummary = report?.tutor_summary || report?.tutor_review_summary || {};
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-teacher-theme">
       <style>{`
         @media print {
           body {

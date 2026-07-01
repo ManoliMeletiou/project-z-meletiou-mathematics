@@ -1,4 +1,5 @@
 import './globals.css';
+import './project-z-theme.css';
 
 export const metadata = {
   title: 'Project Z | Meletiou Mathematics',

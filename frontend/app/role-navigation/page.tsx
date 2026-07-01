@@ -74,7 +74,7 @@ export default function RoleNavigationPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-guest-theme"
       style={{
         minHeight: '100vh',
         background:
@@ -88,6 +88,7 @@ export default function RoleNavigationPage() {
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn secondary" href="/design-preview">Design</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/help">Help</a>

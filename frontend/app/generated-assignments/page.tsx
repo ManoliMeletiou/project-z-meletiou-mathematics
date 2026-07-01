@@ -113,7 +113,7 @@ export default function GeneratedAssignmentsPage() {
   const selectedAssignment = assignments.find((assignment) => assignment.assignment_id === selectedAssignmentId);
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-teacher-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

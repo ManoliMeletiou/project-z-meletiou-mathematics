@@ -36,7 +36,7 @@ export default function ProjectZHelpPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-guest-theme"
       style={{
         minHeight: '100vh',
         background:
@@ -57,6 +57,7 @@ export default function ProjectZHelpPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/role-navigation">Navigation</a>
+            <a className="btn secondary" href="/design-preview">Design</a>
             <a className="btn secondary" href="/mobile-preview">Mobile</a>
             <a className="btn secondary" href="/auth">Sign in</a>
             <a className="btn secondary" href="/account">Account</a>

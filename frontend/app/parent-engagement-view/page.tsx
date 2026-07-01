@@ -106,7 +106,7 @@ export default function ParentEngagementViewPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-parent-theme"
       style={{
         background:
           'radial-gradient(circle at top left, rgba(99,102,241,.14), transparent 30%), radial-gradient(circle at top right, rgba(20,184,166,.14), transparent 30%), linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%)'

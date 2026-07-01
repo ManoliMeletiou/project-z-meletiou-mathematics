@@ -89,7 +89,7 @@ export default function StudentQuestPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-student-theme"
       style={{
         minHeight: '100vh',
         background:

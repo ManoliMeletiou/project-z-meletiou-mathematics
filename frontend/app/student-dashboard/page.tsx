@@ -268,7 +268,7 @@ export default function StudentDashboardPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-student-theme"
       style={{
         background:
           'radial-gradient(circle at top left, rgba(99,102,241,.18), transparent 32%), radial-gradient(circle at top right, rgba(20,184,166,.16), transparent 30%), linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%)'

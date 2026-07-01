@@ -68,7 +68,7 @@ export default function AccountPage() {
   }
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-guest-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

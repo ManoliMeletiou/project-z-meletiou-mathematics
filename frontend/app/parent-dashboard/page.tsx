@@ -136,7 +136,7 @@ export default function ParentDashboardPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-parent-theme"
       style={{
         background:
           'radial-gradient(circle at top left, rgba(14,165,233,.16), transparent 30%), radial-gradient(circle at top right, rgba(168,85,247,.13), transparent 31%), linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%)'

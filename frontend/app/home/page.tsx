@@ -57,7 +57,7 @@ export default function HomePage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-guest-theme"
       style={{
         minHeight: '100vh',
         background:
@@ -73,6 +73,7 @@ export default function HomePage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Landing</a>
             <a className="btn secondary" href="/role-navigation">Role Navigation</a>
+            <a className="btn secondary" href="/design-preview">Design</a>
             <a className="btn secondary" href="/help">Help</a>
             <a className="btn secondary" href="/mobile-preview">Mobile</a>
             <a className="btn secondary" href="/account">Account</a>

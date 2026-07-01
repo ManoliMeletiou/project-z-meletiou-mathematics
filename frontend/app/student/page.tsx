@@ -73,7 +73,7 @@ export default function StudentPortalPage() {
 
   if (!canAccessPortal(role, 'student') && role !== 'guest') {
     return (
-      <main className="page">
+      <main className="page pz-theme pz-student-theme">
         <div className="container">
           <section className="card">
             <h1>Access denied</h1>

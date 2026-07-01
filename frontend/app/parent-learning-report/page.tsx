@@ -79,7 +79,7 @@ export default function ParentLearningReportPage() {
   }, []);
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-parent-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

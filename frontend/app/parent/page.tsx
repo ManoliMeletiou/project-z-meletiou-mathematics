@@ -81,7 +81,7 @@ export default function ParentPortalPage() {
 
   if (!canAccessPortal(role, 'parent') && role !== 'guest') {
     return (
-      <main className="page">
+      <main className="page pz-theme pz-parent-theme">
         <div className="container">
           <section className="card">
             <h1>Access denied</h1>

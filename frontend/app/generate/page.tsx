@@ -59,7 +59,7 @@ export default function GeneratePage() {
   async function promote(id: string) { setBusy(true); const r = await promoteGeneratedQuestion(id); setStatus(r.ok ? 'Question promoted to verified question bank.' : `Could not promote: ${r.reason}`); await loadPage(courseCode); setBusy(false); }
   async function reject(id: string) { setBusy(true); const r = await rejectGeneratedQuestion(id); setStatus(r.ok ? 'Candidate rejected.' : `Could not reject: ${r.reason}`); await loadPage(courseCode); setBusy(false); }
 
-  return <main className="page"><div className="container">
+  return <main className="page pz-theme pz-teacher-theme"><div className="container">
     <nav className="nav"><div className="brand"><strong>Question Generation Lab</strong><span>{email || 'Sign in'} - role: {role}</span></div><div className="navLinks"><a className="btn secondary" href="/">Home</a><a className="btn secondary" href="/teacher">Teacher Portal</a><a className="btn secondary" href="/quality">Quality</a>
             <a className="btn secondary" href="/ai-test">AI Test</a>
             <a className="btn secondary" href="/ai-usage">AI Usage</a><a className="btn secondary" href="/reports">Reports</a><a className="btn secondary" href="/account">Account</a></div></nav>

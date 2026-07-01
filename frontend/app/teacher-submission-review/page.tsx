@@ -156,7 +156,7 @@ export default function TeacherSubmissionReviewPage() {
   }, [submissions]);
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-teacher-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

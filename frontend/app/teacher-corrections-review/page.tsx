@@ -74,7 +74,7 @@ export default function TeacherCorrectionsReviewPage() {
   const needsMoreWorkCount = rows.filter((row) => row.correction_status === 'needs_more_work').length;
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-teacher-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

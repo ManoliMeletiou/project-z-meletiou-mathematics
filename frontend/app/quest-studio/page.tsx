@@ -110,7 +110,7 @@ export default function QuestStudioPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-student-theme"
       style={{
         minHeight: '100vh',
         background:

@@ -95,7 +95,7 @@ export default function TeacherPage() {
 
   if (!authLoaded) {
     return (
-      <main className="page">
+      <main className="page pz-theme pz-teacher-theme">
         <div className="container">
           <section className="card">
             <h1>Checking access...</h1>

@@ -173,7 +173,7 @@ export default function RecommendedPracticePage() {
   );
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-student-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

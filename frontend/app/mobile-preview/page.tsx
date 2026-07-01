@@ -36,7 +36,7 @@ export default function MobilePreviewPage() {
 
   return (
     <main
-      className="page"
+      className="page pz-theme pz-guest-theme"
       style={{
         minHeight: '100vh',
         background:
@@ -53,6 +53,7 @@ export default function MobilePreviewPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/role-navigation">Navigation</a>
+            <a className="btn secondary" href="/design-preview">Design</a>
             <a className="btn secondary" href="/student-dashboard">Student</a>
             <a className="btn secondary" href="/student-quest">Quest</a>
             <a className="btn secondary" href="/quest-studio">Studio</a>

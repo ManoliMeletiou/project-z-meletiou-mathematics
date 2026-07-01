@@ -82,7 +82,7 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-guest-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

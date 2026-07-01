@@ -80,7 +80,7 @@ export default function StudentMemorandumPage() {
   const first = memoRows[0];
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-student-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">

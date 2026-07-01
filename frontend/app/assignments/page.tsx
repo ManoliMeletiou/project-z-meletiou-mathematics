@@ -231,7 +231,7 @@ export default function AssignmentsPage() {
   const returnFiles = assignmentFiles.filter((file) => file.kind === 'student_return');
 
   return (
-    <main className="page">
+    <main className="page pz-theme pz-teacher-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">
