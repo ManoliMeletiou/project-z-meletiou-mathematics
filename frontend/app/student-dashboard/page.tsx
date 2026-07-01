@@ -25,16 +25,16 @@ import {
   QuestIdentity
 } from '../../lib/projectZQuestStudio';
 
-function firstName(email: string | null) {
-  if (!email) return 'there';
-  const name = email.split('@')[0] || 'there';
-  return name
+function firstName(email: string | null | undefined) {
+  if (!email) return 'Explorer';
+  return email
+    .split('@')[0]
     .replace(/[._-]+/g, ' ')
     .split(' ')
     .filter(Boolean)
-    .slice(0, 2)
+    .slice(0, 1)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ') || 'there';
+    .join(' ') || 'Explorer';
 }
 
 function actionIcon(type: string) {
@@ -46,83 +46,26 @@ function actionIcon(type: string) {
   return '✨';
 }
 
-function priorityStyle(label: string): CSSProperties {
-  if (label === 'Urgent') {
-    return {
-      background: 'linear-gradient(135deg, #ffe4e6, #fff7ed)',
-      border: '1px solid rgba(190,18,60,.25)',
-      color: '#9f1239'
-    };
-  }
-
-  if (label === 'Important') {
-    return {
-      background: 'linear-gradient(135deg, #fef3c7, #ecfeff)',
-      border: '1px solid rgba(180,83,9,.25)',
-      color: '#92400e'
-    };
-  }
-
-  if (label === 'Quest') {
-    return {
-      background: 'linear-gradient(135deg, #eef2ff, #f5f3ff)',
-      border: '1px solid rgba(99,102,241,.22)',
-      color: '#3730a3'
-    };
-  }
-
-  return {
-    background: 'linear-gradient(135deg, #eef2ff, #ecfeff)',
-    border: '1px solid rgba(79,70,229,.18)',
-    color: '#3730a3'
-  };
-}
-
 function cardStyle(index: number): CSSProperties {
   const gradients = [
-    'linear-gradient(135deg, #eef2ff 0%, #f8fafc 52%, #ecfeff 100%)',
-    'linear-gradient(135deg, #fff7ed 0%, #f8fafc 52%, #f0fdf4 100%)',
-    'linear-gradient(135deg, #fdf2f8 0%, #f8fafc 52%, #eef2ff 100%)',
-    'linear-gradient(135deg, #ecfeff 0%, #f8fafc 52%, #fff7ed 100%)',
-    'linear-gradient(135deg, #f5f3ff 0%, #f8fafc 52%, #eff6ff 100%)'
+    'linear-gradient(135deg, rgba(168,85,247,.18), rgba(255,255,255,.055))',
+    'linear-gradient(135deg, rgba(34,211,238,.16), rgba(255,255,255,.055))',
+    'linear-gradient(135deg, rgba(249,115,22,.13), rgba(255,255,255,.055))',
+    'linear-gradient(135deg, rgba(52,211,153,.13), rgba(255,255,255,.055))'
   ];
 
   return {
     background: gradients[index % gradients.length],
-    border: '1px solid rgba(15,23,42,.08)',
-    boxShadow: '0 18px 45px rgba(15,23,42,.08)',
+    border: '1px solid rgba(255,255,255,.12)',
     borderRadius: 24
   };
 }
 
-function questCardStyle(): CSSProperties {
-  return {
-    background:
-      'radial-gradient(circle at top right, rgba(99,102,241,.18), transparent 34%), radial-gradient(circle at bottom left, rgba(20,184,166,.14), transparent 32%), linear-gradient(135deg, #eef2ff 0%, #f8fafc 48%, #ecfeff 100%)',
-    border: '1px solid rgba(99,102,241,.16)',
-    boxShadow: '0 22px 60px rgba(30,41,59,.12)',
-    borderRadius: 28
-  };
-}
-
-function progressText(summary: StudentDashboardSummary, questProfile: StudentQuestProfile | null) {
-  if (summary.assignments_to_do > 0) {
-    return `You have ${summary.assignments_to_do} assignment${summary.assignments_to_do === 1 ? '' : 's'} to work on.`;
-  }
-
-  if (summary.corrections_needing_more_work > 0) {
-    return 'Some corrections need another try.';
-  }
-
-  if (summary.corrections_needed > summary.corrections_submitted) {
-    return 'You have corrections to complete after reading the memorandum.';
-  }
-
-  if (questProfile && !questProfile.checked_in_today) {
-    return 'You are up to date. Start today’s streak or practise to keep growing.';
-  }
-
-  return 'You are up to date. Keep practising and ask the tutor if you feel stuck.';
+function priorityStyle(label: string): CSSProperties {
+  if (label === 'Urgent') return { background: 'rgba(251,113,133,.16)', color: '#fecdd3', border: '1px solid rgba(251,113,133,.28)' };
+  if (label === 'Important') return { background: 'rgba(249,115,22,.16)', color: '#fed7aa', border: '1px solid rgba(249,115,22,.28)' };
+  if (label === 'Quest') return { background: 'rgba(168,85,247,.18)', color: '#e9d5ff', border: '1px solid rgba(168,85,247,.30)' };
+  return { background: 'rgba(34,211,238,.15)', color: '#cffafe', border: '1px solid rgba(34,211,238,.26)' };
 }
 
 function xpToNext(profile: StudentQuestProfile) {
@@ -132,16 +75,16 @@ function xpToNext(profile: StudentQuestProfile) {
 function questNextAction(profile: StudentQuestProfile | null, achievements: StudentQuestAchievement[]) {
   if (!profile) {
     return {
-      title: 'Open Student Quest',
-      description: 'Start your XP, level, streak, and companion journey.',
-      button: 'Open quest',
+      title: 'Begin your Quest',
+      description: 'Start your XP, level, streak, achievements, and companion journey.',
+      button: 'Open Quest',
       path: '/student-quest'
     };
   }
 
   if (!profile.checked_in_today) {
     return {
-      title: 'Start today’s streak',
+      title: 'Activate today’s streak',
       description: 'Check in today to keep your learning streak alive and earn XP.',
       button: 'Start streak',
       path: '/student-quest'
@@ -151,28 +94,37 @@ function questNextAction(profile: StudentQuestProfile | null, achievements: Stud
   const locked = achievements.find((achievement) => !achievement.unlocked);
   if (locked) {
     return {
-      title: `Next achievement: ${locked.title}`,
+      title: `Next badge: ${locked.title}`,
       description: locked.description,
-      button: 'View achievements',
+      button: 'View badges',
       path: '/student-quest'
     };
   }
 
   return {
-    title: 'Customize your identity',
-    description: 'Open Quest Studio to equip titles, auras, badges, themes, and companion skins.',
-    button: 'Open studio',
+    title: 'Upgrade your identity',
+    description: 'Open Quest Studio to equip a title, aura, badge, theme, or companion skin.',
+    button: 'Open Studio',
     path: '/quest-studio'
   };
 }
 
-function rarityText(identity: QuestIdentity | null) {
-  if (!identity) return 'Common';
-  const rarities = [identity.skin.rarity, identity.aura.rarity, identity.badge.rarity, identity.title.rarity, identity.theme.rarity];
-  if (rarities.includes('legendary')) return 'Legendary identity';
-  if (rarities.includes('epic')) return 'Epic identity';
-  if (rarities.includes('rare')) return 'Rare identity';
-  return 'Common identity';
+function progressText(summary: StudentDashboardSummary, profile: StudentQuestProfile | null) {
+  if (summary.assignments_to_do > 0) return `You have ${summary.assignments_to_do} active assignment${summary.assignments_to_do === 1 ? '' : 's'} waiting.`;
+  if (summary.corrections_needing_more_work > 0) return 'Some corrections need another attempt. That is how mastery grows.';
+  if (summary.corrections_needed > summary.corrections_submitted) return 'You have correction work waiting after feedback.';
+  if (profile && !profile.checked_in_today) return 'You are up to date. Start today’s streak or practise to keep momentum.';
+  return 'You are up to date. Keep exploring, practising, and asking for help when needed.';
+}
+
+function pathNodes(level: number) {
+  return [
+    { icon: '1', label: 'Start', active: level >= 1 },
+    { icon: '2', label: 'Build', active: level >= 2 },
+    { icon: '3', label: 'Master', active: level >= 3 },
+    { icon: '4', label: 'Extend', active: level >= 4 },
+    { icon: '🏆', label: 'Legend', active: level >= 5 }
+  ];
 }
 
 export default function StudentDashboardPage() {
@@ -184,8 +136,7 @@ export default function StudentDashboardPage() {
   const [questProfile, setQuestProfile] = useState<StudentQuestProfile | null>(null);
   const [questIdentity, setQuestIdentity] = useState<QuestIdentity | null>(null);
   const [achievements, setAchievements] = useState<StudentQuestAchievement[]>([]);
-  const [status, setStatus] = useState('Student dashboard loads your next steps.');
-  const [showCoachTip, setShowCoachTip] = useState(true);
+  const [status, setStatus] = useState('Loading your cosmic learning dashboard.');
   const [checkingIn, setCheckingIn] = useState(false);
 
   async function loadPage() {
@@ -194,7 +145,7 @@ export default function StudentDashboardPage() {
     setEmail(profile.email);
 
     if (profile.role !== 'student') {
-      setStatus(profile.role === 'guest' ? 'Sign in as a student to see your dashboard.' : 'This dashboard is for students.');
+      setStatus(profile.role === 'guest' ? 'Sign in as a student to enter your dashboard.' : 'This cosmic dashboard is for student accounts.');
       return;
     }
 
@@ -238,7 +189,7 @@ export default function StudentDashboardPage() {
     setQuestProfile(nextQuestProfile);
     setQuestIdentity(nextIdentity);
     setAchievements(nextAchievements);
-    setStatus('Today’s streak is active. Nice consistency.');
+    setStatus('Streak activated. Nice consistency.');
     setCheckingIn(false);
   }
 
@@ -248,7 +199,7 @@ export default function StudentDashboardPage() {
 
   const visibleActions = useMemo(() => {
     const questActionCard: StudentDashboardAction = {
-      action_id: 'dashboard-quest-action',
+      action_id: 'student-cosmic-quest-action',
       priority_label: 'Quest',
       action_type: 'quest',
       title: questAction.title,
@@ -260,357 +211,244 @@ export default function StudentDashboardPage() {
       course_skill_code: null,
       skill_title: 'XP, streaks, level, and companion',
       progress_percent: questProfile?.level_progress_percent || 0,
-      sort_order: 15
+      sort_order: 12
     };
 
-    return [questActionCard, ...actions].slice(0, 7);
-  }, [actions, questAction.button, questAction.description, questAction.path, questAction.title, questProfile?.level_progress_percent]);
+    return [questActionCard, ...actions].slice(0, 6);
+  }, [actions, questAction, questProfile?.level_progress_percent]);
 
   return (
-    <main
-      className="page pz-theme pz-student-theme"
-      style={{
-        background:
-          'radial-gradient(circle at top left, rgba(99,102,241,.18), transparent 32%), radial-gradient(circle at top right, rgba(20,184,166,.16), transparent 30%), linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%)'
-      }}
-    >
+    <main className="page pz-theme pz-student-theme">
       <div className="container">
         <nav className="nav" style={{ marginBottom: 22 }}>
           <div className="brand">
-            <strong>Student Dashboard</strong>
-            <span>{email || 'Sign in'} - role: {role}</span>
+            <strong>Project Z Student</strong>
+            <span>{email || 'Sign in'} - cosmic learning dashboard</span>
           </div>
           <div className="navLinks">
-            <a className="btn secondary" href="/">Home</a>
-            <a className="btn secondary" href="/home">Smart Home</a>
+            <a className="btn secondary" href="/home">Home</a>
             <a className="btn secondary" href="/role-navigation">Navigation</a>
-            <a className="btn secondary" href="/student">Student Portal</a>
             <a className="btn secondary" href="/student-quest">Quest</a>
             <a className="btn secondary" href="/quest-studio">Studio</a>
             <a className="btn secondary" href="/student-generated-assignments">Assignments</a>
-            <a className="btn secondary" href="/student-memorandum">Memo</a>
             <a className="btn secondary" href="/student-corrections">Corrections</a>
             <a className="btn secondary" href="/tutor">Tutor</a>
-            <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
 
+        <section className="notice" style={{ marginBottom: 18 }}>
+          <strong>Status:</strong> {status}
+        </section>
+
         {role === 'guest' && (
-          <section className="card" style={cardStyle(0)}>
+          <section className="card">
             <h2>Sign in required</h2>
-            <p className="muted">Sign in as a student to see your next steps.</p>
+            <p className="muted">Sign in as a student to enter your learning dashboard.</p>
             <a className="btn blue" href="/auth">Sign in</a>
           </section>
         )}
 
         {role !== 'guest' && role !== 'student' && (
-          <section className="card" style={cardStyle(0)}>
+          <section className="card">
             <h2>Student-only dashboard</h2>
-            <p className="muted">This page is designed for students.</p>
+            <p className="muted">This cosmic dashboard is designed for student accounts.</p>
           </section>
         )}
 
         {role === 'student' && summary && (
           <>
-            <section
-              className="card"
-              style={{
-                ...cardStyle(0),
-                padding: 30,
-                overflow: 'hidden',
-                position: 'relative'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  right: -60,
-                  top: -60,
-                  width: 190,
-                  height: 190,
-                  borderRadius: '50%',
-                  background: 'rgba(99,102,241,.13)'
-                }}
-              />
-              <p
-                style={{
-                  display: 'inline-flex',
-                  padding: '8px 12px',
-                  borderRadius: 999,
-                  background: 'rgba(255,255,255,.75)',
-                  border: '1px solid rgba(15,23,42,.08)',
-                  marginBottom: 12
-                }}
-              >
-                ✨ Welcome back
-              </p>
-              <h1 style={{ fontSize: 38, lineHeight: 1.05, margin: '4px 0 10px' }}>
-                Hi {firstName(summary.student_email)}, here is what to do next.
-              </h1>
-              <p style={{ fontSize: 18, maxWidth: 720, color: '#475569' }}>
-                {progressText(summary, questProfile)}
-              </p>
+            <section className="pz-student-dashboard-shell">
+              <div className="pz-cosmic-hero">
+                <div className="pz-role-badge">🚀 Student command centre</div>
+                <h1 style={{ fontSize: 48, lineHeight: 1.02, maxWidth: 720, margin: '16px 0 10px' }}>
+                  Keep exploring, {firstName(summary.student_email)}.
+                </h1>
+                <p style={{ fontSize: 18, maxWidth: 660 }} className="muted">
+                  {progressText(summary, questProfile)}
+                </p>
 
-              <div className="grid grid2" style={{ marginTop: 22 }}>
-                <section
-                  style={{
-                    padding: 18,
-                    borderRadius: 22,
-                    background: 'rgba(255,255,255,.78)',
-                    border: '1px solid rgba(15,23,42,.08)'
-                  }}
-                >
-                  <p style={{ margin: 0, fontWeight: 700 }}>
-                    {topAction ? actionIcon(topAction.action_type) : '✅'} Best learning step
-                  </p>
-                  {topAction ? (
-                    <>
-                      <h2 style={{ marginBottom: 6 }}>{topAction.title}</h2>
-                      <p className="muted">{topAction.description}</p>
-                      <a className="btn blue" href={topAction.page_path}>
-                        {topAction.button_label}
-                      </a>
-                    </>
-                  ) : (
-                    <>
-                      <h2>You are up to date</h2>
-                      <p className="muted">No urgent learning tasks found. You can practise, check in, or ask the tutor.</p>
-                      <a className="btn blue" href="/tutor">Open tutor</a>
-                    </>
-                  )}
+                <section className="pz-student-top-stats">
+                  <div className="pz-student-stat-chip">
+                    <span>🔥 Streak</span>
+                    <strong>{questProfile?.current_streak || 0}</strong>
+                    <small className="muted">Longest {questProfile?.longest_streak || 0}</small>
+                  </div>
+                  <div className="pz-student-stat-chip">
+                    <span>⭐ XP</span>
+                    <strong>{questProfile?.total_xp || 0}</strong>
+                    <small className="muted">{questProfile ? `${xpToNext(questProfile)} XP to next level` : 'Start your quest'}</small>
+                  </div>
+                  <div className="pz-student-stat-chip">
+                    <span>💎 Level</span>
+                    <strong>{questProfile?.level || 1}</strong>
+                    <small className="muted">{questProfile?.level_progress_percent || 0}% progress</small>
+                  </div>
                 </section>
 
-                <section
-                  style={{
-                    padding: 18,
-                    borderRadius: 22,
-                    background: 'rgba(255,255,255,.78)',
-                    border: '1px solid rgba(99,102,241,.12)'
-                  }}
-                >
-                  <p style={{ margin: 0, fontWeight: 700 }}>🎮 Best quest step</p>
-                  <h2 style={{ marginBottom: 6 }}>{questAction.title}</h2>
-                  <p className="muted">{questAction.description}</p>
-                  {!questProfile?.checked_in_today && questProfile ? (
-                    <button className="btn blue" onClick={handleDashboardCheckin} disabled={checkingIn}>
-                      {checkingIn ? 'Checking in...' : 'Start today’s streak'}
-                    </button>
-                  ) : (
-                    <a className="btn blue" href={questAction.path}>{questAction.button}</a>
-                  )}
+                <section className="card" style={{ marginTop: 22, background: 'rgba(255,255,255,.08)' }}>
+                  <h2>Quest Path</h2>
+                  <div className="pz-cosmic-path">
+                    {pathNodes(questProfile?.level || 1).map((node) => (
+                      <div key={node.label} className="pz-path-node" style={{ opacity: node.active ? 1 : .48 }}>
+                        <span>{node.icon}</span>
+                        <span>{node.label}</span>
+                      </div>
+                    ))}
+                  </div>
                 </section>
               </div>
-            </section>
 
-            {questProfile && (
-              <section className="card" style={{ ...questCardStyle(), marginTop: 18, padding: 24 }}>
-                <div className="grid grid2">
+              {questProfile && (
+                <aside className="card pz-companion-stage">
                   <div>
-                    <p
-                      style={{
-                        display: 'inline-flex',
-                        padding: '8px 12px',
-                        borderRadius: 999,
-                        background: 'rgba(255,255,255,.78)',
-                        border: '1px solid rgba(99,102,241,.12)',
-                        marginBottom: 12
-                      }}
-                    >
-                      {rarityText(questIdentity)}
-                    </p>
-                    <h2 style={{ fontSize: 30, marginBottom: 8 }}>
-                      {questIdentity?.skin.icon || companionIcon(questProfile.companion_stage)} {questIdentity?.skin.name || companionName(questProfile.companion_stage)}
+                    <div className="pz-role-badge">AI Companion</div>
+                    <div className="pz-companion-avatar">
+                      {questIdentity?.skin.icon || companionIcon(questProfile.companion_stage)}
+                    </div>
+                    <h2 style={{ textAlign: 'center' }}>
+                      {questIdentity?.skin.name || companionName(questProfile.companion_stage)}
                     </h2>
-                    <p className="muted">
+                    <p className="muted" style={{ textAlign: 'center' }}>
                       {questIdentity ? (
                         <>
                           {questIdentity.title.icon} {questIdentity.title.name}<br />
-                          {questIdentity.aura.icon} {questIdentity.aura.name} Aura<br />
-                          {questIdentity.badge.icon} {questIdentity.badge.name}<br />
-                          {questIdentity.theme.icon} {questIdentity.theme.name}
+                          {questIdentity.aura.icon} {questIdentity.aura.name} aura<br />
+                          {questIdentity.badge.icon} {questIdentity.badge.name}
                         </>
-                      ) : (
-                        companionMessage(questProfile.companion_stage)
-                      )}
+                      ) : companionMessage(questProfile.companion_stage)}
                     </p>
-
-                    <div className="navLinks" style={{ marginTop: 14 }}>
-                      <a className="btn blue" href="/student-quest">Open Quest</a>
-                      <a className="btn secondary" href="/quest-studio">Customize</a>
-                    </div>
                   </div>
 
                   <div>
-                    <section className="grid grid3">
-                      <div className="card" style={cardStyle(1)}>
-                        <h3>Level</h3>
-                        <p className="stat">{questProfile.level}</p>
-                      </div>
-
-                      <div className="card" style={cardStyle(2)}>
-                        <h3>Streak</h3>
-                        <p className="stat">{questProfile.current_streak}</p>
-                      </div>
-
-                      <div className="card" style={cardStyle(3)}>
-                        <h3>XP</h3>
-                        <p className="stat">{questProfile.total_xp}</p>
-                      </div>
-                    </section>
-
-                    <div style={{ marginTop: 16 }}>
-                      <progress value={questProfile.level_progress_percent} max={100} style={{ width: '100%' }} />
-                      <p className="muted">
-                        {questProfile.level_progress_percent}% to next level | {xpToNext(questProfile)} XP needed<br />
-                        Achievements unlocked: {unlockedCount}/{achievements.length}
-                      </p>
+                    <progress value={questProfile.level_progress_percent} max={100} style={{ width: '100%' }} />
+                    <p className="muted">
+                      {questProfile.level_progress_percent}% to next level<br />
+                      Achievements: {unlockedCount}/{achievements.length}
+                    </p>
+                    <div className="pz-floating-action-bar">
+                      {!questProfile.checked_in_today ? (
+                        <button className="btn blue" onClick={handleDashboardCheckin} disabled={checkingIn}>
+                          {checkingIn ? 'Activating...' : 'Start streak'}
+                        </button>
+                      ) : (
+                        <a className="btn blue" href="/student-quest">Open Quest</a>
+                      )}
+                      <a className="btn secondary" href="/quest-studio">Customize</a>
                     </div>
                   </div>
-                </div>
-              </section>
-            )}
+                </aside>
+              )}
+            </section>
+
+            <section className="grid grid2" style={{ marginTop: 18 }}>
+              <div className="card">
+                <div className="pz-role-badge">🎯 Best learning move</div>
+                {topAction ? (
+                  <>
+                    <h2>{actionIcon(topAction.action_type)} {topAction.title}</h2>
+                    <p className="muted">{topAction.description}</p>
+                    <a className="btn blue" href={topAction.page_path}>{topAction.button_label}</a>
+                  </>
+                ) : (
+                  <>
+                    <h2>✅ You are up to date</h2>
+                    <p className="muted">Practise, open Quest, or ask the tutor when you want help.</p>
+                    <a className="btn blue" href="/tutor">Ask the tutor</a>
+                  </>
+                )}
+              </div>
+
+              <div className="card">
+                <div className="pz-role-badge">🎮 Best quest move</div>
+                <h2>{questAction.title}</h2>
+                <p className="muted">{questAction.description}</p>
+                {!questProfile?.checked_in_today && questProfile ? (
+                  <button className="btn blue" onClick={handleDashboardCheckin} disabled={checkingIn}>
+                    {checkingIn ? 'Checking in...' : 'Start today’s streak'}
+                  </button>
+                ) : (
+                  <a className="btn blue" href={questAction.path}>{questAction.button}</a>
+                )}
+              </div>
+            </section>
 
             <section className="grid grid3" style={{ marginTop: 18 }}>
-              <div className="card" style={cardStyle(1)}>
-                <h2>Assignments to do</h2>
+              <div className="card">
+                <h2>Assignments</h2>
                 <p className="stat">{summary.assignments_to_do}</p>
                 <p className="muted">{summary.questions_left} question(s) left</p>
               </div>
-
-              <div className="card" style={cardStyle(2)}>
+              <div className="card">
                 <h2>Corrections</h2>
                 <p className="stat">{summary.corrections_needed}</p>
                 <p className="muted">{summary.corrections_accepted} accepted</p>
               </div>
-
-              <div className="card" style={cardStyle(3)}>
+              <div className="card">
                 <h2>Mastery</h2>
                 <p className="stat">{summary.average_mastery}%</p>
                 <p className="muted">{summary.strong_skills} strong skill(s)</p>
               </div>
             </section>
 
-            {showCoachTip && (
-              <section className="card" style={{ ...cardStyle(2), marginTop: 18 }}>
-                <h2>Learning coach tip</h2>
-                <p>
-                  XP is motivating, but the real win is understanding. Use each correction to explain what changed in your thinking.
-                </p>
-                <button className="btn secondary" onClick={() => setShowCoachTip(false)}>Hide tip</button>
-              </section>
-            )}
-
-            <section className="card" style={{ ...cardStyle(1), marginTop: 18 }}>
-              <h2>Your next actions</h2>
-              {visibleActions.length === 0 ? (
-                <p className="muted">No actions yet. When your teacher publishes assignments or memorandums, they will appear here.</p>
-              ) : (
-                <div className="grid">
-                  {visibleActions.map((action, index) => (
-                    <div key={action.action_id} className="card" style={cardStyle(index)}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'start' }}>
-                        <div>
-                          <p style={{ fontSize: 28, margin: '0 0 6px' }}>{actionIcon(action.action_type)}</p>
-                          <h3 style={{ marginBottom: 6 }}>{action.title}</h3>
-                        </div>
-                        <span
-                          style={{
-                            ...priorityStyle(action.priority_label),
-                            padding: '6px 10px',
-                            borderRadius: 999,
-                            fontSize: 13,
-                            fontWeight: 700,
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          {action.priority_label}
-                        </span>
-                      </div>
-
-                      <p className="muted">{action.description}</p>
-
-                      {action.assignment_title && (
-                        <p>
-                          <strong>{action.assignment_title}</strong><br />
-                          <span className="muted">{action.skill_title}</span>
-                        </p>
-                      )}
-
-                      {action.action_type !== 'tutor' && (
-                        <>
-                          <progress value={action.progress_percent} max={100} style={{ width: '100%' }} />
-                          <p className="muted">{action.progress_percent}% progress</p>
-                        </>
-                      )}
-
-                      <a className="btn blue" href={action.page_path}>
-                        {action.button_label}
-                      </a>
+            <section className="card" style={{ marginTop: 18 }}>
+              <h2>Mission board</h2>
+              <div className="grid grid3">
+                {visibleActions.map((action, index) => (
+                  <div key={action.action_id} className="card" style={cardStyle(index)}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
+                      <p style={{ fontSize: 30, margin: 0 }}>{actionIcon(action.action_type)}</p>
+                      <span style={{ ...priorityStyle(action.priority_label), padding: '6px 10px', borderRadius: 999, fontSize: 13, fontWeight: 800 }}>
+                        {action.priority_label}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              )}
+                    <h3>{action.title}</h3>
+                    <p className="muted">{action.description}</p>
+                    {action.action_type !== 'tutor' && (
+                      <>
+                        <progress value={action.progress_percent} max={100} style={{ width: '100%' }} />
+                        <p className="muted">{action.progress_percent}% progress</p>
+                      </>
+                    )}
+                    <a className="btn blue" href={action.page_path}>{action.button_label}</a>
+                  </div>
+                ))}
+              </div>
             </section>
 
             <section className="grid grid2" style={{ marginTop: 18 }}>
-              <div className="card" style={cardStyle(2)}>
-                <h2>Progress snapshot</h2>
-                <p>
-                  <strong>Active assignments:</strong> {summary.active_assignments}<br />
-                  <strong>Memorandums released:</strong> {summary.released_memorandums}<br />
-                  <strong>Corrections submitted:</strong> {summary.corrections_submitted}<br />
-                  <strong>Corrections needing more work:</strong> {summary.corrections_needing_more_work}<br />
-                  <strong>Average confidence:</strong> {summary.average_confidence}%
-                </p>
+              <div className="card">
+                <h2>Recent skills</h2>
+                {skills.length === 0 ? (
+                  <p className="muted">Skill progress appears here as you complete work.</p>
+                ) : (
+                  <div className="grid">
+                    {skills.slice(0, 4).map((skill, index) => (
+                      <div key={skill.course_skill_code} className="notice">
+                        <strong>{skill.skill_title}</strong><br />
+                        <span className="muted">{skill.course_skill_code}</span>
+                        <progress value={skill.mastery_percent} max={100} style={{ width: '100%', marginTop: 8 }} />
+                        <span className="muted">Mastery {skill.mastery_percent}% | Confidence {skill.confidence_percent}%</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="card" style={cardStyle(3)}>
-                <h2>Quick links</h2>
-                <div className="grid">
-                  <a className="btn blue" href="/student-generated-assignments">Open assignments</a>
-                  <a className="btn secondary" href="/student-quest">Open quest</a>
-                  <a className="btn secondary" href="/quest-studio">Customize companion</a>
-                  <a className="btn secondary" href="/student-memorandum">Open memorandum</a>
-                  <a className="btn secondary" href="/student-corrections">Open corrections</a>
-                  <a className="btn secondary" href="/tutor">Ask the tutor</a>
+              <div className="card">
+                <h2>Achievement wall</h2>
+                <div className="pz-achievement-wall">
+                  {achievements.slice(0, 8).map((achievement) => (
+                    <div key={achievement.achievement_key || achievement.title} className={`pz-achievement-tile ${achievement.unlocked ? '' : 'locked'}`}>
+                      <strong>{achievement.unlocked ? '🏆' : '🔒'} {achievement.title}</strong>
+                      <p className="muted">{achievement.description}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </section>
 
-            <section className="card" style={{ ...cardStyle(0), marginTop: 18 }}>
-              <h2>Recent skills</h2>
-              {skills.length === 0 ? (
-                <p className="muted">Your skill progress will appear here as you complete work.</p>
-              ) : (
-                <div className="grid">
-                  {skills.map((skill, index) => (
-                    <div key={skill.course_skill_code} className="card" style={cardStyle(index)}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-                        <h3>{skill.skill_title}</h3>
-                        <span
-                          style={{
-                            ...priorityStyle(skill.status_label === 'Needs practice' ? 'Important' : 'Review'),
-                            padding: '6px 10px',
-                            borderRadius: 999,
-                            fontSize: 13,
-                            fontWeight: 700,
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          {skill.status_label}
-                        </span>
-                      </div>
-                      <p className="muted">{skill.course_skill_code}</p>
-                      <progress value={skill.mastery_percent} max={100} style={{ width: '100%' }} />
-                      <p>
-                        <strong>Mastery:</strong> {skill.mastery_percent}%<br />
-                        <strong>Confidence:</strong> {skill.confidence_percent}%<br />
-                        <span className="muted">{skill.suggestion}</span>
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
+            <section className="notice" style={{ marginTop: 18 }}>
+              <strong>Assessment boundary:</strong> XP, streaks, levels, and achievements are motivation signals. Formal assessment still depends on learning evidence, teacher feedback, and the relevant criteria.
             </section>
           </>
         )}

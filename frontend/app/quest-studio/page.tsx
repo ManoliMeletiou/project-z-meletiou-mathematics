@@ -12,36 +12,11 @@ import {
   updateQuestIdentity
 } from '../../lib/projectZQuestStudio';
 
-function cardStyle(index: number): CSSProperties {
-  const gradients = [
-    'linear-gradient(135deg, #eef2ff 0%, #f8fafc 52%, #ecfeff 100%)',
-    'linear-gradient(135deg, #f0fdf4 0%, #f8fafc 52%, #eef2ff 100%)',
-    'linear-gradient(135deg, #fff7ed 0%, #f8fafc 52%, #fdf2f8 100%)',
-    'linear-gradient(135deg, #f0f9ff 0%, #f8fafc 52%, #f0fdf4 100%)'
-  ];
-
-  return {
-    background: gradients[index % gradients.length],
-    border: '1px solid rgba(15,23,42,.08)',
-    boxShadow: '0 18px 45px rgba(15,23,42,.08)',
-    borderRadius: 24
-  };
-}
-
 function rarityStyle(rarity: string): CSSProperties {
-  if (rarity === 'legendary') {
-    return { background: '#fef3c7', color: '#78350f', border: '1px solid rgba(120,53,15,.22)' };
-  }
-
-  if (rarity === 'epic') {
-    return { background: '#f5f3ff', color: '#5b21b6', border: '1px solid rgba(91,33,182,.22)' };
-  }
-
-  if (rarity === 'rare') {
-    return { background: '#eff6ff', color: '#1d4ed8', border: '1px solid rgba(29,78,216,.20)' };
-  }
-
-  return { background: '#f1f5f9', color: '#334155', border: '1px solid rgba(51,65,85,.15)' };
+  if (rarity === 'legendary') return { background: 'rgba(250,204,21,.18)', color: '#fef3c7', border: '1px solid rgba(250,204,21,.28)' };
+  if (rarity === 'epic') return { background: 'rgba(168,85,247,.20)', color: '#e9d5ff', border: '1px solid rgba(168,85,247,.32)' };
+  if (rarity === 'rare') return { background: 'rgba(34,211,238,.17)', color: '#cffafe', border: '1px solid rgba(34,211,238,.28)' };
+  return { background: 'rgba(255,255,255,.08)', color: '#e2e8f0', border: '1px solid rgba(255,255,255,.14)' };
 }
 
 function typeOrder(type: string) {
@@ -53,13 +28,22 @@ function typeOrder(type: string) {
   return 5;
 }
 
+function categoryIcon(type: string) {
+  if (type === 'companion_skin') return '🤖';
+  if (type === 'title') return '🧭';
+  if (type === 'aura') return '🌌';
+  if (type === 'badge') return '🏆';
+  if (type === 'theme') return '🎨';
+  return '✨';
+}
+
 export default function QuestStudioPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
   const [email, setEmail] = useState<string | null>(null);
   const [identity, setIdentity] = useState<QuestIdentity | null>(null);
   const [cosmetics, setCosmetics] = useState<QuestCosmetic[]>([]);
   const [filter, setFilter] = useState('all');
-  const [status, setStatus] = useState('Quest Studio loads your companion identity.');
+  const [status, setStatus] = useState('Loading Quest Studio.');
   const [busyKey, setBusyKey] = useState<string | null>(null);
 
   async function loadPage() {
@@ -109,29 +93,18 @@ export default function QuestStudioPage() {
   }
 
   return (
-    <main
-      className="page pz-theme pz-student-theme"
-      style={{
-        minHeight: '100vh',
-        background:
-          'radial-gradient(circle at top left, rgba(99,102,241,.18), transparent 31%), radial-gradient(circle at top right, rgba(20,184,166,.16), transparent 30%), linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%)'
-      }}
-    >
+    <main className="page pz-theme pz-student-theme">
       <div className="container">
         <nav className="nav" style={{ marginBottom: 22 }}>
           <div className="brand">
             <strong>Quest Studio</strong>
-            <span>{email || 'Sign in'} - role: {role}</span>
+            <span>{email || 'Sign in'} - customize your learning identity</span>
           </div>
           <div className="navLinks">
-            <a className="btn secondary" href="/">Home</a>
-            <a className="btn secondary" href="/home">Smart Home</a>
-            <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/student-dashboard">Dashboard</a>
             <a className="btn secondary" href="/student-quest">Quest</a>
             <a className="btn secondary" href="/student-generated-assignments">Assignments</a>
             <a className="btn secondary" href="/tutor">Tutor</a>
-            <a className="btn secondary" href="/mobile-preview">Mobile</a>
           </div>
         </nav>
 
@@ -140,7 +113,7 @@ export default function QuestStudioPage() {
         </section>
 
         {role === 'guest' && (
-          <section className="card" style={cardStyle(0)}>
+          <section className="card">
             <h2>Sign in required</h2>
             <p className="muted">Sign in as a student to customize your Math Companion.</p>
             <a className="btn blue" href="/auth">Sign in</a>
@@ -148,93 +121,66 @@ export default function QuestStudioPage() {
         )}
 
         {role !== 'guest' && role !== 'student' && (
-          <section className="card" style={cardStyle(0)}>
+          <section className="card">
             <h2>Student-only studio</h2>
-            <p className="muted">Quest Studio is designed for students aged 12–19.</p>
+            <p className="muted">Quest Studio is designed for students.</p>
           </section>
         )}
 
         {role === 'student' && identity && (
           <>
-            <section
-              className="card"
-              style={{
-                ...cardStyle(0),
-                padding: 34,
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  right: -80,
-                  top: -80,
-                  width: 260,
-                  height: 260,
-                  borderRadius: '50%',
-                  background: 'rgba(99,102,241,.13)'
-                }}
-              />
-
-              <p
-                style={{
-                  display: 'inline-flex',
-                  padding: '8px 12px',
-                  borderRadius: 999,
-                  background: 'rgba(255,255,255,.82)',
-                  border: '1px solid rgba(15,23,42,.08)',
-                  marginBottom: 14
-                }}
-              >
-                ✨ Premium student identity
-              </p>
-
-              <h1 style={{ fontSize: 42, lineHeight: 1.05, margin: '4px 0 12px', maxWidth: 820 }}>
-                Customize your Math Companion.
-              </h1>
-
-              <p style={{ fontSize: 18, maxWidth: 780, color: '#475569' }}>
-                Unlock clean, age-friendly visual upgrades through practice, corrections, streaks, and progress.
-                This is your learning identity — not your grade.
-              </p>
-
-              <section
-                style={{
-                  marginTop: 22,
-                  padding: 22,
-                  borderRadius: 28,
-                  background: 'rgba(255,255,255,.78)',
-                  border: '1px solid rgba(15,23,42,.08)'
-                }}
-              >
-                <div className="grid grid2">
-                  <div>
-                    <p style={{ fontSize: 78, margin: 0 }}>{identity.skin.icon}</p>
-                    <h2>{identity.skin.name}</h2>
-                    <p className="muted">
-                      {identity.title.icon} {identity.title.name}<br />
-                      {identity.aura.icon} {identity.aura.name} Aura<br />
-                      {identity.badge.icon} {identity.badge.name}<br />
-                      {identity.theme.icon} {identity.theme.name}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h2>Level {identity.level}</h2>
-                    <p className="stat">{identity.total_xp}</p>
-                    <p className="muted">
-                      XP total<br />
-                      Current streak: {identity.current_streak}<br />
-                      Companion stage: {identity.companion_stage}
-                    </p>
-                    <a className="btn blue" href="/student-quest">Open Student Quest</a>
-                  </div>
+            <section className="pz-studio-grid">
+              <aside className="card pz-companion-stage">
+                <div>
+                  <div className="pz-role-badge">✨ Current identity</div>
+                  <div className="pz-companion-avatar">{identity.skin.icon}</div>
+                  <h2 style={{ textAlign: 'center' }}>{identity.skin.name}</h2>
+                  <p className="muted" style={{ textAlign: 'center' }}>
+                    {identity.title.icon} {identity.title.name}<br />
+                    {identity.aura.icon} {identity.aura.name} aura<br />
+                    {identity.badge.icon} {identity.badge.name}<br />
+                    {identity.theme.icon} {identity.theme.name}
+                  </p>
                 </div>
+
+                <div>
+                  <p className="muted">
+                    Level {identity.level}<br />
+                    {identity.total_xp} XP<br />
+                    Current streak: {identity.current_streak}
+                  </p>
+                  <a className="btn blue" href="/student-quest">Open Quest</a>
+                </div>
+              </aside>
+
+              <section className="pz-cosmic-hero">
+                <div className="pz-role-badge">🎨 Cosmic identity lab</div>
+                <h1 style={{ fontSize: 52, lineHeight: 1.0, maxWidth: 780, margin: '16px 0 10px' }}>
+                  Build a learning identity that feels like yours.
+                </h1>
+                <p className="muted" style={{ fontSize: 18, maxWidth: 720 }}>
+                  Unlock companion skins, titles, auras, badges, and themes by practising,
+                  correcting, reflecting, and keeping momentum.
+                </p>
+
+                <section className="grid grid3" style={{ marginTop: 24 }}>
+                  <div className="pz-student-stat-chip">
+                    <span>🤖 Skin</span>
+                    <strong>{identity.skin.name}</strong>
+                  </div>
+                  <div className="pz-student-stat-chip">
+                    <span>🌌 Aura</span>
+                    <strong>{identity.aura.name}</strong>
+                  </div>
+                  <div className="pz-student-stat-chip">
+                    <span>🏆 Badge</span>
+                    <strong>{identity.badge.name}</strong>
+                  </div>
+                </section>
               </section>
             </section>
 
-            <section className="card" style={{ ...cardStyle(1), marginTop: 18 }}>
+            <section className="card" style={{ marginTop: 18 }}>
               <h2>Customize</h2>
               <div className="navLinks">
                 <button className={filter === 'all' ? 'btn blue' : 'btn secondary'} onClick={() => setFilter('all')}>All</button>
@@ -246,33 +192,24 @@ export default function QuestStudioPage() {
               </div>
             </section>
 
-            <section className="grid grid3" style={{ marginTop: 18 }}>
-              {filteredCosmetics.map((item, index) => (
+            <section className="pz-cosmetic-grid" style={{ marginTop: 18 }}>
+              {filteredCosmetics.map((item) => (
                 <div
                   key={item.cosmetic_key}
-                  className="card"
+                  className="card pz-cosmetic-card"
                   style={{
-                    ...cardStyle(index),
-                    opacity: item.unlocked ? 1 : 0.58,
-                    filter: item.unlocked ? 'none' : 'grayscale(.25)'
+                    opacity: item.unlocked ? 1 : .54,
+                    filter: item.unlocked ? 'none' : 'grayscale(.28)'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'start' }}>
-                    <p style={{ fontSize: 36, margin: 0 }}>{item.icon}</p>
-                    <span
-                      style={{
-                        ...rarityStyle(item.rarity),
-                        padding: '6px 10px',
-                        borderRadius: 999,
-                        fontSize: 13,
-                        fontWeight: 700
-                      }}
-                    >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'start' }}>
+                    <p style={{ fontSize: 40, margin: 0 }}>{item.icon}</p>
+                    <span style={{ ...rarityStyle(item.rarity), padding: '6px 10px', borderRadius: 999, fontWeight: 800, fontSize: 13 }}>
                       {rarityLabel(item.rarity)}
                     </span>
                   </div>
 
-                  <h3>{item.display_name}</h3>
+                  <h3>{categoryIcon(item.cosmetic_type)} {item.display_name}</h3>
                   <p className="muted">
                     {cosmeticTypeLabel(item.cosmetic_type)}<br />
                     {item.description}
@@ -294,12 +231,8 @@ export default function QuestStudioPage() {
               ))}
             </section>
 
-            <section className="card" style={{ ...cardStyle(2), marginTop: 18 }}>
-              <h2>Design rule</h2>
-              <p>
-                Cosmetics are earned through healthy learning behaviours: practice, correction, consistency,
-                and progress. They are not marks, grades, or IB criteria scores.
-              </p>
+            <section className="notice" style={{ marginTop: 18 }}>
+              <strong>Design rule:</strong> Studio items are earned through learning habits. They are not grades, marks, or IB criteria scores.
             </section>
           </>
         )}
