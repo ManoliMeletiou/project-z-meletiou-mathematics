@@ -1,6 +1,7 @@
 'use client';
 
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
   fetchStudentDashboardActions,
@@ -302,9 +303,13 @@ export default function StudentDashboardPage() {
                 <aside className="card pz-companion-stage">
                   <div>
                     <div className="pz-role-badge">AI Companion</div>
-                    <div className="pz-companion-avatar">
-                      {questIdentity?.skin.icon || companionIcon(questProfile.companion_stage)}
-                    </div>
+                    <ProjectZCompanion3D
+                      stage={questProfile.companion_stage}
+                      skinKey={questIdentity?.skin.key}
+                      auraKey={questIdentity?.aura.key}
+                      mode={questProfile.checked_in_today ? 'idle' : 'encourage'}
+                      interactive={false}
+                    />
                     <h2 style={{ textAlign: 'center' }}>
                       {questIdentity?.skin.name || companionName(questProfile.companion_stage)}
                     </h2>

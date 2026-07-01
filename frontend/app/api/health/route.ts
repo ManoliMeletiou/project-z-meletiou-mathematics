@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-46-student-cosmic-redesign',
+    version: 'phase-47-3d-animated-companion',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -14,6 +14,10 @@ export async function GET() {
       studentDashboardRedesigned: true,
       studentQuestRedesigned: true,
       questStudioRedesigned: true,
+      animatedCompanion3D: true,
+      companionMotionStates: true,
+      companionInteractiveStudioPreview: true,
+      companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,
       questPathVisual: true,

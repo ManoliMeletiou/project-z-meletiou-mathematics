@@ -11,7 +11,10 @@
     "@supabase/supabase-js": "latest",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "@react-three/fiber": "latest",
+    "@react-three/drei": "latest",
+    "three": "latest"
   },
   "devDependencies": {
     "@types/node": "latest",

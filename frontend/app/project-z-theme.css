@@ -879,3 +879,119 @@ main.page.pz-theme {
     text-align: left;
   }
 }
+
+/* Phase 47 — 3D animated student companion foundation */
+.pz-companion-3d-frame {
+  position: relative;
+  width: min(100%, 320px);
+  min-height: 238px;
+  margin: 10px auto 14px;
+  border-radius: 30px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(168, 85, 247, .26), transparent 34%),
+    radial-gradient(circle at 28% 74%, rgba(34, 211, 238, .16), transparent 30%),
+    linear-gradient(180deg, rgba(15, 23, 42, .36), rgba(15, 23, 42, .14));
+  border: 1px solid rgba(255, 255, 255, .13);
+  box-shadow: inset 0 0 34px rgba(255,255,255,.045), 0 22px 60px rgba(0,0,0,.24);
+}
+
+.pz-companion-3d-compact {
+  width: min(100%, 240px);
+  min-height: 188px;
+}
+
+.pz-companion-3d-canvas-wrap {
+  position: relative;
+  height: 238px;
+}
+
+.pz-companion-3d-compact .pz-companion-3d-canvas-wrap {
+  height: 188px;
+}
+
+.pz-companion-3d-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.pz-companion-3d-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  width: 44%;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(34,211,238,.34), rgba(168,85,247,.10), transparent 72%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.pz-companion-3d-label {
+  text-align: center;
+  margin: -8px 12px 14px;
+}
+
+.pz-companion-3d-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  gap: 6px;
+  text-align: center;
+}
+
+.pz-companion-3d-fallback span {
+  font-size: 64px;
+  filter: drop-shadow(0 14px 22px rgba(34,211,238,.24));
+}
+
+.pz-companion-3d-celebrate {
+  box-shadow: inset 0 0 42px rgba(250,204,21,.08), 0 24px 70px rgba(168,85,247,.32);
+}
+
+.pz-companion-3d-thinking {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(34, 211, 238, .25), transparent 34%),
+    radial-gradient(circle at 28% 74%, rgba(99, 102, 241, .18), transparent 30%),
+    linear-gradient(180deg, rgba(15, 23, 42, .38), rgba(15, 23, 42, .15));
+}
+
+.pz-companion-3d-encourage {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(52, 211, 153, .22), transparent 34%),
+    radial-gradient(circle at 28% 74%, rgba(34, 211, 238, .17), transparent 30%),
+    linear-gradient(180deg, rgba(15, 23, 42, .38), rgba(15, 23, 42, .15));
+}
+
+.pz-companion-3d-studio {
+  min-height: 310px;
+}
+
+.pz-companion-3d-studio .pz-companion-3d-canvas-wrap {
+  height: 310px;
+}
+
+@media (max-width: 720px) {
+  .pz-companion-3d-frame {
+    width: min(100%, 280px);
+    min-height: 210px;
+  }
+
+  .pz-companion-3d-canvas-wrap {
+    height: 210px;
+  }
+
+  .pz-companion-3d-studio,
+  .pz-companion-3d-studio .pz-companion-3d-canvas-wrap {
+    min-height: 246px;
+    height: 246px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pz-companion-3d-frame {
+    box-shadow: inset 0 0 24px rgba(255,255,255,.04), 0 12px 32px rgba(0,0,0,.18);
+  }
+}
+

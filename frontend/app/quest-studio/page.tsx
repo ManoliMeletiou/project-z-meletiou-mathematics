@@ -1,6 +1,7 @@
 'use client';
 
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
   cosmeticTypeLabel,
@@ -133,7 +134,15 @@ export default function QuestStudioPage() {
               <aside className="card pz-companion-stage">
                 <div>
                   <div className="pz-role-badge">✨ Current identity</div>
-                  <div className="pz-companion-avatar">{identity.skin.icon}</div>
+                  <ProjectZCompanion3D
+                    stage={identity.companion_stage}
+                    skinKey={identity.skin.key}
+                    auraKey={identity.aura.key}
+                    mode="studio"
+                    interactive={true}
+                    showLabel={true}
+                    title={`${identity.skin.name} interactive preview`}
+                  />
                   <h2 style={{ textAlign: 'center' }}>{identity.skin.name}</h2>
                   <p className="muted" style={{ textAlign: 'center' }}>
                     {identity.title.icon} {identity.title.name}<br />
