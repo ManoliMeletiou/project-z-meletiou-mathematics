@@ -84,6 +84,7 @@ export default function TeacherCorrectionsReviewPage() {
           <div className="navLinks">
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
+            <a className="btn secondary" href="/assignment-lifecycle">Lifecycle</a>
             <a className="btn secondary" href="/teacher-submission-review">Submission Review</a>
             <a className="btn secondary" href="/generated-assignments">Generated Assignments</a>
             <a className="btn secondary" href="/account">Account</a>

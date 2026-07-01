@@ -135,6 +135,7 @@ export default function TeacherPage() {
             <span>{email || 'Teacher'} - teacher-only controls, rosters, analytics, assignments, and reports</span>
           </div>
           <div className="navLinks">
+            <a className="btn secondary" href="/assignment-lifecycle">Lifecycle</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/curriculum">Curriculum</a>
             <a className="btn secondary" href="/assignments">Assignments</a>
