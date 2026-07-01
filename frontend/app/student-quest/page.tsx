@@ -106,6 +106,7 @@ export default function StudentQuestPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/student-dashboard">Dashboard</a>
+            <a className="btn secondary" href="/quest-studio">Studio</a>
             <a className="btn secondary" href="/student-generated-assignments">Assignments</a>
             <a className="btn secondary" href="/student-corrections">Corrections</a>
             <a className="btn secondary" href="/tutor">Tutor</a>
