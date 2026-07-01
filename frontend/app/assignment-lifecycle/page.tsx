@@ -94,6 +94,7 @@ export default function AssignmentLifecyclePage() {
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/mobile-preview">Mobile</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
+            <a className="btn secondary" href="/teacher-engagement-insights">Engagement</a>
             <a className="btn secondary" href="/assignment-recommendations">Recommendations</a>
             <a className="btn secondary" href="/generated-assignments">Generated</a>
             <a className="btn secondary" href="/assignment-audit">Audit</a>
