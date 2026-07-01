@@ -6,21 +6,22 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-28-smart-assignment-recommendations',
+    version: 'phase-29-one-click-30-question-assignments',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
       questionEngineConfigured: hasQuestionEngine,
-      smartAssignmentRecommendations: true,
-      teacherClassScopedRecommendations: true,
-      usesMasteryConfidenceAndTutorEvidence: true,
-      misconceptionRepairRecommendations: true,
-      foundationRebuildRecommendations: true,
-      confidencePracticeRecommendations: true,
-      copyAssignmentPlan: true,
-      teacherRecommendationActionLog: true,
+      oneClickAssignmentCreation: true,
+      minimumQuestionsPerGeneratedAssignment: 30,
+      skillLockedGeneration: true,
+      courseLevelAwareGeneration: true,
+      teacherOnlyCreation: true,
+      generatedAssignmentReviewPage: true,
+      plausibleMcqDistractorsRequired: true,
+      correctOptionDistributionRequired: true,
+      noOffSkillQuestionsRule: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/student', '/teacher', '/parent', '/parent-learning-report', '/export-reports', '/assignment-recommendations', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/health']
+    routes: ['/', '/student', '/teacher', '/parent', '/parent-learning-report', '/export-reports', '/assignment-recommendations', '/generated-assignments', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/create-assignment-from-recommendation', '/api/health']
   });
 }

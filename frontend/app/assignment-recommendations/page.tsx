@@ -9,9 +9,14 @@ import {
   logAssignmentRecommendationAction,
   SmartAssignmentRecommendation
 } from '../../lib/projectZAssignmentRecommendations';
+import { createGeneratedAssignmentFromRecommendation } from '../../lib/projectZGeneratedAssignments';
 
 function PriorityBadge({ label }: { label: string }) {
   return <strong>{label}</strong>;
+}
+
+function minimumQuestionCount(item: SmartAssignmentRecommendation) {
+  return Math.max(30, Number(item.suggested_question_count || 30));
 }
 
 function recommendationText(item: SmartAssignmentRecommendation) {
@@ -23,8 +28,7 @@ function recommendationText(item: SmartAssignmentRecommendation) {
     `Course skill code: ${item.course_skill_code}`,
     `Priority: ${item.priority_label} (${item.priority_score})`,
     `Type: ${item.recommendation_type}`,
-    `Suggested duration: ${item.suggested_duration_minutes} minutes`,
-    `Suggested questions: ${item.suggested_question_count}`,
+    `Required minimum questions: ${minimumQuestionCount(item)}`,
     '',
     'Why this is recommended:',
     `- Weak students: ${item.weak_students}`,
@@ -74,7 +78,7 @@ export default function AssignmentRecommendationsPage() {
     } else if (nextRecommendations.length === 0) {
       setStatus('No recommendations yet. More mastery, diagnostic, or tutor evidence may be needed.');
     } else {
-      setStatus('Smart assignment recommendations loaded.');
+      setStatus('Smart assignment recommendations loaded. You can now create 30-question assignments.');
     }
   }
 
@@ -101,6 +105,25 @@ export default function AssignmentRecommendationsPage() {
     });
 
     setStatus(result.ok ? 'Recommendation copied and logged.' : `Copied, but log failed: ${result.reason}`);
+  }
+
+  async function createAssignment(item: SmartAssignmentRecommendation) {
+    setBusy(true);
+    setStatus('Creating a 30-question skill-locked assignment. This can take a moment...');
+
+    const result = await createGeneratedAssignmentFromRecommendation({
+      ...item,
+      suggested_question_count: minimumQuestionCount(item)
+    });
+
+    if (!result.ok) {
+      setStatus(`Assignment was not created: ${result.reason}`);
+      setBusy(false);
+      return;
+    }
+
+    setStatus(`Created ${result.data.question_count} questions on ${item.skill_title}. Open Generated Assignments to review.`);
+    setBusy(false);
   }
 
   async function markAction(item: SmartAssignmentRecommendation, action: string) {
@@ -150,6 +173,7 @@ export default function AssignmentRecommendationsPage() {
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/assignments">Assignments</a>
+            <a className="btn secondary" href="/generated-assignments">Generated Assignments</a>
             <a className="btn secondary" href="/teacher-tutor-evidence">Tutor Evidence</a>
             <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>
@@ -189,9 +213,9 @@ export default function AssignmentRecommendationsPage() {
               </div>
 
               <div className="card">
-                <h2>How it decides</h2>
+                <h2>Assignment quality rule</h2>
                 <p className="muted">
-                  Uses mastery, confidence, tutor hints, misconceptions, and teacher-reviewed action-needed evidence.
+                  One-click assignments must have at least 30 questions and must stay locked to the recommended skill and level.
                 </p>
               </div>
             </section>
@@ -221,8 +245,7 @@ export default function AssignmentRecommendationsPage() {
                 <p>
                   Priority: <PriorityBadge label={topRecommendation.priority_label} /> ({topRecommendation.priority_score})<br />
                   Type: <strong>{topRecommendation.recommendation_type}</strong><br />
-                  Suggested duration: <strong>{topRecommendation.suggested_duration_minutes} minutes</strong><br />
-                  Suggested questions: <strong>{topRecommendation.suggested_question_count}</strong>
+                  Minimum questions: <strong>{minimumQuestionCount(topRecommendation)}</strong>
                 </p>
                 <p>{topRecommendation.suggested_assignment_instructions}</p>
               </section>
@@ -242,6 +265,7 @@ export default function AssignmentRecommendationsPage() {
                       <p>
                         Priority: <PriorityBadge label={item.priority_label} /> ({item.priority_score})<br />
                         Type: <strong>{item.recommendation_type}</strong><br />
+                        Minimum questions: <strong>{minimumQuestionCount(item)}</strong><br />
                         Average mastery: <strong>{item.average_mastery}%</strong><br />
                         Average confidence: <strong>{item.average_confidence}%</strong>
                       </p>
@@ -269,8 +293,11 @@ export default function AssignmentRecommendationsPage() {
                       </label>
 
                       <div className="navLinks">
-                        <button className="btn blue" disabled={busy} onClick={() => copyPlan(item)}>
-                          Copy assignment plan
+                        <button className="btn blue" disabled={busy} onClick={() => createAssignment(item)}>
+                          Create 30-question assignment
+                        </button>
+                        <button className="btn secondary" disabled={busy} onClick={() => copyPlan(item)}>
+                          Copy plan
                         </button>
                         <button className="btn secondary" disabled={busy} onClick={() => markAction(item, 'planned')}>
                           Mark planned
