@@ -50,6 +50,7 @@ export default function ProjectZHelpPage() {
             <span>{email || 'Not signed in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn secondary" href="/student-quest">Quest</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/mobile-preview">Mobile</a>

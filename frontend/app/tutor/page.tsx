@@ -82,6 +82,7 @@ export default function TutorPage() {
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn secondary" href="/student-quest">Quest</a>
             <a className="btn secondary" href="/">Home</a>
             {role === 'student' && <a className="btn secondary" href="/student">Student Portal</a>}
             {role === 'teacher' && <a className="btn secondary" href="/teacher">Teacher Portal</a>}
