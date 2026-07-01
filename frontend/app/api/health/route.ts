@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-47-3d-animated-companion',
+    version: 'phase-48-companion-upgrade-system',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -17,6 +17,9 @@ export async function GET() {
       animatedCompanion3D: true,
       companionMotionStates: true,
       companionInteractiveStudioPreview: true,
+      companionUpgradeSystem: true,
+      companionEvolutionRoadmap: true,
+      companionSupabaseMilestonesReady: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,

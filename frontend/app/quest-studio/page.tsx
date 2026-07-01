@@ -2,6 +2,7 @@
 
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
+import { ProjectZCompanionUpgradePanel } from '../../components/ProjectZCompanionUpgradePanel';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
   cosmeticTypeLabel,
@@ -12,6 +13,12 @@ import {
   rarityLabel,
   updateQuestIdentity
 } from '../../lib/projectZQuestStudio';
+import {
+  CompanionEvolutionMilestone,
+  CompanionUpgradeSummary,
+  fetchCompanionEvolutionPath,
+  fetchCompanionUpgradeSummary
+} from '../../lib/projectZCompanionProgression';
 
 function rarityStyle(rarity: string): CSSProperties {
   if (rarity === 'legendary') return { background: 'rgba(250,204,21,.18)', color: '#fef3c7', border: '1px solid rgba(250,204,21,.28)' };
@@ -43,6 +50,8 @@ export default function QuestStudioPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [identity, setIdentity] = useState<QuestIdentity | null>(null);
   const [cosmetics, setCosmetics] = useState<QuestCosmetic[]>([]);
+  const [companionSummary, setCompanionSummary] = useState<CompanionUpgradeSummary | null>(null);
+  const [companionMilestones, setCompanionMilestones] = useState<CompanionEvolutionMilestone[]>([]);
   const [filter, setFilter] = useState('all');
   const [status, setStatus] = useState('Loading Quest Studio.');
   const [busyKey, setBusyKey] = useState<string | null>(null);
@@ -57,13 +66,17 @@ export default function QuestStudioPage() {
       return;
     }
 
-    const [nextIdentity, nextCosmetics] = await Promise.all([
+    const [nextIdentity, nextCosmetics, nextCompanionSummary, nextCompanionMilestones] = await Promise.all([
       fetchQuestIdentity(),
-      fetchQuestCosmetics()
+      fetchQuestCosmetics(),
+      fetchCompanionUpgradeSummary(),
+      fetchCompanionEvolutionPath()
     ]);
 
     setIdentity(nextIdentity);
     setCosmetics(nextCosmetics);
+    setCompanionSummary(nextCompanionSummary);
+    setCompanionMilestones(nextCompanionMilestones);
     setStatus('Quest Studio is ready.');
   }
 
@@ -80,7 +93,11 @@ export default function QuestStudioPage() {
   async function equipCosmetic(key: string) {
     setBusyKey(key);
     const nextIdentity = await updateQuestIdentity(key);
-    const nextCosmetics = await fetchQuestCosmetics();
+    const [nextCosmetics, nextCompanionSummary, nextCompanionMilestones] = await Promise.all([
+      fetchQuestCosmetics(),
+      fetchCompanionUpgradeSummary(nextIdentity?.companion_stage || identity?.companion_stage || 1),
+      fetchCompanionEvolutionPath(nextIdentity?.companion_stage || identity?.companion_stage || 1)
+    ]);
 
     if (nextIdentity) {
       setIdentity(nextIdentity);
@@ -90,6 +107,8 @@ export default function QuestStudioPage() {
     }
 
     setCosmetics(nextCosmetics);
+    setCompanionSummary(nextCompanionSummary);
+    setCompanionMilestones(nextCompanionMilestones);
     setBusyKey(null);
   }
 
@@ -188,6 +207,22 @@ export default function QuestStudioPage() {
                 </section>
               </section>
             </section>
+
+            <ProjectZCompanionUpgradePanel
+              stage={identity.companion_stage}
+              skinKey={identity.skin.key}
+              auraKey={identity.aura.key}
+              companionName={identity.skin.name}
+              titleName={identity.title.name}
+              auraName={identity.aura.name}
+              badgeName={identity.badge.name}
+              summary={companionSummary}
+              milestones={companionMilestones}
+              defaultMode="studio"
+            >
+              <a className="btn blue" href="/student-quest">Use in Quest</a>
+              <a className="btn secondary" href="/student-dashboard">Back to Dashboard</a>
+            </ProjectZCompanionUpgradePanel>
 
             <section className="card" style={{ marginTop: 18 }}>
               <h2>Customize</h2>

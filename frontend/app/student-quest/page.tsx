@@ -2,6 +2,7 @@
 
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
+import { ProjectZCompanionUpgradePanel } from '../../components/ProjectZCompanionUpgradePanel';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
   companionIcon,
@@ -14,6 +15,12 @@ import {
   StudentQuestProfile
 } from '../../lib/projectZStudentQuest';
 import { fetchQuestIdentity, QuestIdentity } from '../../lib/projectZQuestStudio';
+import {
+  CompanionEvolutionMilestone,
+  CompanionUpgradeSummary,
+  fetchCompanionEvolutionPath,
+  fetchCompanionUpgradeSummary
+} from '../../lib/projectZCompanionProgression';
 
 function cardStyle(index: number): CSSProperties {
   const backgrounds = [
@@ -50,6 +57,8 @@ export default function StudentQuestPage() {
   const [profile, setProfile] = useState<StudentQuestProfile | null>(null);
   const [identity, setIdentity] = useState<QuestIdentity | null>(null);
   const [achievements, setAchievements] = useState<StudentQuestAchievement[]>([]);
+  const [companionSummary, setCompanionSummary] = useState<CompanionUpgradeSummary | null>(null);
+  const [companionMilestones, setCompanionMilestones] = useState<CompanionEvolutionMilestone[]>([]);
   const [status, setStatus] = useState('Loading Student Quest.');
   const [checkingIn, setCheckingIn] = useState(false);
 
@@ -63,15 +72,19 @@ export default function StudentQuestPage() {
       return;
     }
 
-    const [nextProfile, nextIdentity, nextAchievements] = await Promise.all([
+    const [nextProfile, nextIdentity, nextAchievements, nextCompanionSummary, nextCompanionMilestones] = await Promise.all([
       fetchStudentQuestProfile(),
       fetchQuestIdentity(),
-      fetchStudentQuestAchievements()
+      fetchStudentQuestAchievements(),
+      fetchCompanionUpgradeSummary(),
+      fetchCompanionEvolutionPath()
     ]);
 
     setProfile(nextProfile);
     setIdentity(nextIdentity);
     setAchievements(nextAchievements);
+    setCompanionSummary(nextCompanionSummary);
+    setCompanionMilestones(nextCompanionMilestones);
     setStatus('Student Quest is ready.');
   }
 
@@ -82,14 +95,18 @@ export default function StudentQuestPage() {
   async function checkIn() {
     setCheckingIn(true);
     const nextProfile = await runDailyStreakCheckin();
-    const [nextIdentity, nextAchievements] = await Promise.all([
+    const [nextIdentity, nextAchievements, nextCompanionSummary, nextCompanionMilestones] = await Promise.all([
       fetchQuestIdentity(),
-      fetchStudentQuestAchievements()
+      fetchStudentQuestAchievements(),
+      fetchCompanionUpgradeSummary(nextProfile.companion_stage),
+      fetchCompanionEvolutionPath(nextProfile.companion_stage)
     ]);
 
     setProfile(nextProfile);
     setIdentity(nextIdentity);
     setAchievements(nextAchievements);
+    setCompanionSummary(nextCompanionSummary);
+    setCompanionMilestones(nextCompanionMilestones);
     setStatus('Daily streak activated. Keep going.');
     setCheckingIn(false);
   }
@@ -217,6 +234,29 @@ export default function StudentQuestPage() {
                 </div>
               </aside>
             </section>
+
+            <ProjectZCompanionUpgradePanel
+              stage={profile.companion_stage}
+              skinKey={identity?.skin.key}
+              auraKey={identity?.aura.key}
+              companionName={identity?.skin.name || companionName(profile.companion_stage)}
+              titleName={identity?.title.name}
+              auraName={identity?.aura.name}
+              badgeName={identity?.badge.name}
+              summary={companionSummary}
+              milestones={companionMilestones}
+              defaultMode={profile.checked_in_today ? 'celebrate' : 'encourage'}
+            >
+              {!profile.checked_in_today ? (
+                <button className="btn blue" onClick={checkIn} disabled={checkingIn}>
+                  {checkingIn ? 'Activating...' : 'Start today’s streak'}
+                </button>
+              ) : (
+                <a className="btn blue" href="/quest-studio">Open Quest Studio</a>
+              )}
+              <a className="btn secondary" href="/student-generated-assignments">Earn XP</a>
+              <a className="btn secondary" href="/student-corrections">Grow through corrections</a>
+            </ProjectZCompanionUpgradePanel>
 
             <section className="grid grid3" style={{ marginTop: 18 }}>
               <div className="card">

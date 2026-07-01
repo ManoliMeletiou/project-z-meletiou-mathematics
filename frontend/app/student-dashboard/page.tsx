@@ -2,6 +2,7 @@
 
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
+import { ProjectZCompanionUpgradePanel } from '../../components/ProjectZCompanionUpgradePanel';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
   fetchStudentDashboardActions,
@@ -25,6 +26,12 @@ import {
   fetchQuestIdentity,
   QuestIdentity
 } from '../../lib/projectZQuestStudio';
+import {
+  CompanionEvolutionMilestone,
+  CompanionUpgradeSummary,
+  fetchCompanionEvolutionPath,
+  fetchCompanionUpgradeSummary
+} from '../../lib/projectZCompanionProgression';
 
 function firstName(email: string | null | undefined) {
   if (!email) return 'Explorer';
@@ -137,6 +144,8 @@ export default function StudentDashboardPage() {
   const [questProfile, setQuestProfile] = useState<StudentQuestProfile | null>(null);
   const [questIdentity, setQuestIdentity] = useState<QuestIdentity | null>(null);
   const [achievements, setAchievements] = useState<StudentQuestAchievement[]>([]);
+  const [companionSummary, setCompanionSummary] = useState<CompanionUpgradeSummary | null>(null);
+  const [companionMilestones, setCompanionMilestones] = useState<CompanionEvolutionMilestone[]>([]);
   const [status, setStatus] = useState('Loading your cosmic learning dashboard.');
   const [checkingIn, setCheckingIn] = useState(false);
 
@@ -156,14 +165,18 @@ export default function StudentDashboardPage() {
       nextSkills,
       nextQuestProfile,
       nextQuestIdentity,
-      nextAchievements
+      nextAchievements,
+      nextCompanionSummary,
+      nextCompanionMilestones
     ] = await Promise.all([
       fetchStudentDashboardSummary(),
       fetchStudentDashboardActions(),
       fetchStudentDashboardSkills(),
       fetchStudentQuestProfile(),
       fetchQuestIdentity(),
-      fetchStudentQuestAchievements()
+      fetchStudentQuestAchievements(),
+      fetchCompanionUpgradeSummary(),
+      fetchCompanionEvolutionPath()
     ]);
 
     setSummary(nextSummary);
@@ -172,6 +185,8 @@ export default function StudentDashboardPage() {
     setQuestProfile(nextQuestProfile);
     setQuestIdentity(nextQuestIdentity);
     setAchievements(nextAchievements);
+    setCompanionSummary(nextCompanionSummary);
+    setCompanionMilestones(nextCompanionMilestones);
     setStatus('Your dashboard is ready.');
   }
 
@@ -182,14 +197,18 @@ export default function StudentDashboardPage() {
   async function handleDashboardCheckin() {
     setCheckingIn(true);
     const nextQuestProfile = await runDailyStreakCheckin();
-    const [nextIdentity, nextAchievements] = await Promise.all([
+    const [nextIdentity, nextAchievements, nextCompanionSummary, nextCompanionMilestones] = await Promise.all([
       fetchQuestIdentity(),
-      fetchStudentQuestAchievements()
+      fetchStudentQuestAchievements(),
+      fetchCompanionUpgradeSummary(nextQuestProfile.companion_stage),
+      fetchCompanionEvolutionPath(nextQuestProfile.companion_stage)
     ]);
 
     setQuestProfile(nextQuestProfile);
     setQuestIdentity(nextIdentity);
     setAchievements(nextAchievements);
+    setCompanionSummary(nextCompanionSummary);
+    setCompanionMilestones(nextCompanionMilestones);
     setStatus('Streak activated. Nice consistency.');
     setCheckingIn(false);
   }
@@ -344,6 +363,31 @@ export default function StudentDashboardPage() {
                 </aside>
               )}
             </section>
+
+            {questProfile && (
+              <ProjectZCompanionUpgradePanel
+                stage={questProfile.companion_stage}
+                skinKey={questIdentity?.skin.key}
+                auraKey={questIdentity?.aura.key}
+                companionName={questIdentity?.skin.name || companionName(questProfile.companion_stage)}
+                titleName={questIdentity?.title.name}
+                auraName={questIdentity?.aura.name}
+                badgeName={questIdentity?.badge.name}
+                summary={companionSummary}
+                milestones={companionMilestones}
+                defaultMode={questProfile.checked_in_today ? 'idle' : 'encourage'}
+                compact={true}
+              >
+                {!questProfile.checked_in_today ? (
+                  <button className="btn blue" onClick={handleDashboardCheckin} disabled={checkingIn}>
+                    {checkingIn ? 'Activating...' : 'Start streak'}
+                  </button>
+                ) : (
+                  <a className="btn blue" href="/student-quest">Open Quest</a>
+                )}
+                <a className="btn secondary" href="/quest-studio">Upgrade identity</a>
+              </ProjectZCompanionUpgradePanel>
+            )}
 
             <section className="grid grid2" style={{ marginTop: 18 }}>
               <div className="card">
