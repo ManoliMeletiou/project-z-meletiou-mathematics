@@ -101,6 +101,7 @@ export default function StudentPortalPage() {
             <a className="btn secondary" href="/recommended">Recommended</a>
             <a className="btn secondary" href="/path">Skill Path</a>
             <a className="btn secondary" href="/assignments">Assignments</a>
+            <a className="btn secondary" href="/student-generated-assignments">Generated Assignments</a>
             <a className="btn secondary" href="/tutor">Tutor</a>
             <a className="btn secondary" href="/reports">Reports</a>
             <a className="btn secondary" href="/account">Account</a>

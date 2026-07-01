@@ -9,6 +9,7 @@ import {
   GeneratedAssignmentQuestion,
   markGeneratedAssignmentStatus
 } from '../../lib/projectZGeneratedAssignments';
+import { publishGeneratedAssignment, fetchTeacherGeneratedAssignmentProgress, TeacherGeneratedAssignmentProgress } from '../../lib/projectZPublishGeneratedAssignments';
 
 function formatOptions(options: Record<string, string> | null) {
   if (!options) return null;
@@ -30,6 +31,7 @@ export default function GeneratedAssignmentsPage() {
   const [selectedAssignmentId, setSelectedAssignmentId] = useState('');
   const [questions, setQuestions] = useState<GeneratedAssignmentQuestion[]>([]);
   const [status, setStatus] = useState('Generated assignments load for teachers.');
+  const [progressRows, setProgressRows] = useState<TeacherGeneratedAssignmentProgress[]>([]);
   const [busy, setBusy] = useState(false);
 
   async function loadPage() {
@@ -61,6 +63,7 @@ export default function GeneratedAssignmentsPage() {
     setStatus('Loading assignment questions...');
     const nextQuestions = await fetchGeneratedAssignmentQuestions(assignmentId);
     setQuestions(nextQuestions);
+    setProgressRows(await fetchTeacherGeneratedAssignmentProgress(assignmentId));
     setStatus(`Loaded ${nextQuestions.length} questions.`);
   }
 
@@ -84,6 +87,25 @@ export default function GeneratedAssignmentsPage() {
     }
 
     setStatus(`Assignment marked as ${nextStatus}.`);
+    await loadPage();
+    setBusy(false);
+  }
+
+  async function publishAssignment() {
+    if (!selectedAssignmentId) return;
+
+    setBusy(true);
+    setStatus('Publishing generated assignment to students...');
+
+    const result = await publishGeneratedAssignment(selectedAssignmentId);
+
+    if (!result.ok) {
+      setStatus(`Could not publish: ${result.reason}`);
+      setBusy(false);
+      return;
+    }
+
+    setStatus('Generated assignment published to students.');
     await loadPage();
     setBusy(false);
   }
@@ -182,10 +204,46 @@ export default function GeneratedAssignmentsPage() {
                     <button className="btn secondary" disabled={busy} onClick={() => updateStatus('assigned')}>
                       Mark assigned
                     </button>
+                    <button className="btn blue" disabled={busy || selectedAssignment.question_count < 30} onClick={publishAssignment}>
+                      Publish to students
+                    </button>
                     <button className="btn secondary" disabled={busy} onClick={() => updateStatus('archived')}>
                       Archive
                     </button>
                   </div>
+                </section>
+
+                
+                <section className="card" style={{ marginTop: 18 }}>
+                  <h2>Student progress after publishing</h2>
+                  {progressRows.length === 0 ? (
+                    <p className="muted">No student progress yet. This will populate after students start.</p>
+                  ) : (
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th>Student</th>
+                          <th>Answered</th>
+                          <th>Submitted</th>
+                          <th>Correct</th>
+                          <th>Progress</th>
+                          <th>Accuracy</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {progressRows.map((row) => (
+                          <tr key={row.student_id}>
+                            <td>{row.student_email}</td>
+                            <td>{row.answered_count}/{row.question_count}</td>
+                            <td>{row.submitted_count}</td>
+                            <td>{row.correct_count}</td>
+                            <td>{row.progress_percent}%</td>
+                            <td>{row.accuracy_percent}%</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </section>
 
                 <section className="card" style={{ marginTop: 18 }}>
