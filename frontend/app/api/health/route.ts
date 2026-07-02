@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-50-parent-command-centre',
+    version: 'phase-51-assignment-lifecycle-command-centre',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -28,6 +28,11 @@ export async function GET() {
       parentSafeSupportPlan: true,
       parentPrivacyBoundaryPreserved: true,
       parentHomeSupportPrompts: true,
+      assignmentLifecycleCommandCentre: true,
+      teacherWorkflowRunway: true,
+      teacherPriorityQueue: true,
+      assignmentAuditAndCorrectionsConnected: true,
+      memorandumBoundaryPreserved: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,
