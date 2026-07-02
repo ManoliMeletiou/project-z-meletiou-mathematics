@@ -1,6 +1,6 @@
 'use client';
 
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
   fetchTeacherEngagementClasses,
@@ -11,36 +11,8 @@ import {
   TeacherEngagementSummary
 } from '../../lib/projectZTeacherEngagement';
 
-function cardStyle(index: number): CSSProperties {
-  const gradients = [
-    'linear-gradient(135deg, #eef2ff 0%, #f8fafc 52%, #ecfeff 100%)',
-    'linear-gradient(135deg, #fff7ed 0%, #f8fafc 52%, #f0fdf4 100%)',
-    'linear-gradient(135deg, #fdf2f8 0%, #f8fafc 52%, #eef2ff 100%)',
-    'linear-gradient(135deg, #ecfeff 0%, #f8fafc 52%, #fff7ed 100%)'
-  ];
-
-  return {
-    background: gradients[index % gradients.length],
-    border: '1px solid rgba(15,23,42,.08)',
-    boxShadow: '0 18px 45px rgba(15,23,42,.08)',
-    borderRadius: 24
-  };
-}
-
-function statusStyle(status: string): CSSProperties {
-  if (status === 'No engagement yet' || status === 'Low assignment engagement') {
-    return { background: '#fff1f2', color: '#9f1239', border: '1px solid rgba(190,18,60,.18)' };
-  }
-
-  if (status === 'Needs correction support') {
-    return { background: '#fffbeb', color: '#92400e', border: '1px solid rgba(180,83,9,.18)' };
-  }
-
-  if (status === 'Building momentum') {
-    return { background: '#ecfdf5', color: '#166534', border: '1px solid rgba(22,101,52,.18)' };
-  }
-
-  return { background: '#eff6ff', color: '#1d4ed8', border: '1px solid rgba(29,78,216,.18)' };
+function clampPercent(value: number) {
+  return Math.max(0, Math.min(100, Math.round(Number(value || 0))));
 }
 
 function studentName(email: string) {
@@ -59,6 +31,59 @@ function updatedLabel(value: string | null) {
   return new Date(value).toLocaleString();
 }
 
+function statusTone(status: string) {
+  if (status === 'No engagement yet' || status === 'Low assignment engagement') return 'danger';
+  if (status === 'Needs correction support') return 'warning';
+  if (status === 'Building momentum') return 'success';
+  if (status === 'Active') return 'info';
+  return 'neutral';
+}
+
+function supportScore(row: TeacherEngagementRow) {
+  let score = 0;
+  if (row.engagement_status === 'No engagement yet') score += 34;
+  if (row.engagement_status === 'Low assignment engagement') score += 28;
+  if (row.engagement_status === 'Needs correction support') score += 26;
+  if (row.completion_percent < 40) score += 18;
+  if (row.corrections_needed > row.corrections_submitted) score += 16;
+  if (row.accuracy_percent > 0 && row.accuracy_percent < 50) score += 10;
+  if (!row.checked_in_today) score += 6;
+  return clampPercent(score);
+}
+
+function momentumScore(row: TeacherEngagementRow) {
+  const completion = clampPercent(row.completion_percent) * 0.35;
+  const accuracy = clampPercent(row.accuracy_percent) * 0.24;
+  const correction = clampPercent(row.correction_effort_percent) * 0.18;
+  const streak = Math.min(100, row.current_streak * 12) * 0.13;
+  const achievement = Math.min(100, row.achievements_unlocked * 14) * 0.10;
+  return clampPercent(completion + accuracy + correction + streak + achievement);
+}
+
+function priorityLabel(row: TeacherEngagementRow) {
+  if (row.engagement_status === 'No engagement yet') return 'Start contact';
+  if (row.engagement_status === 'Low assignment engagement') return 'Completion support';
+  if (row.engagement_status === 'Needs correction support') return 'Correction conference';
+  if (row.engagement_status === 'Building momentum') return 'Stretch next';
+  if (row.engagement_status === 'Active') return 'Maintain momentum';
+  return 'Review';
+}
+
+function heatCellClass(row: TeacherEngagementRow) {
+  const score = supportScore(row);
+  if (score >= 70) return 'hot';
+  if (score >= 42) return 'warm';
+  if (momentumScore(row) >= 70) return 'cool';
+  return 'neutral';
+}
+
+function supportStatusRows(rows: TeacherEngagementRow[]) {
+  return rows
+    .filter((row) => supportScore(row) > 0 || ['No engagement yet', 'Low assignment engagement', 'Needs correction support'].includes(row.engagement_status))
+    .sort((a, b) => supportScore(b) - supportScore(a))
+    .slice(0, 5);
+}
+
 export default function TeacherEngagementInsightsPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
   const [email, setEmail] = useState<string | null>(null);
@@ -67,8 +92,8 @@ export default function TeacherEngagementInsightsPage() {
   const [summary, setSummary] = useState<TeacherEngagementSummary | null>(null);
   const [rows, setRows] = useState<TeacherEngagementRow[]>([]);
   const [filter, setFilter] = useState('all');
-  const [status, setStatus] = useState('Teacher engagement insights load support signals.');
-  const [showCaution, setShowCaution] = useState(true);
+  const [status, setStatus] = useState('Teacher command centre is loading support signals.');
+  const [showBoundary, setShowBoundary] = useState(true);
 
   async function loadPage(classId = selectedClassId) {
     const profile = await getCurrentProfile();
@@ -76,7 +101,7 @@ export default function TeacherEngagementInsightsPage() {
     setEmail(profile.email);
 
     if (profile.role !== 'teacher') {
-      setStatus(profile.role === 'guest' ? 'Sign in as a teacher to view engagement insights.' : 'This page is for teacher accounts.');
+      setStatus(profile.role === 'guest' ? 'Sign in as a teacher to view the command centre.' : 'This command centre is for teacher accounts.');
       return;
     }
 
@@ -93,7 +118,7 @@ export default function TeacherEngagementInsightsPage() {
 
     setSummary(nextSummary);
     setRows(nextRows);
-    setStatus(nextRows.length === 0 ? 'No engagement data yet. Generate and publish assignments first.' : `Loaded ${nextRows.length} student engagement record(s).`);
+    setStatus(nextRows.length === 0 ? 'No engagement data yet. Generate and publish assignments first.' : `Command centre loaded ${nextRows.length} student signal record(s).`);
   }
 
   useEffect(() => {
@@ -108,35 +133,37 @@ export default function TeacherEngagementInsightsPage() {
   const filteredRows = useMemo(() => {
     if (filter === 'all') return rows;
     if (filter === 'support') return rows.filter((row) => ['No engagement yet', 'Low assignment engagement', 'Needs correction support'].includes(row.engagement_status));
-    if (filter === 'momentum') return rows.filter((row) => row.engagement_status === 'Building momentum');
-    if (filter === 'active') return rows.filter((row) => row.engagement_status === 'Active');
     if (filter === 'corrections') return rows.filter((row) => row.corrections_needed > row.corrections_submitted);
+    if (filter === 'active') return rows.filter((row) => row.engagement_status === 'Active');
+    if (filter === 'momentum') return rows.filter((row) => row.engagement_status === 'Building momentum' || momentumScore(row) >= 70);
     return rows;
   }, [rows, filter]);
 
+  const supportRows = useMemo(() => supportStatusRows(rows), [rows]);
+  const selectedClass = classes.find((item) => item.class_id === selectedClassId);
+  const supportCount = (summary?.no_engagement_count || 0) + (summary?.correction_support_count || 0) + (summary?.low_assignment_engagement_count || 0);
+  const totalStudents = summary?.student_count || rows.length || 0;
+  const activeOrMomentum = (summary?.active_count || 0) + (summary?.building_momentum_count || 0);
+  const supportPercent = totalStudents ? clampPercent((supportCount / totalStudents) * 100) : 0;
+  const momentumPercent = totalStudents ? clampPercent((activeOrMomentum / totalStudents) * 100) : 0;
+
   return (
-    <main
-      className="page pz-theme pz-teacher-theme"
-      style={{
-        background:
-          'radial-gradient(circle at top left, rgba(99,102,241,.16), transparent 30%), radial-gradient(circle at top right, rgba(20,184,166,.14), transparent 30%), linear-gradient(180deg, #f8fafc 0%, #ffffff 42%, #f8fafc 100%)'
-      }}
-    >
+    <main className="page pz-theme pz-teacher-theme">
       <div className="container">
         <nav className="nav" style={{ marginBottom: 22 }}>
           <div className="brand">
-            <strong>Teacher Engagement Insights</strong>
+            <strong>Teacher Command Centre</strong>
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
-            <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/home">Smart Home</a>
             <a className="btn secondary" href="/role-navigation">Navigation</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/assignment-lifecycle">Lifecycle</a>
+            <a className="btn secondary" href="/generated-assignments">Generate</a>
+            <a className="btn secondary" href="/assignment-audit">Audit</a>
             <a className="btn secondary" href="/teacher-submission-review">Submissions</a>
             <a className="btn secondary" href="/teacher-corrections-review">Corrections</a>
-            <a className="btn secondary" href="/account">Account</a>
           </div>
         </nav>
 
@@ -145,132 +172,154 @@ export default function TeacherEngagementInsightsPage() {
         </section>
 
         {role === 'guest' && (
-          <section className="card" style={cardStyle(0)}>
+          <section className="card pz-teacher-access-card">
             <h2>Sign in required</h2>
-            <p className="muted">Sign in as a teacher to see engagement insights.</p>
+            <p className="muted">Sign in as a teacher to see the analytics command centre.</p>
             <a className="btn blue" href="/auth">Sign in</a>
           </section>
         )}
 
         {role !== 'guest' && role !== 'teacher' && (
-          <section className="card" style={cardStyle(0)}>
-            <h2>Teacher-only insights</h2>
+          <section className="card pz-teacher-access-card">
+            <h2>Teacher-only command centre</h2>
             <p className="muted">This page is for teachers supporting students in their classes.</p>
           </section>
         )}
 
         {role === 'teacher' && (
           <>
-            <section
-              className="card"
-              style={{
-                ...cardStyle(0),
-                padding: 30,
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  right: -70,
-                  top: -70,
-                  width: 220,
-                  height: 220,
-                  borderRadius: '50%',
-                  background: 'rgba(99,102,241,.12)'
-                }}
-              />
+            <section className="pz-teacher-command-hero">
+              <div className="pz-teacher-hero-copy">
+                <div className="pz-role-badge">🧠 Professional analytics command centre</div>
+                <h1>Know who needs help, what to do next, and where momentum is building.</h1>
+                <p className="muted">
+                  This command centre combines assignment completion, correction effort, accuracy, activity,
+                  XP, streaks, and achievements into teacher-friendly support signals. These are guidance signals,
+                  not formal marks or IB criteria scores.
+                </p>
 
-              <p
-                style={{
-                  display: 'inline-flex',
-                  padding: '8px 12px',
-                  borderRadius: 999,
-                  background: 'rgba(255,255,255,.78)',
-                  border: '1px solid rgba(15,23,42,.08)',
-                  marginBottom: 12
-                }}
-              >
-                🧭 Support signals, not grades
-              </p>
+                <div className="pz-teacher-control-row">
+                  <label className="label">
+                    Class filter
+                    <select className="select" value={selectedClassId} onChange={(event) => changeClass(event.target.value)}>
+                      <option value="">All classes</option>
+                      {classes.map((item) => (
+                        <option key={item.class_id} value={item.class_id}>
+                          {item.class_label} — {item.student_count} student(s), {item.assignment_count} assignment(s)
+                        </option>
+                      ))}
+                    </select>
+                  </label>
 
-              <h1 style={{ fontSize: 38, lineHeight: 1.05, margin: '4px 0 12px', maxWidth: 820 }}>
-                See who needs support and who is building momentum.
-              </h1>
+                  <div className="pz-teacher-live-chip">
+                    <span>Current view</span>
+                    <strong>{selectedClass?.class_label || 'All classes'}</strong>
+                  </div>
+                </div>
+              </div>
 
-              <p style={{ fontSize: 18, maxWidth: 780, color: '#475569' }}>
-                This page combines assignment completion, correction effort, XP, level, streaks, and achievements
-                to help you decide how to support students next.
-              </p>
-
-              {classes.length > 0 && (
-                <label className="label" style={{ maxWidth: 460, marginTop: 20 }}>
-                  Class filter
-                  <select className="select" value={selectedClassId} onChange={(event) => changeClass(event.target.value)}>
-                    <option value="">All classes</option>
-                    {classes.map((item) => (
-                      <option key={item.class_id} value={item.class_id}>
-                        {item.class_label} — {item.student_count} student(s), {item.assignment_count} assignment(s)
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              )}
+              <aside className="pz-teacher-radar-card">
+                <span>Support load</span>
+                <strong>{supportPercent}%</strong>
+                <progress value={supportPercent} max={100} />
+                <span>Momentum</span>
+                <strong>{momentumPercent}%</strong>
+                <progress value={momentumPercent} max={100} />
+                <p className="muted">Use this as a planning lens. It is not a gradebook.</p>
+              </aside>
             </section>
 
-            {showCaution && (
-              <section className="card" style={{ ...cardStyle(1), marginTop: 18 }}>
-                <h2>Important assessment boundary</h2>
-                <p>
-                  XP, streaks, levels, and achievements are motivation signals. They must not be used as formal marks,
-                  IB criteria scores, grades, or a replacement for teacher judgement.
-                </p>
-                <button className="btn secondary" onClick={() => setShowCaution(false)}>Hide note</button>
+            {showBoundary && (
+              <section className="notice pz-teacher-boundary-note" style={{ marginTop: 18 }}>
+                <div>
+                  <strong>Assessment boundary:</strong> XP, streaks, levels, achievements, and companion progress are motivation and engagement signals only. Formal assessment still depends on learning evidence, teacher feedback, and the relevant criteria.
+                </div>
+                <button className="btn secondary" onClick={() => setShowBoundary(false)}>Hide note</button>
               </section>
             )}
 
-            <section className="grid grid3" style={{ marginTop: 18 }}>
-              <div className="card" style={cardStyle(1)}>
-                <h2>Students</h2>
-                <p className="stat">{summary?.student_count || 0}</p>
-                <p className="muted">Visible through your generated assignments</p>
-              </div>
-
-              <div className="card" style={cardStyle(2)}>
-                <h2>Need support</h2>
-                <p className="stat">
-                  {(summary?.no_engagement_count || 0) + (summary?.correction_support_count || 0) + (summary?.low_assignment_engagement_count || 0)}
-                </p>
+            <section className="pz-teacher-kpi-grid" style={{ marginTop: 18 }}>
+              <div className="card pz-teacher-kpi-card critical">
+                <span>Students needing support</span>
+                <strong>{supportCount}</strong>
                 <p className="muted">No engagement, low completion, or correction support</p>
               </div>
-
-              <div className="card" style={cardStyle(3)}>
-                <h2>Momentum</h2>
-                <p className="stat">{summary?.building_momentum_count || 0}</p>
-                <p className="muted">Consistent and active students</p>
+              <div className="card pz-teacher-kpi-card success">
+                <span>Active / momentum</span>
+                <strong>{activeOrMomentum}</strong>
+                <p className="muted">Students showing consistent learning movement</p>
+              </div>
+              <div className="card pz-teacher-kpi-card info">
+                <span>Average completion</span>
+                <strong>{summary?.average_completion_percent || 0}%</strong>
+                <p className="muted">Across visible generated assignment work</p>
+              </div>
+              <div className="card pz-teacher-kpi-card warning">
+                <span>Correction effort</span>
+                <strong>{summary?.average_correction_effort_percent || 0}%</strong>
+                <p className="muted">How strongly students are using feedback</p>
               </div>
             </section>
 
-            <section className="grid grid3" style={{ marginTop: 18 }}>
-              <div className="card" style={cardStyle(0)}>
-                <h2>Avg completion</h2>
-                <p className="stat">{summary?.average_completion_percent || 0}%</p>
+            <section className="grid grid2" style={{ marginTop: 18 }}>
+              <div className="card pz-teacher-panel">
+                <div className="pz-panel-header">
+                  <div>
+                    <div className="pz-role-badge">🚦 Support queue</div>
+                    <h2>Highest-priority students</h2>
+                  </div>
+                  <a className="btn secondary" href="/teacher-submission-review">Open submissions</a>
+                </div>
+                {supportRows.length === 0 ? (
+                  <p className="muted">No urgent support signals yet.</p>
+                ) : (
+                  <div className="pz-teacher-support-list">
+                    {supportRows.map((row) => (
+                      <div key={`queue-${row.student_id}-${row.class_id}`} className="pz-teacher-support-item">
+                        <div>
+                          <strong>{studentName(row.student_email)}</strong>
+                          <p className="muted">{row.class_label} · {priorityLabel(row)}</p>
+                        </div>
+                        <span className={`pz-teacher-status ${statusTone(row.engagement_status)}`}>{row.engagement_status}</span>
+                        <progress value={supportScore(row)} max={100} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="card" style={cardStyle(1)}>
-                <h2>Avg correction effort</h2>
-                <p className="stat">{summary?.average_correction_effort_percent || 0}%</p>
-              </div>
-
-              <div className="card" style={cardStyle(2)}>
-                <h2>Total XP</h2>
-                <p className="stat">{summary?.total_xp || 0}</p>
+              <div className="card pz-teacher-panel">
+                <div className="pz-panel-header">
+                  <div>
+                    <div className="pz-role-badge">🧩 Signal heatmap</div>
+                    <h2>Class pulse</h2>
+                  </div>
+                  <span className="muted">{filteredRows.length} visible</span>
+                </div>
+                <div className="pz-teacher-signal-heatmap">
+                  {rows.slice(0, 40).map((row) => (
+                    <span
+                      key={`heat-${row.student_id}-${row.class_id}`}
+                      className={heatCellClass(row)}
+                      title={`${studentName(row.student_email)} — ${row.engagement_status}`}
+                    />
+                  ))}
+                </div>
+                <div className="pz-teacher-legend">
+                  <span><i className="hot" /> urgent</span>
+                  <span><i className="warm" /> watch</span>
+                  <span><i className="cool" /> momentum</span>
+                  <span><i className="neutral" /> neutral</span>
+                </div>
+                <p className="muted">Each square is one student signal. Use it to plan check-ins, not to grade.</p>
               </div>
             </section>
 
-            <section className="card" style={{ ...cardStyle(2), marginTop: 18 }}>
-              <h2>Filter students</h2>
+            <section className="card pz-teacher-filter-panel" style={{ marginTop: 18 }}>
+              <div>
+                <h2>Student signal board</h2>
+                <p className="muted">Filter the command centre by immediate teacher action.</p>
+              </div>
               <div className="navLinks">
                 <button className={filter === 'all' ? 'btn blue' : 'btn secondary'} onClick={() => setFilter('all')}>All</button>
                 <button className={filter === 'support' ? 'btn blue' : 'btn secondary'} onClick={() => setFilter('support')}>Needs support</button>
@@ -280,80 +329,49 @@ export default function TeacherEngagementInsightsPage() {
               </div>
             </section>
 
-            <section className="card" style={{ ...cardStyle(0), marginTop: 18 }}>
-              <h2>Student engagement</h2>
+            <section className="pz-teacher-student-grid" style={{ marginTop: 18 }}>
               {filteredRows.length === 0 ? (
-                <p className="muted">No students match this filter yet.</p>
+                <section className="card pz-teacher-panel">
+                  <h2>No students match this filter yet.</h2>
+                  <p className="muted">Try all classes or publish an assignment to generate support signals.</p>
+                </section>
               ) : (
-                <div className="grid">
-                  {filteredRows.map((row, index) => (
-                    <div key={`${row.student_id}-${row.class_id}`} className="card" style={cardStyle(index)}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'start' }}>
-                        <div>
-                          <h3>{studentName(row.student_email)}</h3>
-                          <p className="muted">{row.class_label} | Updated: {updatedLabel(row.updated_at)}</p>
-                        </div>
-                        <span
-                          style={{
-                            ...statusStyle(row.engagement_status),
-                            padding: '6px 10px',
-                            borderRadius: 999,
-                            fontWeight: 700,
-                            fontSize: 13,
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          {row.engagement_status}
-                        </span>
+                filteredRows.map((row) => (
+                  <article key={`${row.student_id}-${row.class_id}`} className="card pz-teacher-student-card">
+                    <header>
+                      <div>
+                        <h3>{studentName(row.student_email)}</h3>
+                        <p className="muted">{row.class_label} · Updated {updatedLabel(row.updated_at)}</p>
                       </div>
+                      <span className={`pz-teacher-status ${statusTone(row.engagement_status)}`}>{row.engagement_status}</span>
+                    </header>
 
-                      <section className="grid grid3">
-                        <div>
-                          <strong>Completion</strong><br />
-                          {row.completion_percent}%
-                        </div>
-                        <div>
-                          <strong>Accuracy</strong><br />
-                          {row.accuracy_percent}%
-                        </div>
-                        <div>
-                          <strong>Corrections</strong><br />
-                          {row.corrections_submitted}/{row.corrections_needed}
-                        </div>
-                        <div>
-                          <strong>Level</strong><br />
-                          {row.level}
-                        </div>
-                        <div>
-                          <strong>XP</strong><br />
-                          {row.total_xp}
-                        </div>
-                        <div>
-                          <strong>Streak</strong><br />
-                          {row.current_streak}
-                        </div>
-                        <div>
-                          <strong>Achievements</strong><br />
-                          {row.achievements_unlocked}
-                        </div>
-                        <div>
-                          <strong>Submitted</strong><br />
-                          {row.submitted_responses}
-                        </div>
-                        <div>
-                          <strong>Reviewed</strong><br />
-                          {row.reviewed_responses}
-                        </div>
-                      </section>
-
-                      <section className="notice" style={{ marginTop: 12 }}>
-                        <strong>Suggested teacher action:</strong> {row.teacher_next_action}
-                      </section>
-
-                      <p className="muted">{row.caution_note}</p>
+                    <div className="pz-teacher-mini-metrics">
+                      <div><span>Completion</span><strong>{row.completion_percent}%</strong></div>
+                      <div><span>Accuracy</span><strong>{row.accuracy_percent}%</strong></div>
+                      <div><span>Corrections</span><strong>{row.corrections_submitted}/{row.corrections_needed}</strong></div>
+                      <div><span>Streak</span><strong>{row.current_streak}</strong></div>
                     </div>
-                  ))}
-                </div>
+
+                    <div className="pz-teacher-progress-pair">
+                      <label>Support priority <progress value={supportScore(row)} max={100} /></label>
+                      <label>Momentum <progress value={momentumScore(row)} max={100} /></label>
+                    </div>
+
+                    <section className="notice">
+                      <strong>Suggested teacher action:</strong> {row.teacher_next_action}
+                    </section>
+
+                    <footer>
+                      <span>Level {row.level}</span>
+                      <span>{row.total_xp} XP</span>
+                      <span>{row.achievements_unlocked} achievement(s)</span>
+                      <span>{row.reviewed_responses}/{row.submitted_responses} reviewed</span>
+                    </footer>
+
+                    <p className="muted">{row.caution_note}</p>
+                  </article>
+                ))
               )}
             </section>
           </>
@@ -362,3 +380,4 @@ export default function TeacherEngagementInsightsPage() {
     </main>
   );
 }
+

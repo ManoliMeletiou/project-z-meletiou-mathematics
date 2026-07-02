@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-48-companion-upgrade-system',
+    version: 'phase-49-teacher-command-centre',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -20,6 +20,10 @@ export async function GET() {
       companionUpgradeSystem: true,
       companionEvolutionRoadmap: true,
       companionSupabaseMilestonesReady: true,
+      teacherCommandCentreRedesigned: true,
+      teacherSupportQueue: true,
+      teacherSignalHeatmap: true,
+      teacherAssessmentBoundaryPreserved: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,
@@ -34,3 +38,4 @@ export async function GET() {
     routes: ['/', '/home', '/role-navigation', '/design-preview', '/help', '/mobile-preview', '/student', '/student-dashboard', '/student-quest', '/quest-studio', '/teacher', '/teacher-engagement-insights', '/parent', '/parent-dashboard', '/parent-engagement-view', '/parent-learning-report', '/export-reports', '/assignment-recommendations', '/generated-assignments', '/assignment-audit', '/assignment-lifecycle', '/teacher-submission-review', '/teacher-corrections-review', '/student-generated-assignments', '/student-memorandum', '/student-corrections', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/create-assignment-from-recommendation', '/api/regenerate-assignment-question', '/api/health']
   });
 }
+

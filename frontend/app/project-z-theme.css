@@ -1010,3 +1010,334 @@ main.page.pz-theme {
 .pz-companion-upgrade-actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
 .pz-companion-boundary-note { margin-top: 14px; font-size: .92rem; }
 @media (max-width: 980px) { .pz-companion-upgrade-main, .pz-companion-upgrade-progress, .pz-companion-evolution-roadmap { grid-template-columns: 1fr; } }
+
+
+/* Phase 49 — Teacher Analytics Command Centre Redesign */
+.pz-teacher-command-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, .65fr);
+  gap: 18px;
+  align-items: stretch;
+  overflow: hidden;
+  padding: clamp(24px, 5vw, 46px);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(56,189,248,.26), transparent 32%),
+    radial-gradient(circle at 86% 20%, rgba(45,212,191,.22), transparent 28%),
+    linear-gradient(135deg, rgba(2, 18, 33, .92), rgba(5, 39, 64, .78) 52%, rgba(2, 44, 52, .86));
+  border: 1px solid rgba(125, 211, 252, .26);
+  box-shadow: 0 28px 90px rgba(2, 6, 23, .48), 0 0 48px rgba(45, 212, 191, .16);
+  backdrop-filter: blur(28px);
+}
+
+.pz-teacher-command-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .75;
+  background:
+    linear-gradient(115deg, transparent 0 42%, rgba(56,189,248,.14) 43%, transparent 45% 100%),
+    radial-gradient(circle at 14% 20%, rgba(255,255,255,.44) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 28%, rgba(125,211,252,.44) 0 1px, transparent 2px),
+    radial-gradient(circle at 82% 72%, rgba(45,212,191,.36) 0 1px, transparent 2px),
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(56,189,248,.07) 47px, transparent 48px),
+    repeating-linear-gradient(0deg, transparent 0 46px, rgba(45,212,191,.055) 47px, transparent 48px);
+}
+
+.pz-teacher-command-hero > * {
+  position: relative;
+  z-index: 2;
+}
+
+.pz-teacher-hero-copy h1 {
+  max-width: 880px;
+  margin: 18px 0 12px;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: .98;
+}
+
+.pz-teacher-hero-copy p {
+  max-width: 790px;
+  font-size: 1.08rem;
+}
+
+.pz-teacher-control-row {
+  display: grid;
+  grid-template-columns: minmax(260px, 440px) minmax(180px, 260px);
+  gap: 14px;
+  align-items: end;
+  margin-top: 24px;
+}
+
+.pz-teacher-live-chip,
+.pz-teacher-radar-card {
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.pz-teacher-live-chip span,
+.pz-teacher-radar-card span,
+.pz-teacher-kpi-card span {
+  display: block;
+  color: var(--pz-muted);
+  font-size: .84rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.pz-teacher-live-chip strong,
+.pz-teacher-radar-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.35rem;
+}
+
+.pz-teacher-radar-card {
+  display: grid;
+  align-content: center;
+  gap: 10px;
+}
+
+.pz-teacher-boundary-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.pz-teacher-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.pz-teacher-kpi-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 170px;
+}
+
+.pz-teacher-kpi-card::after {
+  content: "";
+  position: absolute;
+  right: -44px;
+  bottom: -62px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(255,255,255,.10);
+}
+
+.pz-teacher-kpi-card strong {
+  display: block;
+  margin: 10px 0 6px;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: .9;
+  letter-spacing: -.07em;
+}
+
+.pz-teacher-kpi-card.critical strong { color: #fecdd3; }
+.pz-teacher-kpi-card.success strong { color: #bbf7d0; }
+.pz-teacher-kpi-card.info strong { color: #bae6fd; }
+.pz-teacher-kpi-card.warning strong { color: #fed7aa; }
+
+.pz-teacher-panel {
+  min-height: 360px;
+}
+
+.pz-panel-header,
+.pz-teacher-filter-panel {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.pz-panel-header h2,
+.pz-teacher-filter-panel h2 {
+  margin-top: 10px;
+}
+
+.pz-teacher-support-list {
+  display: grid;
+  gap: 12px;
+}
+
+.pz-teacher-support-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+.pz-teacher-support-item progress {
+  grid-column: 1 / -1;
+}
+
+.pz-teacher-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 850;
+  white-space: nowrap;
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+.pz-teacher-status.danger { color: #fecdd3; background: rgba(244,63,94,.16); border-color: rgba(244,63,94,.30); }
+.pz-teacher-status.warning { color: #fed7aa; background: rgba(249,115,22,.15); border-color: rgba(249,115,22,.28); }
+.pz-teacher-status.success { color: #bbf7d0; background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.26); }
+.pz-teacher-status.info { color: #bae6fd; background: rgba(56,189,248,.14); border-color: rgba(56,189,248,.26); }
+.pz-teacher-status.neutral { color: #e2e8f0; background: rgba(148,163,184,.13); border-color: rgba(148,163,184,.24); }
+
+.pz-teacher-signal-heatmap {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(14px, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.pz-teacher-signal-heatmap span,
+.pz-teacher-legend i {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.13);
+}
+
+.pz-teacher-signal-heatmap span.hot,
+.pz-teacher-legend i.hot { background: linear-gradient(135deg, rgba(244,63,94,.95), rgba(249,115,22,.75)); box-shadow: 0 0 20px rgba(244,63,94,.22); }
+.pz-teacher-signal-heatmap span.warm,
+.pz-teacher-legend i.warm { background: linear-gradient(135deg, rgba(249,115,22,.90), rgba(250,204,21,.70)); }
+.pz-teacher-signal-heatmap span.cool,
+.pz-teacher-legend i.cool { background: linear-gradient(135deg, rgba(34,197,94,.85), rgba(45,212,191,.70)); }
+.pz-teacher-signal-heatmap span.neutral,
+.pz-teacher-legend i.neutral { background: linear-gradient(135deg, rgba(148,163,184,.44), rgba(56,189,248,.24)); }
+
+.pz-teacher-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pz-teacher-legend span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--pz-muted);
+}
+
+.pz-teacher-legend i {
+  width: 14px;
+  height: 14px;
+}
+
+.pz-teacher-student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 14px;
+}
+
+.pz-teacher-student-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pz-teacher-student-card header,
+.pz-teacher-student-card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pz-teacher-student-card h3 {
+  margin-bottom: 4px;
+}
+
+.pz-teacher-mini-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pz-teacher-mini-metrics div {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.11);
+}
+
+.pz-teacher-mini-metrics span,
+.pz-teacher-student-card footer span {
+  color: var(--pz-muted);
+  font-size: .82rem;
+}
+
+.pz-teacher-mini-metrics strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.1rem;
+}
+
+.pz-teacher-progress-pair {
+  display: grid;
+  gap: 10px;
+}
+
+.pz-teacher-progress-pair label {
+  display: grid;
+  gap: 6px;
+  color: var(--pz-muted);
+  font-weight: 700;
+}
+
+.pz-teacher-access-card {
+  max-width: 720px;
+}
+
+@media (max-width: 980px) {
+  .pz-teacher-command-hero,
+  .pz-teacher-control-row,
+  .pz-teacher-kpi-grid,
+  .pz-panel-header,
+  .pz-teacher-filter-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .pz-teacher-kpi-grid {
+    display: grid;
+  }
+
+  .pz-panel-header,
+  .pz-teacher-filter-panel,
+  .pz-teacher-boundary-note {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .pz-teacher-mini-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pz-teacher-signal-heatmap {
+    grid-template-columns: repeat(5, minmax(14px, 1fr));
+  }
+}
+
