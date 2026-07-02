@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-49-teacher-command-centre',
+    version: 'phase-50-parent-command-centre',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -24,6 +24,10 @@ export async function GET() {
       teacherSupportQueue: true,
       teacherSignalHeatmap: true,
       teacherAssessmentBoundaryPreserved: true,
+      parentCommandCentreRedesigned: true,
+      parentSafeSupportPlan: true,
+      parentPrivacyBoundaryPreserved: true,
+      parentHomeSupportPrompts: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,

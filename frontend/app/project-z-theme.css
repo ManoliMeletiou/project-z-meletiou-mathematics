@@ -1341,3 +1341,238 @@ main.page.pz-theme {
   }
 }
 
+
+
+/* Phase 50 — Parent / Guardian Command Centre */
+.pz-parent-command-theme {
+  --pz-page-bg:
+    radial-gradient(circle at 12% 14%, rgba(249, 115, 22, .18), transparent 32%),
+    radial-gradient(circle at 86% 12%, rgba(34, 197, 94, .16), transparent 30%),
+    radial-gradient(circle at 74% 84%, rgba(168, 85, 247, .12), transparent 34%),
+    linear-gradient(135deg, #fff7ed 0%, #f8fafc 46%, #effcf1 100%);
+}
+
+.pz-parent-command-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .75fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.pz-parent-hero-copy,
+.pz-parent-support-card,
+.pz-parent-command-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.pz-parent-hero-copy {
+  min-height: 420px;
+  padding: clamp(24px, 5vw, 46px);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 80% 18%, rgba(249,115,22,.22), transparent 22%),
+    radial-gradient(circle at 18% 76%, rgba(34,197,94,.16), transparent 26%),
+    linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.62));
+  border: 1px solid rgba(148,163,184,.22);
+  box-shadow: 0 28px 80px rgba(120,53,15,.12);
+  backdrop-filter: blur(24px);
+}
+
+.pz-parent-hero-copy::after {
+  content: "🌿";
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  font-size: 82px;
+  opacity: .13;
+}
+
+.pz-parent-hero-copy h1 {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  line-height: .98;
+  margin: 18px 0 12px;
+  max-width: 780px;
+}
+
+.pz-parent-hero-copy p {
+  max-width: 720px;
+  font-size: 1.08rem;
+}
+
+.pz-parent-child-selector {
+  display: block;
+  max-width: 420px;
+  margin-top: 22px;
+}
+
+.pz-parent-support-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 420px;
+  padding: 24px;
+  border-radius: 30px;
+  color: #243042;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(34,197,94,.20), transparent 28%),
+    linear-gradient(135deg, rgba(255,255,255,.94), rgba(255,255,255,.70));
+  border: 1px solid rgba(148,163,184,.22);
+  box-shadow: 0 28px 70px rgba(22,101,52,.12);
+  backdrop-filter: blur(22px);
+}
+
+.pz-parent-question-box {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(148,163,184,.22);
+}
+
+.pz-parent-pulse-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.pz-parent-command-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, .75fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.pz-parent-kicker {
+  display: inline-flex;
+  width: fit-content;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 800;
+  color: #334155;
+  background: rgba(255,255,255,.70);
+  border: 1px solid rgba(148,163,184,.20);
+}
+
+.pz-parent-status-pill {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 850;
+  border: 1px solid rgba(148,163,184,.20);
+  white-space: nowrap;
+}
+
+.pz-parent-status-pill.good {
+  color: #166534;
+  background: #dcfce7;
+  border-color: rgba(22,101,52,.20);
+}
+
+.pz-parent-status-pill.watch {
+  color: #92400e;
+  background: #fef3c7;
+  border-color: rgba(180,83,9,.20);
+}
+
+.pz-parent-status-pill.support {
+  color: #9f1239;
+  background: #ffe4e6;
+  border-color: rgba(190,18,60,.20);
+}
+
+.pz-parent-support-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.pz-parent-support-steps div {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.68);
+  border: 1px solid rgba(148,163,184,.20);
+}
+
+.pz-parent-support-steps strong {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: white;
+  background: linear-gradient(135deg, #f97316, #16a34a);
+}
+
+.pz-parent-boundary-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.pz-parent-boundary-list span {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.68);
+  border: 1px solid rgba(148,163,184,.18);
+}
+
+.pz-parent-activity-list,
+.pz-parent-skill-list {
+  display: grid;
+  gap: 12px;
+}
+
+.pz-parent-activity-item,
+.pz-parent-skill-row {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.66);
+  border: 1px solid rgba(148,163,184,.18);
+}
+
+.pz-parent-activity-item h3,
+.pz-parent-skill-row p {
+  margin-bottom: 0;
+}
+
+.pz-parent-action-strip {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 980px) {
+  .pz-parent-command-hero,
+  .pz-parent-command-layout,
+  .pz-parent-pulse-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pz-parent-hero-copy,
+  .pz-parent-support-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .pz-parent-support-steps,
+  .pz-parent-boundary-list {
+    grid-template-columns: 1fr;
+  }
+}
+
