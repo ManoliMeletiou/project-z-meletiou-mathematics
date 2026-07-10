@@ -1,21 +1,28 @@
 # Project Z Handover Documents
 
-Main documents:
+Current authoritative documents:
 
 ```text
-PROJECT_Z_HANDOVER_PHASE_46.md
-NEXT_STEPS_AFTER_PHASE_46.md
-AI_AGENT_CONTINUATION_PROMPT_PHASE_46.md
+PROJECT_Z_HANDOVER_PHASE_52.md
+NEXT_STEPS_AFTER_PHASE_52.md
+AI_AGENT_CONTINUATION_PROMPT_PHASE_52.md
+../PROJECT_Z_COMPLETION_MASTER_PLAN.md
 ```
 
-Phase report:
+Current phase report:
 
 ```text
-../phase-reports/PHASE_46_STUDENT_COSMIC_REDESIGN_REPORT.md
+../phase-reports/PHASE_52_SECURITY_RELEASE_FOUNDATION_REPORT.md
 ```
 
-Current recommended next phase:
+Current release gate:
 
 ```text
-Phase 47 — Teacher Analytics Command Centre Redesign
+Publish Phase 52, pass CI and signed-in role smoke tests, deploy, and verify.
+```
+
+Next product phase after the release gate:
+
+```text
+Phase 53 — Assignment Factory Command Centre
 ```

@@ -1,37 +1,31 @@
 # Project Z Current Handover
 
-Current handover documents:
+Authoritative handover:
 
 ```text
-docs/handover/
+docs/handover/PROJECT_Z_HANDOVER_PHASE_52.md
 ```
 
-Start with:
+Completion plan:
 
 ```text
-docs/handover/PROJECT_Z_HANDOVER_PHASE_46.md
+docs/PROJECT_Z_COMPLETION_MASTER_PLAN.md
 ```
 
-AI continuation prompt:
+Current verified production milestone before this release:
 
 ```text
-docs/handover/AI_AGENT_CONTINUATION_PROMPT_PHASE_46.md
+Phase 51 — Assignment Lifecycle Command Centre
 ```
 
-Next recommended work:
+Current release being prepared:
 
 ```text
-docs/handover/NEXT_STEPS_AFTER_PHASE_46.md
+Phase 52 — Security and Release Foundation
 ```
 
-Current production milestone:
+Expected health version after deployment:
 
 ```text
-Phase 46 — Student Cosmic Quest Dashboard Redesign
-```
-
-Expected health version:
-
-```text
-phase-46-student-cosmic-redesign
+phase-52-security-release-foundation
 ```
