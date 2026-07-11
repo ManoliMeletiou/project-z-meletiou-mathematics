@@ -10,15 +10,3 @@ export const supabase = hasSupabaseConfig
   : null;
 
 export type ProjectZRole = 'student' | 'teacher' | 'parent';
-
-export function getStoredRole(): ProjectZRole {
-  if (typeof window === 'undefined') return 'student';
-  const role = window.localStorage.getItem('project-z-role');
-  if (role === 'teacher' || role === 'parent' || role === 'student') return role;
-  return 'student';
-}
-
-export function storeRole(role: ProjectZRole) {
-  if (typeof window === 'undefined') return;
-  window.localStorage.setItem('project-z-role', role);
-}

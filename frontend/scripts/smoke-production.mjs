@@ -36,7 +36,7 @@ try {
   const health = await healthResponse.json();
   assert.equal(health.ok, true);
   assert.equal(health.app, 'Project Z');
-  assert.equal(health.version, 'phase-55-automated-release-tests');
+  assert.equal(health.version, 'phase-56-identity-role-hardening');
   assert.equal(health.checks.controlledAssignmentFactory, true);
 
   await verifyText('/home', ['Project Z', 'Choose your starting point', 'More tools']);
@@ -50,4 +50,3 @@ try {
     else server.once('exit', resolve);
   });
 }
-

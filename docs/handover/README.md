@@ -3,24 +3,24 @@
 Current authoritative documents:
 
 ```text
-PROJECT_Z_HANDOVER_PHASE_55.md
+PROJECT_Z_HANDOVER_PHASE_56.md
 ../PROJECT_Z_COMPLETION_MASTER_PLAN.md
 ```
 
 Current phase report:
 
 ```text
-../phase-reports/PHASE_55_AUTOMATED_RELEASE_TEST_FOUNDATION_REPORT.md
+../phase-reports/PHASE_56_IDENTITY_ROLE_HARDENING_REPORT.md
 ```
 
 Current release gate:
 
 ```text
-Publish Phase 55, pass the expanded CI and production smoke, deploy, and verify health.
+Publish Phase 56, pass CI, deploy, and verify database-authoritative role handling.
 ```
 
 Next product phase after the release gate:
 
 ```text
-Phase 56 — Identity, privacy, and account lifecycle
+Continue Phase 56: role approval, route guards, session lifecycle, export, deletion, and MFA policy
 ```

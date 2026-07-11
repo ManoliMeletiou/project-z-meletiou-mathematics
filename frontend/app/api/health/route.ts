@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-55-automated-release-tests',
+    version: 'phase-56-identity-role-hardening',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -50,6 +50,10 @@ export async function GET() {
       automatedUnitContracts: true,
       automatedApiBoundaryTests: true,
       automatedProductionSmoke: true,
+      selfAssignedPrivilegedRolesBlocked: true,
+      databaseRoleAuthority: true,
+      verifiedRoleRequestFlow: true,
+      passwordResetFlow: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,
