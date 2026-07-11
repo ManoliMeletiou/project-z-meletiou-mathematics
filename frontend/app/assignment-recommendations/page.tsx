@@ -170,6 +170,7 @@ export default function AssignmentRecommendationsPage() {
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn blue" href="/assignment-factory">Assignment Factory</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/teacher">Teacher Portal</a>
             <a className="btn secondary" href="/assignments">Assignments</a>

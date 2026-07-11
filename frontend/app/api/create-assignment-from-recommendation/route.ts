@@ -382,7 +382,10 @@ async function insertAssignment(token: string, teacherId: string, recommendation
           course_code: recommendation.course_code || null,
           assignment_level: level,
           difficulty_mix: generated.mix,
-          requires_teacher_review_before_assigning: true
+          requires_teacher_review_before_assigning: true,
+          content_origin: 'ai_generated_draft',
+          rights_status: 'teacher_review_required',
+          deterministic_release_audit_required: true
         }
       })
     }
@@ -393,19 +396,28 @@ async function insertAssignment(token: string, teacherId: string, recommendation
     throw new Error('Assignment was not created.');
   }
 
-  await fetchJson(
-    `${supabaseUrl}/rest/v1/project_z_generated_assignment_questions`,
-    token,
-    {
-      method: 'POST',
-      body: JSON.stringify(
-        generated.questions.map((question) => ({
-          assignment_id: assignmentId,
-          ...question
-        }))
-      )
-    }
-  );
+  try {
+    await fetchJson(
+      `${supabaseUrl}/rest/v1/project_z_generated_assignment_questions`,
+      token,
+      {
+        method: 'POST',
+        body: JSON.stringify(
+          generated.questions.map((question) => ({
+            assignment_id: assignmentId,
+            ...question
+          }))
+        )
+      }
+    );
+  } catch (error) {
+    await fetchJson(
+      `${supabaseUrl}/rest/v1/project_z_generated_assignments?id=eq.${assignmentId}`,
+      token,
+      { method: 'DELETE' }
+    ).catch(() => undefined);
+    throw error;
+  }
 
   return assignmentId;
 }

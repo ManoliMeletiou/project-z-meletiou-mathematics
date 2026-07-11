@@ -13,6 +13,7 @@ import {
   fetchAssignmentQualityAuditLogs,
   logAssignmentQualityAudit,
   regenerateAssignmentQuestion,
+  runAssignmentReleaseAudit,
   AssignmentQualityAuditLog
 } from '../../lib/projectZAssignmentAudit';
 
@@ -101,15 +102,7 @@ export default function AssignmentAuditPage() {
     setBusy(true);
     setStatus('Saving automatic audit result...');
 
-    const issueCodes = audit.allIssues.map((issue) => issue.code);
-    const result = await logAssignmentQualityAudit({
-      assignment_id: selectedAssignmentId,
-      question_id: null,
-      audit_type: 'automatic_check',
-      audit_status: audit.allIssues.length === 0 && audit.questionCountOk ? 'passed' : 'flagged',
-      issue_codes: issueCodes,
-      notes: `Automatic audit: ${questions.length} questions, ${audit.flaggedQuestions.length} flagged questions.`
-    });
+    const result = await runAssignmentReleaseAudit(selectedAssignmentId);
 
     if (!result.ok) {
       setStatus(`Could not save audit: ${result.reason}`);
@@ -118,7 +111,9 @@ export default function AssignmentAuditPage() {
     }
 
     await loadAssignment(selectedAssignmentId);
-    setStatus('Automatic audit saved.');
+    setStatus(result.data.ok
+      ? 'Database release audit passed. Open Assignment Factory to approve and publish.'
+      : `Database release audit found: ${result.data.issue_codes.join(', ')}`);
     setBusy(false);
   }
 
@@ -206,6 +201,7 @@ export default function AssignmentAuditPage() {
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn blue" href="/assignment-factory">Assignment Factory</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/generated-assignments">Generated Assignments</a>
             <a className="btn secondary" href="/assignment-recommendations">Recommendations</a>

@@ -137,9 +137,9 @@ const teacherItems: ProjectZNavItem[] = [
     group: 'insight'
   },
   {
-    title: 'Smart Recommendations',
-    description: 'Find suggested assignments based on student needs.',
-    href: '/assignment-recommendations',
+    title: 'Assignment Factory',
+    description: 'Turn learning evidence into audited, teacher-approved assignments.',
+    href: '/assignment-factory',
     icon: '🧠',
     priority: 'primary',
     group: 'manage'
