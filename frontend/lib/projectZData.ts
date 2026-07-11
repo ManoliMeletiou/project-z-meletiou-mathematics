@@ -9,6 +9,16 @@ export type ProjectZAttemptInput = {
   difficulty?: number;
 };
 
+export type ProjectZRoleRequest = {
+  request_id: string;
+  requested_role: 'teacher' | 'parent';
+  reason: string | null;
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export async function getCurrentUserEmail() {
   if (!supabase) return null;
   const { data } = await supabase.auth.getUser();
@@ -36,6 +46,29 @@ export async function upsertCurrentProfile(role: 'student' | 'teacher' | 'parent
   }
 
   return { ok: true };
+}
+
+export async function requestRoleAccess(requestedRole: 'teacher' | 'parent', reason?: string) {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return { ok: false, reason: 'Sign in first' } as const;
+
+  const { data, error } = await supabase.rpc('project_z_request_role', {
+    p_requested_role: requestedRole,
+    p_reason: reason || null
+  });
+  if (error) return { ok: false, reason: error.message } as const;
+  return { ok: true, data } as const;
+}
+
+export async function fetchMyRoleRequests() {
+  if (!supabase) return [] as ProjectZRoleRequest[];
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return [] as ProjectZRoleRequest[];
+
+  const { data, error } = await supabase.rpc('project_z_my_role_requests');
+  if (error) return [] as ProjectZRoleRequest[];
+  return (data || []) as ProjectZRoleRequest[];
 }
 
 export async function recordPracticeAttempt(input: ProjectZAttemptInput) {

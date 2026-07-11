@@ -1,131 +1,103 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getStoredRole, hasSupabaseConfig, ProjectZRole, supabase } from '../../lib/supabaseClient';
-import { fetchMyMastery, upsertCurrentProfile } from '../../lib/projectZData';
-
-type UserState = {
-  email: string | null;
-  id: string | null;
-};
-
-type MasteryRow = {
-  skill_id: string;
-  attempts: number;
-  correct: number;
-  mastery_score: number;
-};
+import { ProjectZCalmHeader } from '../../components/ProjectZCalmHeader';
+import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
+import {
+  fetchMyRoleRequests,
+  ProjectZRoleRequest,
+  requestRoleAccess
+} from '../../lib/projectZData';
+import { projectZThemeForRole } from '../../lib/projectZNavigation';
+import { supabase } from '../../lib/supabaseClient';
 
 export default function AccountPage() {
-  const [user, setUser] = useState<UserState>({ email: null, id: null });
-  const [role, setRole] = useState<ProjectZRole>('student');
-  const [status, setStatus] = useState('Checking account...');
-  const [mastery, setMastery] = useState<MasteryRow[]>([]);
-  const [profileStatus, setProfileStatus] = useState('');
+  const [email, setEmail] = useState<string | null>(null);
+  const [role, setRole] = useState<ProjectZRole>('guest');
+  const [requests, setRequests] = useState<ProjectZRoleRequest[]>([]);
+  const [requestedRole, setRequestedRole] = useState<'teacher' | 'parent'>('teacher');
+  const [reason, setReason] = useState('');
+  const [status, setStatus] = useState('Checking your account…');
+  const [busy, setBusy] = useState(false);
 
   async function load() {
-    const storedRole = getStoredRole();
-    setRole(storedRole);
-
-    if (!hasSupabaseConfig || !supabase) {
-      setStatus('Supabase environment variables are not configured. Local MVP mode is active.');
-      return;
-    }
-
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error || !data.user) {
-      setStatus('Not signed in.');
-      setUser({ email: null, id: null });
-      return;
-    }
-
-    setUser({ email: data.user.email || null, id: data.user.id });
-    setStatus('Signed in.');
-
-    const profileResult = await upsertCurrentProfile(storedRole);
-    setProfileStatus(profileResult.ok
-      ? 'Profile synced.'
-      : `Profile sync pending: ${profileResult.reason}`);
-
-    const masteryRows = await fetchMyMastery();
-    setMastery(masteryRows as MasteryRow[]);
+    const profile = await getCurrentProfile();
+    setEmail(profile.email);
+    setRole(profile.role);
+    setRequests(profile.user ? await fetchMyRoleRequests() : []);
+    setStatus(profile.user ? 'Your database role is authoritative.' : 'Sign in to manage your account.');
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { void load(); }, []);
+
+  async function submitRequest() {
+    setBusy(true);
+    setStatus(`Requesting ${requestedRole} access…`);
+    const result = await requestRoleAccess(requestedRole, reason);
+    await load();
+    setStatus(result.ok ? 'Request submitted for verification. Your current access has not changed.' : `Request failed: ${result.reason}`);
+    setBusy(false);
+  }
 
   async function signOut() {
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
-
-    setUser({ email: null, id: null });
-    setStatus('Signed out.');
-    setProfileStatus('');
-    setMastery([]);
+    if (supabase) await supabase.auth.signOut();
+    await load();
+    window.location.href = '/home';
   }
 
   return (
-    <main className="page pz-theme pz-guest-theme">
-      <div className="container">
-        <nav className="nav">
-          <div className="brand">
-            <strong>Account</strong>
-            <span>Your Project Z session and database status</span>
-          </div>
-          <div className="navLinks">
-            <a className="btn secondary" href="/">Home</a>
-            <a className="btn secondary" href="/auth">Auth</a>
-            <a className="btn secondary" href="/dashboard">Dashboard</a>
-          </div>
-        </nav>
+    <main className={`page pz-theme pz-calm-page ${projectZThemeForRole(role)}`}>
+      <div className="pz-calm-container">
+        <ProjectZCalmHeader email={email} role={role} backHref="/home" backLabel="Home" />
 
-        <section className="grid grid2">
-          <div className="card">
-            <h1 style={{ fontSize: 42 }}>Account status</h1>
-            <p><strong>Status:</strong> {status}</p>
-            <p><strong>Email:</strong> {user.email || 'Not available'}</p>
-            <p><strong>User ID:</strong> {user.id || 'Not available'}</p>
-            <p><strong>Selected role:</strong> {role}</p>
-            {profileStatus && <p><strong>Profile:</strong> {profileStatus}</p>}
-
-            <div className="row" style={{ marginTop: 18 }}>
-              <a className="btn blue" href="/auth">Sign in / Create account</a>
-              <button className="btn secondary" onClick={signOut}>Sign out</button>
-              <button className="btn secondary" onClick={load}>Refresh account</button>
-            </div>
-          </div>
-
-          <div className="card">
-            <h2>Supabase mastery</h2>
-            {mastery.length === 0 ? (
-              <p className="muted">No mastery data yet. Sign in, run the SQL migration, then submit answers in the dashboard.</p>
-            ) : (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Skill</th>
-                    <th>Attempts</th>
-                    <th>Correct</th>
-                    <th>Mastery</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mastery.map((row) => (
-                    <tr key={row.skill_id}>
-                      <td>{row.skill_id}</td>
-                      <td>{row.attempts}</td>
-                      <td>{row.correct}</td>
-                      <td>{row.mastery_score}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+        <section className="pz-calm-hero pz-calm-hero-compact">
+          <p className="pz-eyebrow">Account</p>
+          <h1>{email ? 'Your Project Z access' : 'Sign in to Project Z'}</h1>
+          <p>{status}</p>
+          {!email ? <a className="pz-primary-action" href="/auth">Sign in <span>→</span></a> : null}
         </section>
+
+        {email ? (
+          <>
+            <section className="pz-calm-section">
+              <p className="pz-eyebrow">Current access</p>
+              <h2>{role.charAt(0).toUpperCase() + role.slice(1)}</h2>
+              <p className="muted">Your role comes from the protected Project Z profile—not this browser or local storage.</p>
+              <button className="btn secondary" onClick={() => void signOut()}>Sign out</button>
+            </section>
+
+            {role === 'student' ? (
+              <section className="pz-calm-section">
+                <p className="pz-eyebrow">Verified access</p>
+                <h2>Request teacher or parent access</h2>
+                <p className="muted">Requesting a role does not grant it. Approval must be completed by an authorized Project Z operator.</p>
+                <div className="grid" style={{ maxWidth: 620 }}>
+                  <label className="label">Requested role
+                    <select className="select" value={requestedRole} onChange={(event) => setRequestedRole(event.target.value as 'teacher' | 'parent')}>
+                      <option value="teacher">Teacher</option>
+                      <option value="parent">Parent</option>
+                    </select>
+                  </label>
+                  <label className="label">Reason or school context
+                    <textarea className="input" rows={3} value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Briefly explain the access you need." />
+                  </label>
+                  <button className="btn blue" disabled={busy} onClick={() => void submitRequest()}>Submit access request</button>
+                </div>
+              </section>
+            ) : null}
+
+            {requests.length > 0 ? (
+              <details className="pz-more-tools">
+                <summary>Access request history <span>{requests.length}</span></summary>
+                <div className="pz-more-tools-content">
+                  {requests.map((request) => (
+                    <p key={request.request_id}><strong>{request.requested_role}</strong> · {request.status}<br /><small className="muted">Updated {new Date(request.updated_at).toLocaleString()}</small></p>
+                  ))}
+                </div>
+              </details>
+            ) : null}
+          </>
+        ) : null}
       </div>
     </main>
   );

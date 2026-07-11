@@ -1,16 +1,22 @@
 'use client';
 
-import { useState } from 'react';
-import { getCurrentProfile, portalHomeForRole, ProjectZRole } from '../../lib/projectZAuth';
+import { useEffect, useState } from 'react';
+import { getCurrentProfile, portalHomeForRole } from '../../lib/projectZAuth';
 import { supabase } from '../../lib/supabaseClient';
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<'sign-in' | 'sign-up'>('sign-in');
+  const [mode, setMode] = useState<'sign-in' | 'sign-up' | 'forgot' | 'reset'>('sign-in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [role, setRole] = useState<ProjectZRole>('student');
   const [status, setStatus] = useState('Sign in or create an account.');
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('mode') === 'reset') {
+      setMode('reset');
+      setStatus('Choose a new password for your Project Z account.');
+    }
+  }, []);
 
   async function redirectToMyPortal() {
     const profile = await getCurrentProfile();
@@ -57,7 +63,7 @@ export default function AuthPage() {
 
     if (data.user) {
       const { error: profileError } = await supabase.rpc('project_z_upsert_profile', {
-        p_role: role,
+        p_role: 'student',
         p_display_name: displayName || email.split('@')[0]
       });
 
@@ -81,12 +87,39 @@ export default function AuthPage() {
     await redirectToMyPortal();
   }
 
+  async function sendPasswordReset() {
+    if (!supabase || !email.trim()) {
+      setStatus('Enter your account email first.');
+      return;
+    }
+    setStatus('Sending a secure reset link…');
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/auth?mode=reset`
+    });
+    setStatus(error ? error.message : 'Reset link sent. Check your email and follow the link.');
+  }
+
+  async function updatePassword() {
+    if (!supabase || password.length < 8) {
+      setStatus('Use a password of at least 8 characters.');
+      return;
+    }
+    setStatus('Updating your password…');
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) {
+      setStatus(error.message);
+      return;
+    }
+    setStatus('Password updated. Redirecting…');
+    await redirectToMyPortal();
+  }
+
   return (
     <main className="page pz-theme pz-guest-theme">
       <div className="container">
         <nav className="nav">
           <div className="brand">
-            <strong>{mode === 'sign-in' ? 'Sign in' : 'Create account'}</strong>
+            <strong>{mode === 'sign-in' ? 'Sign in' : mode === 'sign-up' ? 'Create account' : mode === 'forgot' ? 'Reset password' : 'Choose new password'}</strong>
             <span>Project Z role-based access</span>
           </div>
           <div className="navLinks">
@@ -101,15 +134,15 @@ export default function AuthPage() {
 
         <section className="card" style={{ maxWidth: 720 }}>
           <div className="grid">
-            <label className="label">
+            {mode !== 'reset' ? <label className="label">
               Email
               <input className="input" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" />
-            </label>
+            </label> : null}
 
-            <label className="label">
+            {mode !== 'forgot' ? <label className="label">
               Password
               <input className="input" value={password} onChange={(event) => setPassword(event.target.value)} type="password" />
-            </label>
+            </label> : null}
 
             {mode === 'sign-up' && (
               <>
@@ -118,28 +151,28 @@ export default function AuthPage() {
                   <input className="input" value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="Name shown in reports" />
                 </label>
 
-                <label className="label">
-                  Role
-                  <select className="select" value={role} onChange={(event) => setRole(event.target.value as ProjectZRole)}>
-                    <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="parent">Parent</option>
-                  </select>
-                </label>
+                <p className="notice">
+                  New accounts begin as students. Teacher and parent access is verified through a request from the Account page.
+                </p>
               </>
             )}
 
             {mode === 'sign-in' ? (
               <button className="btn blue" onClick={signIn}>Sign in</button>
-            ) : (
+            ) : mode === 'sign-up' ? (
               <button className="btn blue" onClick={signUp}>Create account</button>
-            )}
+            ) : mode === 'forgot' ? (
+              <button className="btn blue" onClick={sendPasswordReset}>Send reset link</button>
+            ) : <button className="btn blue" onClick={updatePassword}>Update password</button>}
 
             {mode === 'sign-in' ? (
-              <button className="btn secondary" onClick={() => setMode('sign-up')}>Need an account?</button>
-            ) : (
+              <>
+                <button className="btn secondary" onClick={() => setMode('sign-up')}>Need an account?</button>
+                <button className="btn secondary" onClick={() => setMode('forgot')}>Forgot password?</button>
+              </>
+            ) : mode === 'sign-up' ? (
               <button className="btn secondary" onClick={() => setMode('sign-in')}>Already have an account?</button>
-            )}
+            ) : <button className="btn secondary" onClick={() => setMode('sign-in')}>Back to sign in</button>}
           </div>
         </section>
       </div>

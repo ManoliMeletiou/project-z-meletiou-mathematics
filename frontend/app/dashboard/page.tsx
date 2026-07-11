@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { getStoredRole, supabase } from '../../lib/supabaseClient';
+import { getCurrentProfile } from '../../lib/projectZAuth';
+import { supabase } from '../../lib/supabaseClient';
 import { fetchMyMastery, fetchMyRecentAttempts, recordPracticeAttempt } from '../../lib/projectZData';
 
 type Question = {
@@ -121,7 +122,8 @@ export default function DashboardPage() {
     setAttempts(readAttempts());
 
     async function loadAccount() {
-      const role = getStoredRole();
+      const profile = await getCurrentProfile();
+      const role = profile.role;
 
       if (!supabase) {
         setAccountLabel(`Guest ${role}`);
@@ -129,9 +131,8 @@ export default function DashboardPage() {
         return;
       }
 
-      const { data } = await supabase.auth.getUser();
-      setAccountLabel(data.user?.email ? `${data.user.email} · ${role}` : `Guest ${role}`);
-      setSyncStatus(data.user ? 'Ready to sync with Supabase' : 'Sign in to sync with Supabase');
+      setAccountLabel(profile.email ? `${profile.email} · ${role}` : 'Guest student');
+      setSyncStatus(profile.user ? 'Ready to sync with Supabase' : 'Sign in to sync with Supabase');
 
       await refreshDatabaseData();
     }
