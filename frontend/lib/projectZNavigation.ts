@@ -19,6 +19,12 @@ export type ProjectZRoleNavigation = {
   guidance: string[];
 };
 
+export type ProjectZNavigationSummary = {
+  continueAction: ProjectZNavItem;
+  recommendedActions: ProjectZNavItem[];
+  moreActions: ProjectZNavItem[];
+};
+
 const guestItems: ProjectZNavItem[] = [
   {
     title: 'Sign in',
@@ -368,6 +374,33 @@ export function projectZNavigationForRole(roleInput: string | null | undefined):
       'Students, teachers, and parents each get a different workflow.'
     ]
   };
+}
+
+export function projectZNavigationSummary(
+  navigation: ProjectZRoleNavigation
+): ProjectZNavigationSummary {
+  const continueAction = navigation.primaryAction;
+  const recommendedActions = navigation.items
+    .filter((item) => item.href !== continueAction.href && item.priority === 'primary')
+    .slice(0, 2);
+  const recommendedHrefs = new Set([
+    continueAction.href,
+    ...recommendedActions.map((item) => item.href)
+  ]);
+
+  return {
+    continueAction,
+    recommendedActions,
+    moreActions: navigation.items.filter((item) => !recommendedHrefs.has(item.href))
+  };
+}
+
+export function projectZThemeForRole(roleInput: string | null | undefined): string {
+  const role = normalizedRole(roleInput);
+  if (role === 'student') return 'pz-student-theme';
+  if (role === 'teacher' || role === 'admin') return 'pz-teacher-theme';
+  if (role === 'parent') return 'pz-parent-theme';
+  return 'pz-guest-theme';
 }
 
 export function priorityLabel(priority: string) {

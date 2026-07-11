@@ -49,7 +49,17 @@ Project Z is launch-complete only when every gate is met:
 
 Exit gate: anonymous executable `SECURITY DEFINER` count is zero and existing signed-in workflows still operate.
 
-### Phase 53 — Assignment factory command centre
+### Phase 53 — Product constitution and calm shell
+
+1. Freeze the Project Z writable/reference boundary.
+2. Define the complete IB coverage, learning, AI, role, and acceptance contracts.
+3. Replace duplicated home navigation with one primary action, at most two secondary actions, and progressive disclosure.
+4. Remove design, preview, test, and system routes from the primary user path without deleting capabilities.
+5. Add reduced-motion and role-appropriate visual handling.
+
+Exit gate: the binding contracts are tracked and Home/Role Navigation present a calm, unambiguous path on desktop and mobile.
+
+### Phase 54 — Assignment factory command centre
 
 1. Unify `/assignment-recommendations`, `/generated-assignments`, and `/assignment-audit` into one controlled workflow.
 2. Show evidence behind each recommendation, target students, skill/prerequisite, difficulty and criterion mix.
@@ -59,7 +69,7 @@ Exit gate: anonymous executable `SECURITY DEFINER` count is zero and existing si
 
 Exit gate: a teacher can generate, audit, repair, and publish only verified work without bypassing review.
 
-### Phase 54 — Automated role and API test foundation
+### Phase 55 — Automated role and API test foundation
 
 1. Add unit tests for answer normalization, assignment validation, role routing, mastery, and spaced repetition.
 2. Add API tests for authentication, authorization, malformed input, rate limits, and provider failures.
@@ -69,7 +79,7 @@ Exit gate: a teacher can generate, audit, repair, and publish only verified work
 
 Exit gate: critical workflows and every cross-role denial are automated in CI.
 
-### Phase 55 — Identity, privacy, and account lifecycle
+### Phase 56 — Identity, privacy, and account lifecycle
 
 1. Remove local-storage role authority; the database profile is authoritative.
 2. Add server-side route protection where private content can render.
@@ -79,7 +89,7 @@ Exit gate: critical workflows and every cross-role denial are automated in CI.
 
 Exit gate: no user can self-promote or access another role's data.
 
-### Phase 56 — Mathematics and curriculum completeness
+### Phase 57 — Mathematics and curriculum completeness
 
 1. Define supported launch courses; do not claim unsupported coverage.
 2. Audit every canonical skill, prerequisite edge, diagnostic item, and course placement.
@@ -90,7 +100,7 @@ Exit gate: no user can self-promote or access another role's data.
 
 Exit gate: every advertised course meets the approved coverage threshold and sampling audit.
 
-### Phase 57 — Learning intelligence and assessment integrity
+### Phase 58 — Learning intelligence and assessment integrity
 
 1. Validate diagnostics, mastery updates, spaced repetition, prerequisite gaps, and recommendations with test cases.
 2. Keep Criterion A deterministic where possible.
@@ -100,7 +110,7 @@ Exit gate: every advertised course meets the approved coverage threshold and sam
 
 Exit gate: learning decisions are explainable, reproducible, and do not overstate assessment certainty.
 
-### Phase 58 — UX, accessibility, and performance
+### Phase 59 — UX, accessibility, and performance
 
 1. Run complete responsive checks on phone, tablet, laptop, and desktop.
 2. Add keyboard/focus, semantic headings, labels, live regions, reduced motion, contrast, and 3D fallbacks.
@@ -110,7 +120,7 @@ Exit gate: learning decisions are explainable, reproducible, and do not overstat
 
 Exit gate: WCAG 2.2 AA target checks and agreed performance budgets pass.
 
-### Phase 59 — Production operations and compliance
+### Phase 60 — Production operations and compliance
 
 1. Approve privacy policy, terms, child/student-data position, consent, retention, and deletion rules.
 2. Configure production/preview environment separation and secret rotation.
@@ -120,7 +130,7 @@ Exit gate: WCAG 2.2 AA target checks and agreed performance budgets pass.
 
 Exit gate: an operator can detect, contain, restore, and explain a production incident.
 
-### Phase 60 — Controlled pilot and launch
+### Phase 61 — Controlled pilot and launch
 
 1. Seed clean pilot data and create verified accounts for every role.
 2. Run the complete real-user checklist with teachers, students, and parents.

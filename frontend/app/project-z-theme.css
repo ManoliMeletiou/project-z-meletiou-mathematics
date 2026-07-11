@@ -622,6 +622,319 @@ main.page.pz-theme {
   }
 }
 
+/* Phase 53: calm, progressive-disclosure shell */
+.pz-calm-page::before,
+.pz-calm-page::after {
+  animation: none;
+  opacity: .35;
+}
+
+.pz-calm-container {
+  width: min(920px, calc(100vw - 32px));
+  margin-inline: auto;
+  padding: 18px 0 48px;
+}
+
+.pz-calm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 2px 24px;
+}
+
+.pz-calm-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--pz-text);
+}
+
+.pz-calm-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--pz-primary), var(--pz-primary-2));
+}
+
+.pz-calm-brand > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.pz-calm-brand small,
+.pz-calm-action small,
+.pz-tool-list small {
+  display: block;
+  color: var(--pz-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.pz-calm-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pz-icon-link,
+.pz-text-link {
+  color: var(--pz-muted);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.pz-icon-link:hover,
+.pz-text-link:hover {
+  color: var(--pz-text);
+}
+
+.pz-calm-page a:focus-visible,
+.pz-calm-page summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--pz-primary-2) 70%, white);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.pz-calm-hero,
+.pz-calm-section,
+.pz-more-tools {
+  border: 1px solid var(--pz-border);
+  background: var(--pz-card-bg);
+  box-shadow: 0 18px 52px rgba(2, 6, 23, .18);
+  backdrop-filter: blur(18px);
+}
+
+.pz-calm-hero {
+  padding: clamp(28px, 6vw, 54px);
+  border-radius: 28px;
+}
+
+.pz-calm-hero-compact {
+  padding-block: clamp(26px, 5vw, 42px);
+}
+
+.pz-calm-hero h1 {
+  max-width: 720px;
+  margin: 8px 0 14px;
+  font-size: clamp(2.35rem, 7vw, 4.3rem);
+  line-height: 1.02;
+}
+
+.pz-calm-hero > p:not(.pz-eyebrow) {
+  max-width: 680px;
+  color: var(--pz-muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.pz-eyebrow {
+  margin: 0;
+  color: color-mix(in srgb, var(--pz-primary-2) 78%, white);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.pz-parent-theme .pz-eyebrow {
+  color: #15803d;
+}
+
+.pz-primary-action {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 500px);
+  margin-top: 24px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  color: #fff;
+  font-weight: 850;
+  background: linear-gradient(135deg, var(--pz-primary), var(--pz-primary-2));
+  box-shadow: 0 14px 32px color-mix(in srgb, var(--pz-primary) 25%, transparent);
+}
+
+.pz-primary-action:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.pz-calm-section,
+.pz-more-tools {
+  margin-top: 18px;
+  padding: clamp(22px, 4vw, 30px);
+  border-radius: 22px;
+}
+
+.pz-calm-section h2 {
+  margin: 6px 0 18px;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+}
+
+.pz-calm-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pz-calm-action {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 92px;
+  padding: 16px;
+  border: 1px solid var(--pz-border);
+  border-radius: 16px;
+  background: rgba(255,255,255,.065);
+}
+
+.pz-calm-action:hover,
+.pz-tool-list a:hover {
+  border-color: var(--pz-border-strong);
+  background: rgba(255,255,255,.10);
+}
+
+.pz-calm-action strong,
+.pz-tool-list strong {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.pz-calm-action-icon {
+  font-size: 24px;
+}
+
+.pz-calm-action-arrow {
+  color: var(--pz-muted);
+}
+
+.pz-more-tools > summary,
+.pz-disclosure-stack summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  font-weight: 850;
+  list-style: none;
+}
+
+.pz-more-tools > summary::-webkit-details-marker,
+.pz-disclosure-stack summary::-webkit-details-marker {
+  display: none;
+}
+
+.pz-more-tools summary span,
+.pz-disclosure-stack summary span {
+  min-width: 28px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--pz-muted);
+  text-align: center;
+  background: rgba(255,255,255,.08);
+}
+
+.pz-more-tools-content {
+  display: grid;
+  gap: 24px;
+  padding-top: 24px;
+}
+
+.pz-more-tools-content h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.pz-tool-list {
+  display: grid;
+  gap: 8px;
+}
+
+.pz-tool-list a {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+}
+
+.pz-guided-steps {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding-left: 25px;
+  color: var(--pz-muted);
+  line-height: 1.55;
+}
+
+.pz-guided-steps li::marker {
+  color: var(--pz-primary-2);
+  font-weight: 900;
+}
+
+.pz-disclosure-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.pz-disclosure-stack details {
+  padding: 14px 16px;
+  border: 1px solid var(--pz-border);
+  border-radius: 15px;
+  background: rgba(255,255,255,.045);
+}
+
+.pz-disclosure-stack details[open] summary {
+  margin-bottom: 12px;
+}
+
+.pz-parent-theme .pz-calm-action,
+.pz-parent-theme .pz-disclosure-stack details {
+  background: rgba(255,255,255,.58);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .pz-calm-container {
+    width: min(100vw - 22px, 920px);
+    padding-top: 8px;
+  }
+
+  .pz-calm-header {
+    align-items: flex-start;
+  }
+
+  .pz-calm-brand small {
+    display: none;
+  }
+
+  .pz-calm-header-actions {
+    gap: 10px;
+  }
+
+  .pz-calm-action-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -1874,4 +2187,3 @@ main.page.pz-theme {
     flex-direction: column;
   }
 }
-

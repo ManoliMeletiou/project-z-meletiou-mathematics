@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-52-security-release-foundation',
+    version: 'phase-53-product-constitution-calm-shell',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -37,6 +37,12 @@ export async function GET() {
       defaultFunctionPrivilegesHardened: true,
       dependencyVersionsPinned: true,
       ciReleaseGate: true,
+      productConstitutionTracked: true,
+      ibCoverageContractTracked: true,
+      referenceBoundaryTracked: true,
+      completionAcceptanceMatrixTracked: true,
+      calmRoleHome: true,
+      progressiveDisclosureNavigation: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,
