@@ -9,7 +9,7 @@ import {
   GeneratedAssignmentQuestion,
   markGeneratedAssignmentStatus
 } from '../../lib/projectZGeneratedAssignments';
-import { publishGeneratedAssignment, fetchTeacherGeneratedAssignmentProgress, TeacherGeneratedAssignmentProgress } from '../../lib/projectZPublishGeneratedAssignments';
+import { fetchTeacherGeneratedAssignmentProgress, TeacherGeneratedAssignmentProgress } from '../../lib/projectZPublishGeneratedAssignments';
 
 function formatOptions(options: Record<string, string> | null) {
   if (!options) return null;
@@ -91,25 +91,6 @@ export default function GeneratedAssignmentsPage() {
     setBusy(false);
   }
 
-  async function publishAssignment() {
-    if (!selectedAssignmentId) return;
-
-    setBusy(true);
-    setStatus('Publishing generated assignment to students...');
-
-    const result = await publishGeneratedAssignment(selectedAssignmentId);
-
-    if (!result.ok) {
-      setStatus(`Could not publish: ${result.reason}`);
-      setBusy(false);
-      return;
-    }
-
-    setStatus('Generated assignment published to students.');
-    await loadPage();
-    setBusy(false);
-  }
-
   const selectedAssignment = assignments.find((assignment) => assignment.assignment_id === selectedAssignmentId);
 
   return (
@@ -121,6 +102,7 @@ export default function GeneratedAssignmentsPage() {
             <span>{email || 'Sign in'} - role: {role}</span>
           </div>
           <div className="navLinks">
+            <a className="btn blue" href="/assignment-factory">Assignment Factory</a>
             <a className="btn secondary" href="/">Home</a>
             <a className="btn secondary" href="/assignment-recommendations">Recommendations</a>
             <a className="btn secondary" href="/assignment-audit">Quality Audit</a>
@@ -203,12 +185,7 @@ export default function GeneratedAssignmentsPage() {
                     <button className="btn blue" disabled={busy} onClick={() => updateStatus('reviewed')}>
                       Mark reviewed
                     </button>
-                    <button className="btn secondary" disabled={busy} onClick={() => updateStatus('assigned')}>
-                      Mark assigned
-                    </button>
-                    <button className="btn blue" disabled={busy || selectedAssignment.question_count < 30} onClick={publishAssignment}>
-                      Publish to students
-                    </button>
+                    <a className="btn blue" href="/assignment-factory">Verify and publish in Assignment Factory</a>
                     <button className="btn secondary" disabled={busy} onClick={() => updateStatus('archived')}>
                       Archive
                     </button>

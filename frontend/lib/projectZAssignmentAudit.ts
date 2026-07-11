@@ -18,6 +18,28 @@ export type AssignmentQualityAuditLog = {
   created_at: string;
 };
 
+export type GeneratedAssignmentReleaseReadiness = {
+  ready: boolean;
+  assignment_id: string;
+  question_count_ok: boolean;
+  actual_question_count: number;
+  unresolved_flags: number;
+  automatic_audit_current: boolean;
+  teacher_approval_current: boolean;
+  rights_status_confirmed: boolean;
+  latest_content_change: string | null;
+  latest_automatic_pass: string | null;
+  latest_teacher_approval: string | null;
+};
+
+export type AssignmentReleaseAuditResult = {
+  ok: boolean;
+  audit_id: string;
+  audit_status: 'passed' | 'flagged';
+  issue_codes: string[];
+  question_count: number;
+};
+
 export function auditGeneratedQuestion(question: GeneratedAssignmentQuestion): AssignmentQualityIssue[] {
   const issues: AssignmentQualityIssue[] = [];
   const prompt = question.prompt || '';
@@ -191,6 +213,49 @@ export async function fetchAssignmentQualityAuditLogs(assignmentId: string) {
 
   if (error) return [] as AssignmentQualityAuditLog[];
   return (data || []) as AssignmentQualityAuditLog[];
+}
+
+export async function runAssignmentReleaseAudit(assignmentId: string) {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return { ok: false, reason: 'Sign in first' } as const;
+
+  const { data, error } = await supabase.rpc('project_z_run_assignment_release_audit', {
+    p_assignment_id: assignmentId
+  });
+
+  if (error) return { ok: false, reason: error.message } as const;
+  return { ok: true, data: data as AssignmentReleaseAuditResult } as const;
+}
+
+export async function fetchGeneratedAssignmentReleaseReadiness(assignmentId: string) {
+  if (!supabase) return null;
+
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return null;
+
+  const { data, error } = await supabase.rpc('project_z_generated_assignment_release_readiness', {
+    p_assignment_id: assignmentId
+  });
+
+  if (error) return null;
+  return data as GeneratedAssignmentReleaseReadiness;
+}
+
+export async function approveGeneratedAssignmentRelease(assignmentId: string) {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return { ok: false, reason: 'Sign in first' } as const;
+
+  const { data, error } = await supabase.rpc('project_z_approve_generated_assignment_release', {
+    p_assignment_id: assignmentId,
+    p_originality_and_rights_confirmed: true
+  });
+
+  if (error) return { ok: false, reason: error.message } as const;
+  return { ok: true, data } as const;
 }
 
 export async function regenerateAssignmentQuestion(payload: {
