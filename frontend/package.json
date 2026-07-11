@@ -2,12 +2,15 @@
   "name": "project-z-frontend",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "smoke": "node scripts/smoke-production.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mts",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run build"
+    "check": "npm test && npm run typecheck && npm run build && npm run smoke"
   },
   "dependencies": {
     "@react-three/drei": "10.7.7",
