@@ -25,6 +25,7 @@ import {
   GeneratedAssignmentQuestion,
 } from '../../lib/projectZGeneratedAssignments';
 import { publishGeneratedAssignment } from '../../lib/projectZPublishGeneratedAssignments';
+import { nextReleaseFlowAction } from '../../lib/projectZReleaseFlow';
 import { useProjectZProfile } from '../../lib/useProjectZProfile';
 
 const emptyReadiness: GeneratedAssignmentReleaseReadiness = {
@@ -190,15 +191,26 @@ export default function AssignmentFactoryPage() {
     setBusy(false);
   }
 
-  const primaryAction = selectedAssignment?.status === 'assigned'
+  const nextAction = nextReleaseFlowAction({
+    assignmentSelected: Boolean(selectedAssignmentId),
+    alreadyAssigned: selectedAssignment?.status === 'assigned',
+    automaticAuditCurrent: readiness.automatic_audit_current,
+    unresolvedFlags: readiness.unresolved_flags,
+    teacherApprovalCurrent: readiness.teacher_approval_current,
+    rightsConfirmed: readiness.rights_status_confirmed || rightsConfirmed,
+    ready: readiness.ready
+  });
+  const primaryAction = nextAction === 'published'
     ? { label: 'Published to students', action: () => undefined, disabled: true }
-    : !readiness.automatic_audit_current
-    ? { label: 'Run release audit', action: runAudit, disabled: !selectedAssignmentId }
-    : readiness.unresolved_flags > 0
-      ? { label: 'Repair flagged questions', action: () => undefined, disabled: true }
-      : !readiness.teacher_approval_current
-        ? { label: 'Approve audited assignment', action: approveForRelease, disabled: !rightsConfirmed }
-        : { label: 'Publish to students', action: publish, disabled: !readiness.ready || selectedAssignment?.status === 'assigned' };
+    : nextAction === 'audit'
+      ? { label: 'Run release audit', action: runAudit, disabled: !selectedAssignmentId }
+      : nextAction === 'repair'
+        ? { label: 'Repair flagged questions', action: () => undefined, disabled: true }
+        : nextAction === 'approve'
+          ? { label: 'Approve audited assignment', action: approveForRelease, disabled: !rightsConfirmed }
+          : nextAction === 'publish'
+            ? { label: 'Publish to students', action: publish, disabled: !readiness.ready }
+            : { label: 'Select an assignment', action: () => undefined, disabled: true };
 
   return (
     <main className="page pz-theme pz-teacher-theme pz-calm-page">

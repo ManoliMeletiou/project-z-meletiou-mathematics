@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-54-controlled-assignment-factory',
+    version: 'phase-55-automated-release-tests',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -47,6 +47,9 @@ export async function GET() {
       databaseAssignmentReleaseAudit: true,
       directAssignedStatusBlocked: true,
       studentAnswerLeakageBlocked: true,
+      automatedUnitContracts: true,
+      automatedApiBoundaryTests: true,
+      automatedProductionSmoke: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,

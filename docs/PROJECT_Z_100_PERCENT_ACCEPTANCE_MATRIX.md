@@ -14,6 +14,7 @@ No percentage based on page count, route count, question rows, or phases complet
 |---|---|---|
 | Scope boundary | GREEN | Binding writable/read-only register exists and every external write verifies its target. |
 | Release foundation | GREEN | CI build/typecheck/Python checks, production health, deployment evidence, rollback path. |
+| Automated release tests | AMBER | Unit, API-boundary, SQL-contract, and production-smoke tests exist; authenticated role/RLS/browser fixtures and full E2E loops remain. |
 | Anonymous RPC containment | GREEN | Zero anonymously executable `SECURITY DEFINER` functions. |
 | Least-privilege data security | RED | Role matrix tests pass; no unresolved high/critical advisor issue; privileged RPCs minimized; RLS policy gaps resolved. |
 | Identity lifecycle | RED | Signup, verification, reset, session expiry, logout, invitation, role approval, export, and deletion pass end to end. |
@@ -37,4 +38,3 @@ No percentage based on page count, route count, question rows, or phases complet
 ## Launch rule
 
 Project Z reaches 100% only when every row is `GREEN`, evidence links are recorded, production is reverified after the final release, and the launch decision is signed. Until then, work continues in the risk-first order in `PROJECT_Z_COMPLETION_MASTER_PLAN.md`.
-

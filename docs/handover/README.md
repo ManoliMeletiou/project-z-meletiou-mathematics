@@ -3,24 +3,24 @@
 Current authoritative documents:
 
 ```text
-PROJECT_Z_HANDOVER_PHASE_54.md
+PROJECT_Z_HANDOVER_PHASE_55.md
 ../PROJECT_Z_COMPLETION_MASTER_PLAN.md
 ```
 
 Current phase report:
 
 ```text
-../phase-reports/PHASE_54_CONTROLLED_ASSIGNMENT_FACTORY_REPORT.md
+../phase-reports/PHASE_55_AUTOMATED_RELEASE_TEST_FOUNDATION_REPORT.md
 ```
 
 Current release gate:
 
 ```text
-Publish Phase 54, apply the Project Z migration, pass CI, deploy, and verify every release gate.
+Publish Phase 55, pass the expanded CI and production smoke, deploy, and verify health.
 ```
 
 Next product phase after the release gate:
 
 ```text
-Phase 55 — Automated role and API test foundation
+Phase 56 — Identity, privacy, and account lifecycle
 ```
