@@ -19,6 +19,37 @@ export type ProjectZRoleRequest = {
   updated_at: string;
 };
 
+export type ProjectZOperatorRoleRequest = {
+  request_id: string;
+  user_id: string;
+  email: string;
+  requested_role: 'teacher' | 'parent';
+  reason: string | null;
+  status: 'pending';
+  created_at: string;
+  updated_at: string;
+};
+
+export type ProjectZAccountDeletionRequest = {
+  request_id: string;
+  status: 'pending' | 'cancelled' | 'processing' | 'completed';
+  requested_at: string;
+  grace_ends_at: string;
+  cancelled_at: string | null;
+  processed_at: string | null;
+};
+
+export type ProjectZOperatorDeletionRequest = {
+  request_id: string;
+  user_id: string;
+  email: string;
+  role: 'student' | 'teacher' | 'parent';
+  status: 'pending';
+  requested_at: string;
+  grace_ends_at: string;
+  eligible: boolean;
+};
+
 export async function getCurrentUserEmail() {
   if (!supabase) return null;
   const { data } = await supabase.auth.getUser();
@@ -69,6 +100,74 @@ export async function fetchMyRoleRequests() {
   const { data, error } = await supabase.rpc('project_z_my_role_requests');
   if (error) return [] as ProjectZRoleRequest[];
   return (data || []) as ProjectZRoleRequest[];
+}
+
+export async function isProjectZOperator() {
+  if (!supabase) return false;
+  const { data, error } = await supabase.rpc('project_z_is_operator');
+  return error ? false : data === true;
+}
+
+export async function fetchOperatorRoleRequestQueue() {
+  if (!supabase) return [] as ProjectZOperatorRoleRequest[];
+  const { data, error } = await supabase.rpc('project_z_operator_role_request_queue');
+  return error ? [] as ProjectZOperatorRoleRequest[] : (data || []) as ProjectZOperatorRoleRequest[];
+}
+
+export async function reviewProjectZRoleRequest(
+  requestId: string,
+  decision: 'approved' | 'rejected',
+  reviewNote?: string
+) {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+  const { data, error } = await supabase.rpc('project_z_review_role_request', {
+    p_request_id: requestId,
+    p_decision: decision,
+    p_review_note: reviewNote || null
+  });
+  return error ? { ok: false, reason: error.message } as const : { ok: true, data } as const;
+}
+
+export async function exportMyProjectZData() {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+  const { data, error } = await supabase.rpc('project_z_export_my_data');
+  return error ? { ok: false, reason: error.message } as const : { ok: true, data } as const;
+}
+
+export async function fetchMyAccountDeletionRequest() {
+  if (!supabase) return null as ProjectZAccountDeletionRequest | null;
+  const { data, error } = await supabase.rpc('project_z_my_account_deletion_request');
+  if (error) return null;
+  return ((data || [])[0] || null) as ProjectZAccountDeletionRequest | null;
+}
+
+export async function requestProjectZAccountDeletion(confirmation: string) {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+  const { data, error } = await supabase.rpc('project_z_request_account_deletion', {
+    p_confirmation: confirmation
+  });
+  return error ? { ok: false, reason: error.message } as const : { ok: true, data } as const;
+}
+
+export async function cancelProjectZAccountDeletion() {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+  const { data, error } = await supabase.rpc('project_z_cancel_account_deletion');
+  return error ? { ok: false, reason: error.message } as const : { ok: true, data } as const;
+}
+
+export async function fetchOperatorDeletionQueue() {
+  if (!supabase) return [] as ProjectZOperatorDeletionRequest[];
+  const { data, error } = await supabase.rpc('project_z_operator_deletion_queue');
+  return error ? [] as ProjectZOperatorDeletionRequest[] : (data || []) as ProjectZOperatorDeletionRequest[];
+}
+
+export async function processProjectZAccountDeletion(requestId: string, confirmation: string) {
+  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' } as const;
+  const { data, error } = await supabase.rpc('project_z_operator_process_account_deletion', {
+    p_request_id: requestId,
+    p_confirmation: confirmation
+  });
+  return error ? { ok: false, reason: error.message } as const : { ok: true, data } as const;
 }
 
 export async function recordPracticeAttempt(input: ProjectZAttemptInput) {

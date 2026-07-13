@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-56-identity-role-hardening',
+    version: 'phase-56b-identity-privacy-completion',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -54,6 +54,15 @@ export async function GET() {
       databaseRoleAuthority: true,
       verifiedRoleRequestFlow: true,
       passwordResetFlow: true,
+      cookieBasedServerSessions: true,
+      verifiedClaimsRouteProtection: true,
+      databaseRoleRouteProtection: true,
+      safeAuthCallbacks: true,
+      operatorApprovalSeparation: true,
+      operatorSelfApprovalBlocked: true,
+      accountDataExport: true,
+      deletionGraceAndCancellation: true,
+      controlledDeletionProcessing: true,
       companionFallbackForAccessibility: true,
       cosmicStudentBackground: true,
       companionCommandPanel: true,
@@ -65,6 +74,6 @@ export async function GET() {
       mobileResponsive: true,
       bestAccuracyOverDecoration: true
     },
-    routes: ['/', '/home', '/role-navigation', '/design-preview', '/help', '/mobile-preview', '/student', '/student-dashboard', '/student-quest', '/quest-studio', '/teacher', '/teacher-engagement-insights', '/parent', '/parent-dashboard', '/parent-engagement-view', '/parent-learning-report', '/export-reports', '/assignment-factory', '/assignment-recommendations', '/generated-assignments', '/assignment-audit', '/assignment-lifecycle', '/teacher-submission-review', '/teacher-corrections-review', '/student-generated-assignments', '/student-memorandum', '/student-corrections', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/create-assignment-from-recommendation', '/api/regenerate-assignment-question', '/api/health']
+    routes: ['/', '/home', '/role-navigation', '/design-preview', '/help', '/mobile-preview', '/student', '/student-dashboard', '/student-quest', '/quest-studio', '/teacher', '/teacher-engagement-insights', '/parent', '/parent-dashboard', '/parent-engagement-view', '/parent-learning-report', '/export-reports', '/assignment-factory', '/assignment-recommendations', '/generated-assignments', '/assignment-audit', '/assignment-lifecycle', '/teacher-submission-review', '/teacher-corrections-review', '/student-generated-assignments', '/student-memorandum', '/student-corrections', '/reports', '/quality', '/generate', '/ai-test', '/ai-usage', '/tutor', '/tutor-evidence', '/teacher-tutor-evidence', '/curriculum', '/diagnostic', '/recommended', '/path', '/auth', '/auth/callback', '/auth/confirm', '/account', '/dashboard', '/classes', '/assignments', '/api/question', '/api/generate-quality-question', '/api/generation-status', '/api/generation-self-test', '/api/tutor', '/api/create-assignment-from-recommendation', '/api/regenerate-assignment-question', '/api/health']
   });
 }
