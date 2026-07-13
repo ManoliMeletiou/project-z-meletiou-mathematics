@@ -30,18 +30,29 @@ async function verifyText(path, expected) {
   for (const value of expected) assert.ok(text.includes(value), `${path} must contain: ${value}`);
 }
 
+async function verifyRedirect(path, destination) {
+  const response = await fetch(`${origin}${path}`, { redirect: 'manual' });
+  assert.ok([302, 303, 307, 308].includes(response.status), `${path} must redirect when signed out`);
+  const location = response.headers.get('location') || '';
+  assert.ok(location.includes(destination), `${path} must redirect to ${destination}`);
+}
+
 try {
   await waitForServer();
   const healthResponse = await fetch(`${origin}/api/health`);
   const health = await healthResponse.json();
   assert.equal(health.ok, true);
   assert.equal(health.app, 'Project Z');
-  assert.equal(health.version, 'phase-56-identity-role-hardening');
+  assert.equal(health.version, 'phase-56b-identity-privacy-completion');
   assert.equal(health.checks.controlledAssignmentFactory, true);
+  assert.equal(health.checks.verifiedClaimsRouteProtection, true);
+  assert.equal(health.checks.accountDataExport, true);
 
   await verifyText('/home', ['Project Z', 'Choose your starting point', 'More tools']);
   await verifyText('/role-navigation', ['One clear path, with every tool available', 'Suggested path']);
-  await verifyText('/assignment-factory', ['Evidence to assignment, without unsafe shortcuts', 'Teacher sign-in required']);
+  await verifyText('/auth', ['Project Z role-based access', 'Sign in']);
+  await verifyText('/account', ['Sign in to Project Z']);
+  await verifyRedirect('/assignment-factory', '/auth');
   process.stdout.write('Project Z production smoke test passed.\n');
 } finally {
   server.kill('SIGTERM');

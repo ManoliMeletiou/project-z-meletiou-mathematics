@@ -17,7 +17,7 @@ No percentage based on page count, route count, question rows, or phases complet
 | Automated release tests | AMBER | Unit, API-boundary, SQL-contract, and production-smoke tests exist; authenticated role/RLS/browser fixtures and full E2E loops remain. |
 | Anonymous RPC containment | GREEN | Zero anonymously executable `SECURITY DEFINER` functions. |
 | Least-privilege data security | RED | Role matrix tests pass; no unresolved high/critical advisor issue; privileged RPCs minimized; RLS policy gaps resolved. |
-| Identity lifecycle | AMBER | Signup/reset/logout and self-promotion prevention exist; verified role approval, session-expiry UX, export/deletion, MFA policy, and authenticated E2E remain. |
+| Identity lifecycle | AMBER | Signup/reset/global logout, self-promotion prevention, server route guards, operator approval, export, deletion grace/cancellation, and safe callbacks exist; authenticated browser fixtures, leaked-password protection, and MFA policy remain. |
 | Calm product shell | AMBER | Home and role navigation simplified in Phase 53; every primary route still requires the same audit. |
 | MYP atlas | RED | Years 1–5 Standard and Extended fully mapped, reviewed, versioned, and audited. |
 | DP atlas | RED | AA SL/HL and AI SL/HL fully mapped, reviewed, versioned, and audited. |

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getCurrentProfile, portalHomeForRole } from '../../lib/projectZAuth';
+import { safeProjectZNextPath } from '../../lib/projectZAuthRedirect';
 import { supabase } from '../../lib/supabaseClient';
 
 export default function AuthPage() {
@@ -12,13 +13,37 @@ export default function AuthPage() {
   const [status, setStatus] = useState('Sign in or create an account.');
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get('mode') === 'reset') {
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get('reason');
+    if (params.get('mode') === 'reset') {
       setMode('reset');
       setStatus('Choose a new password for your Project Z account.');
+    } else if (reason === 'session-required') {
+      setStatus('Sign in securely to continue to that Project Z page.');
+    } else if (reason === 'callback-failed' || reason === 'confirmation-failed') {
+      setStatus('That secure email link could not be verified. Request a new link and try again.');
+    } else if (reason === 'configuration') {
+      setStatus('Project Z sign-in is temporarily unavailable. Please try again shortly.');
     }
+
+    const { data: listener } = supabase?.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setMode('reset');
+        setStatus('Choose a new password for your Project Z account.');
+      }
+    }) || { data: { subscription: null } };
+    return () => listener.subscription?.unsubscribe();
   }, []);
 
   async function redirectToMyPortal() {
+    const requestedNext = safeProjectZNextPath(
+      new URLSearchParams(window.location.search).get('next'),
+      ''
+    );
+    if (requestedNext) {
+      window.location.href = requestedNext;
+      return;
+    }
     const profile = await getCurrentProfile();
     window.location.href = portalHomeForRole(profile.role);
   }
@@ -53,7 +78,10 @@ export default function AuthPage() {
     setStatus('Creating account...');
     const { data, error } = await supabase.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent('/account')}`
+      }
     });
 
     if (error) {
@@ -94,7 +122,7 @@ export default function AuthPage() {
     }
     setStatus('Sending a secure reset link…');
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/auth?mode=reset`
+      redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent('/auth?mode=reset')}`
     });
     setStatus(error ? error.message : 'Reset link sent. Check your email and follow the link.');
   }
