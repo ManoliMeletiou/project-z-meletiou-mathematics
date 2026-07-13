@@ -19,6 +19,19 @@ MYP source boundary: the public IB framework defines broad content areas and Sta
 
 DP version boundary: current and upcoming cohort specifications must be versioned separately. A skill or assessment rule may not silently combine the first-assessment-2021 and first-assessment-2029 courses.
 
+## Curriculum approval contract
+
+Curriculum approval is a two-person evidence decision, not an operator toggle:
+
+1. an operator registers source metadata and a credential-verified curriculum mapper;
+2. the mapper records the authorized source code, a precise private-source locator, a decision and notes for one candidate placement;
+3. a different credential-verified mathematics educator independently approves or rejects that placement;
+4. the database records immutable events and evidence digests for both decisions;
+5. only the two approved decisions can move the candidate placement to `approved`;
+6. changing either decision reopens the placement and keeps serving blocked.
+
+Operators may manage reviewer eligibility but may not verify themselves or substitute for either independent review. Protected guide text, copies of assessment material and private Drive links are not stored in the Project Z interface or repository. Source locators and detailed review notes remain restricted.
+
 ## Skill record contract
 
 Every advertised skill requires:

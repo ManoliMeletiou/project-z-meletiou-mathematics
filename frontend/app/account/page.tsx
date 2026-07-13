@@ -172,7 +172,12 @@ export default function AccountPage() {
               <p className="pz-eyebrow">Current access</p>
               <h2>{role.charAt(0).toUpperCase() + role.slice(1)}</h2>
               <p className="muted">Your role comes from the protected Project Z profile—not this browser or local storage.</p>
-              {operator ? <p className="notice"><strong>Operator controls active.</strong> This is separate from your learning role.</p> : null}
+              {operator ? (
+                <div className="notice">
+                  <p><strong>Operator controls active.</strong> This is separate from your learning role.</p>
+                  <a className="btn secondary" href="/curriculum-review">Open curriculum review</a>
+                </div>
+              ) : null}
               <button className="btn secondary" onClick={() => void signOut()}>Sign out everywhere</button>
             </section>
 

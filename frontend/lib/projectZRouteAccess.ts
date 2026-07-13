@@ -3,6 +3,7 @@ export type ProjectZDatabaseRole = 'student' | 'teacher' | 'parent';
 export type ProjectZRouteRule = {
   route: string;
   roles: readonly ProjectZDatabaseRole[];
+  access?: 'database-role' | 'curriculum-review';
 };
 
 const teacherOnly = [
@@ -55,7 +56,12 @@ const sharedRules: ProjectZRouteRule[] = [
   { route: '/export-reports', roles: ['teacher', 'parent'] }
 ];
 
+const restrictedRules: ProjectZRouteRule[] = [
+  { route: '/curriculum-review', roles: [], access: 'curriculum-review' }
+];
+
 export const projectZProtectedRouteRules: ProjectZRouteRule[] = [
+  ...restrictedRules,
   ...teacherOnly.map((route) => ({ route, roles: ['teacher'] as const })),
   ...studentOnly.map((route) => ({ route, roles: ['student'] as const })),
   ...parentOnly.map((route) => ({ route, roles: ['parent'] as const })),
@@ -73,7 +79,8 @@ export function projectZRouteRuleForPath(pathname: string) {
 export function projectZRouteDecision(
   pathname: string,
   authenticated: boolean,
-  role: ProjectZDatabaseRole | null
+  role: ProjectZDatabaseRole | null,
+  access: { curriculumReview?: boolean } = {}
 ) {
   const rule = projectZRouteRuleForPath(pathname);
   if (!rule) return { allowed: true, redirectTo: null, reason: 'public' as const };
@@ -85,6 +92,17 @@ export function projectZRouteDecision(
       redirectTo: `/auth?reason=session-required&next=${next}`,
       reason: 'sign-in' as const
     };
+  }
+
+  if (rule.access === 'curriculum-review') {
+    if (!access.curriculumReview) {
+      return {
+        allowed: false,
+        redirectTo: '/home?access=denied',
+        reason: 'curriculum-review' as const
+      };
+    }
+    return { allowed: true, redirectTo: null, reason: 'allowed' as const };
   }
 
   if (!role) {

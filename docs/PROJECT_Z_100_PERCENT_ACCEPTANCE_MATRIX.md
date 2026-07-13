@@ -19,8 +19,8 @@ No percentage based on page count, route count, question rows, or phases complet
 | Least-privilege data security | RED | Role matrix tests pass; no unresolved high/critical advisor issue; privileged RPCs minimized; RLS policy gaps resolved. |
 | Identity lifecycle | AMBER | Signup/reset/global logout, self-promotion prevention, server route guards, operator approval, export, deletion grace/cancellation, and safe callbacks exist; authenticated browser fixtures, leaked-password protection, and MFA policy remain. |
 | Calm product shell | AMBER | Home and role navigation simplified in Phase 53; every primary route still requires the same audit. |
-| MYP atlas | RED | Phase 57 registers all ten Year 1–5 Standard/Extended pathways and 142 legacy candidate placements with source/version evidence; authorized-guide alignment and educator approval remain incomplete. |
-| DP atlas | RED | Phase 57 registers AA SL/HL and AI SL/HL and 296 legacy candidate placements, with current-2021 and upcoming-2029 briefs separated; exhaustive guide alignment and educator approval remain incomplete. |
+| MYP atlas | RED | Phase 57 registers all ten Year 1–5 Standard/Extended pathways and 142 legacy candidate placements. Phase 58 now enforces separate verified source alignment and mathematics-educator sign-off, but no authorized guide or reviewer is registered and no placement is approved. |
+| DP atlas | RED | Phase 57 registers AA SL/HL and AI SL/HL and 296 legacy candidate placements, with current-2021 and upcoming-2029 briefs separated. Phase 58 adds the auditable two-person review gate, but exact guide alignment and approval remain at zero. |
 | Practice depth | RED | Phase 57 enforces a 2,000-distinct-verified-variant floor and reports zero release-ready skills; generator diversity, approval, and sampling remain incomplete. |
 | Diagnostic validity | RED | Adaptive placement and misconception detection validated against reviewed cases. |
 | Mastery validity | RED | Explainable mastery and spaced review calibrated against reviewed learning histories. |
@@ -33,7 +33,7 @@ No percentage based on page count, route count, question rows, or phases complet
 | Reliability/operations | RED | Monitoring, rate/cost limits, backup/restore drill, incident response, provider outage, and rollback tested. |
 | Privacy/compliance | RED | Approved privacy, terms, retention, consent, child-data, export, deletion, and breach procedures. |
 | Controlled pilot | RED | Representative students, teachers, and parents complete the pilot with zero release blocker. |
-| Final handover | RED | Architecture, schema, curriculum, AI, environments, deployment, rollback, operations, and limitations are current. |
+| Final handover | RED | Phase 58 handover records the current fail-closed curriculum state; final architecture, schema, curriculum, AI, environments, deployment, rollback, operations, limitations, and launch decision remain incomplete. |
 
 ## Launch rule
 

@@ -397,6 +397,44 @@ main.page.pz-theme {
   line-height: 1.55;
 }
 
+.pz-review-focus {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, 0.45fr);
+  gap: 22px;
+  align-items: start;
+  margin-top: 18px;
+  padding: 22px;
+  border: 1px solid var(--pz-border);
+  border-radius: 20px;
+  background: var(--pz-panel-soft);
+}
+
+.pz-review-focus h3 {
+  margin: 4px 0 8px;
+  font-size: clamp(1.25rem, 2.4vw, 1.65rem);
+}
+
+.pz-review-focus p {
+  margin-bottom: 0;
+}
+
+.pz-review-blockers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 760px) {
+  .pz-review-focus {
+    grid-template-columns: 1fr;
+  }
+
+  .pz-review-blockers {
+    justify-content: flex-start;
+  }
+}
+
 .pz-atlas-groups {
   display: grid;
   gap: 10px;
