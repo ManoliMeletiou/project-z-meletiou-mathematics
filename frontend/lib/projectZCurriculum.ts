@@ -10,6 +10,16 @@ export type CourseCatalogRow = {
   is_gateway: boolean;
   is_selectable: boolean;
   sort_order: number;
+  year_number?: number | null;
+  atlas_skill_count?: number;
+  reviewed_skill_count?: number;
+  variant_ready_skill_count?: number;
+  strict_verified_variant_count?: number;
+  release_state?: 'blocked' | 'pilot' | 'released' | 'retired';
+  advertised_complete?: boolean;
+  required_min_variants_per_skill?: number;
+  source_reviewed?: boolean;
+  release_block_reason?: string;
 };
 
 export type SelectedCourseRow = {
@@ -44,16 +54,54 @@ export type CurriculumSkillRow = {
   sort_order: number;
 };
 
+export type AtlasSkillCoverageRow = {
+  atlas_skill_code: string;
+  canonical_skill_id: string;
+  title: string;
+  learning_objective: string;
+  strand_code: string;
+  subtopic_code: string | null;
+  placement_stages: string[];
+  course_sequence: number;
+  difficulty_band: number;
+  prerequisite_count: number;
+  review_status: 'candidate' | 'needs_revision' | 'educator_review' | 'approved' | 'retired';
+  candidate_verified_variant_count: number;
+  strict_verified_variant_count: number;
+  required_min_variants: number;
+  release_ready: boolean;
+};
+
 export async function fetchCurriculumCourses() {
   if (!supabase) return [] as CourseCatalogRow[];
 
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return [] as CourseCatalogRow[];
 
-  const { data, error } = await supabase.rpc('project_z_curriculum_courses');
+  const { data, error } = await supabase.rpc('project_z_curriculum_pathways');
 
   if (error) return [] as CourseCatalogRow[];
-  return (data || []) as CourseCatalogRow[];
+  return ((data || []) as Omit<CourseCatalogRow, 'parent_course_code' | 'is_gateway' | 'is_selectable'>[])
+    .map((course) => ({
+      ...course,
+      parent_course_code: null,
+      is_gateway: false,
+      is_selectable: true
+    }));
+}
+
+export async function fetchAtlasSkillCoverage(courseCode: string) {
+  if (!supabase) return [] as AtlasSkillCoverageRow[];
+
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return [] as AtlasSkillCoverageRow[];
+
+  const { data, error } = await supabase.rpc('project_z_atlas_skill_coverage', {
+    p_course_code: courseCode
+  });
+
+  if (error) return [] as AtlasSkillCoverageRow[];
+  return (data || []) as AtlasSkillCoverageRow[];
 }
 
 export async function selectStudentCourse(courseCode: string) {

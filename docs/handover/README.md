@@ -3,24 +3,24 @@
 Current authoritative documents:
 
 ```text
-PROJECT_Z_HANDOVER_PHASE_56B.md
+PROJECT_Z_HANDOVER_PHASE_57.md
 ../PROJECT_Z_COMPLETION_MASTER_PLAN.md
 ```
 
 Current phase report:
 
 ```text
-../phase-reports/PHASE_56B_IDENTITY_PRIVACY_COMPLETION_REPORT.md
+../phase-reports/PHASE_57_IB_CURRICULUM_EVIDENCE_FOUNDATION_REPORT.md
 ```
 
 Current release gate:
 
 ```text
-Publish Phase 56b, pass CI, deploy, and verify cookie sessions, server role guards, operator controls, and privacy lifecycle.
+Publish Phase 57, pass CI, deploy, and verify the fourteen-pathway curriculum surface and fail-closed release evidence.
 ```
 
 Next product phase after the release gate:
 
 ```text
-Phase 57: authoritative MYP/DP curriculum atlas, coverage evidence, and verified content foundation
+Phase 57 continuation: authorized-guide alignment, mathematics educator approval, verified generator families, and 2,000 distinct variants for every approved skill.
 ```

@@ -307,6 +307,164 @@ main.page.pz-theme {
     rgba(255,255,255,.70) !important;
 }
 
+/* Phase 57: calm curriculum pathway and evidence controls */
+.pz-choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pz-pathway-choice {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 92px;
+  padding: 18px 20px;
+  color: var(--pz-text);
+  text-align: left;
+  background: var(--pz-panel-soft);
+  border: 1px solid var(--pz-border);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+
+.pz-pathway-choice:hover,
+.pz-pathway-choice:focus-visible {
+  border-color: var(--pz-border-strong);
+  transform: translateY(-1px);
+}
+
+.pz-pathway-choice.is-selected {
+  background: color-mix(in srgb, var(--pz-primary) 18%, var(--pz-panel-soft));
+  border-color: color-mix(in srgb, var(--pz-primary-2) 64%, transparent);
+}
+
+.pz-pathway-choice span:first-child {
+  display: grid;
+  gap: 6px;
+}
+
+.pz-pathway-choice strong {
+  font-size: 1rem;
+}
+
+.pz-pathway-choice small {
+  color: var(--pz-muted);
+  font-size: .86rem;
+}
+
+.pz-evidence-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.pz-evidence-strip > div {
+  display: grid;
+  gap: 5px;
+  min-height: 88px;
+  align-content: center;
+  padding: 14px;
+  background: var(--pz-panel-soft);
+  border: 1px solid var(--pz-border);
+  border-radius: 16px;
+}
+
+.pz-evidence-strip strong {
+  font-size: 1.4rem;
+}
+
+.pz-evidence-strip span {
+  color: var(--pz-muted);
+  font-size: .82rem;
+  line-height: 1.35;
+}
+
+.pz-calm-callout {
+  padding: 16px 18px;
+  border-left: 3px solid var(--pz-accent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--pz-accent) 9%, var(--pz-panel-soft));
+}
+
+.pz-calm-callout p {
+  margin: 6px 0 0;
+  color: var(--pz-muted);
+  line-height: 1.55;
+}
+
+.pz-atlas-groups {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pz-atlas-groups details {
+  overflow: hidden;
+  border: 1px solid var(--pz-border);
+  border-radius: 16px;
+  background: var(--pz-panel-soft);
+}
+
+.pz-atlas-groups summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 17px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.pz-atlas-groups summary span:last-child {
+  color: var(--pz-muted);
+  font-size: .84rem;
+  font-weight: 500;
+}
+
+.pz-atlas-list {
+  display: grid;
+  gap: 1px;
+  border-top: 1px solid var(--pz-border);
+}
+
+.pz-atlas-list article {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 17px;
+  background: color-mix(in srgb, var(--pz-panel) 78%, transparent);
+}
+
+.pz-atlas-list p {
+  margin: 5px 0 0;
+  color: var(--pz-muted);
+  line-height: 1.45;
+}
+
+.pz-status-pill {
+  align-self: flex-start;
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  color: var(--pz-muted);
+  font-size: .76rem;
+  border: 1px solid var(--pz-border);
+  border-radius: 999px;
+}
+
+@media (max-width: 700px) {
+  .pz-evidence-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .pz-atlas-list article {
+    display: grid;
+  }
+}
+
 /* Hero panels */
 .pz-hero-panel {
   position: relative;

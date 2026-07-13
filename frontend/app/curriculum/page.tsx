@@ -1,49 +1,83 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { ProjectZCalmHeader } from '../../components/ProjectZCalmHeader';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
+  AtlasSkillCoverageRow,
   CourseCatalogRow,
-  CurriculumSkillRow,
+  fetchAtlasSkillCoverage,
   fetchCurriculumCourses,
-  fetchCurriculumSkillMap,
   fetchMySelectedCourse,
   selectStudentCourse,
   SelectedCourseRow
 } from '../../lib/projectZCurriculum';
+import {
+  mypPathwayCode,
+  PROJECT_Z_DP_PATHWAY_CODES,
+  PROJECT_Z_MYP_YEARS
+} from '../../lib/projectZCurriculumFoundation';
+
+function themeForRole(role: ProjectZRole) {
+  if (role === 'student') return 'pz-student-theme';
+  if (role === 'parent') return 'pz-parent-theme';
+  if (role === 'teacher') return 'pz-teacher-theme';
+  return 'pz-guest-theme';
+}
+
+function compactStrand(value: string) {
+  return value
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
 
 export default function CurriculumPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
   const [email, setEmail] = useState<string | null>(null);
-  const [courses, setCourses] = useState<CourseCatalogRow[]>([]);
+  const [pathways, setPathways] = useState<CourseCatalogRow[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<SelectedCourseRow | null>(null);
-  const [visibleCourseCode, setVisibleCourseCode] = useState('myp_standard');
-  const [skills, setSkills] = useState<CurriculumSkillRow[]>([]);
-  const [status, setStatus] = useState('Loading curriculum...');
+  const [visibleCourseCode, setVisibleCourseCode] = useState('myp_1_standard');
+  const [mypYear, setMypYear] = useState<(typeof PROJECT_Z_MYP_YEARS)[number]>(1);
+  const [skills, setSkills] = useState<AtlasSkillCoverageRow[]>([]);
+  const [showAtlas, setShowAtlas] = useState(false);
+  const [status, setStatus] = useState('Loading the Project Z curriculum evidence…');
 
-  async function loadCurriculum(courseCode?: string) {
+  async function showPathway(courseCode: string) {
+    setVisibleCourseCode(courseCode);
+    setShowAtlas(false);
+    setStatus('Loading pathway evidence…');
+    const skillRows = await fetchAtlasSkillCoverage(courseCode);
+    setSkills(skillRows);
+    setStatus('Pathway evidence loaded. Unreleased content remains locked.');
+  }
+
+  async function loadCurriculum() {
     const profile = await getCurrentProfile();
     setRole(profile.role);
     setEmail(profile.email);
 
     if (profile.role === 'guest') {
-      setStatus('Sign in to view the curriculum and skill map.');
+      setStatus('Sign in to choose a pathway and inspect its curriculum evidence.');
       return;
     }
 
     const courseRows = await fetchCurriculumCourses();
     const selected = await fetchMySelectedCourse();
+    const firstCode = selected?.course_code || courseRows[0]?.course_code || 'myp_1_standard';
 
-    setCourses(courseRows);
+    setPathways(courseRows);
     setSelectedCourse(selected);
+    setVisibleCourseCode(firstCode);
 
-    const code = courseCode || selected?.course_code || visibleCourseCode || 'myp_standard';
-    setVisibleCourseCode(code);
+    const selectedMyp = courseRows.find((course) => course.course_code === firstCode && course.program === 'MYP');
+    if (selectedMyp?.year_number) {
+      setMypYear(selectedMyp.year_number as (typeof PROJECT_Z_MYP_YEARS)[number]);
+    }
 
-    const skillRows = await fetchCurriculumSkillMap(code);
+    const skillRows = await fetchAtlasSkillCoverage(firstCode);
     setSkills(skillRows);
-
-    setStatus('Curriculum and skill map loaded from Supabase.');
+    setStatus('Fourteen pathways are registered. Content stays locked until every release check passes.');
   }
 
   useEffect(() => {
@@ -51,191 +85,193 @@ export default function CurriculumPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function chooseCourse(courseCode: string) {
-    setStatus('Selecting course...');
-
+  async function choosePathway(courseCode: string) {
     if (role !== 'student') {
-      setVisibleCourseCode(courseCode);
-      const skillRows = await fetchCurriculumSkillMap(courseCode);
-      setSkills(skillRows);
-      setStatus('Previewing course. Only student accounts can save a course selection.');
+      await showPathway(courseCode);
+      setStatus('Previewing this pathway. Student accounts can save a selection.');
       return;
     }
 
+    setStatus('Saving pathway…');
     const result = await selectStudentCourse(courseCode);
-
     if (!result.ok) {
-      setStatus(`Could not select course: ${result.reason}`);
+      setStatus(`Could not save the pathway: ${result.reason}`);
       return;
     }
 
-    setVisibleCourseCode(courseCode);
-    await loadCurriculum(courseCode);
-    setStatus('Course selected. Diagnostic and recommended practice will use this curriculum.');
+    await showPathway(courseCode);
+    const selected = await fetchMySelectedCourse();
+    setSelectedCourse(selected);
+    setStatus('Pathway saved. Practice will unlock only after the curriculum and content evidence pass.');
   }
 
-  const mypCourses = courses.filter((course) => course.program === 'MYP');
-  const dpGateways = courses.filter((course) => course.program === 'DP' && course.is_gateway);
-  const dpChildren = courses.filter((course) => course.program === 'DP' && !course.is_gateway);
-
+  const visiblePathway = pathways.find((pathway) => pathway.course_code === visibleCourseCode) || null;
+  const dpPathways = PROJECT_Z_DP_PATHWAY_CODES
+    .map((code) => pathways.find((pathway) => pathway.course_code === code))
+    .filter((pathway): pathway is CourseCatalogRow => Boolean(pathway));
   const groupedSkills = useMemo(() => {
-    const groups: Record<string, CurriculumSkillRow[]> = {};
+    const groups = new Map<string, AtlasSkillCoverageRow[]>();
     for (const skill of skills) {
-      const key = skill.assessment_criterion
-        ? `Criterion ${skill.assessment_criterion} - ${skill.strand_title}`
-        : skill.strand_title;
-
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(skill);
+      const current = groups.get(skill.strand_code) || [];
+      current.push(skill);
+      groups.set(skill.strand_code, current);
     }
-    return groups;
+    return [...groups.entries()];
   }, [skills]);
 
-  return (
-    <main className="page pz-theme pz-teacher-theme">
-      <div className="container">
-        <nav className="nav">
-          <div className="brand">
-            <strong>Curriculum and Skill Map</strong>
-            <span>{email || 'Sign in'} - role: {role}</span>
-          </div>
-          <div className="navLinks">
-            <a className="btn secondary" href="/">Home</a>
-            {role === 'student' && <a className="btn secondary" href="/diagnostic">Diagnostic</a>}
-            {role === 'student' && <a className="btn secondary" href="/recommended">Recommended</a>}
-            {role === 'student' && <a className="btn secondary" href="/path">Skill Path</a>}
-            <a className="btn secondary" href="/reports">Reports</a>
-            <a className="btn secondary" href="/account">Account</a>
-          </div>
-        </nav>
+  const reviewedPercent = visiblePathway?.atlas_skill_count
+    ? Math.round(((visiblePathway.reviewed_skill_count || 0) / visiblePathway.atlas_skill_count) * 100)
+    : 0;
 
-        <section className="notice" style={{ marginBottom: 18 }}>
+  return (
+    <main className={`page pz-theme ${themeForRole(role)}`}>
+      <div className="container">
+        <ProjectZCalmHeader email={email} role={role} />
+
+        <section className="pz-hero-panel" style={{ marginTop: 20 }}>
+          <p className="pz-eyebrow">IB mathematics · evidence first</p>
+          <h1>Choose one clear pathway</h1>
+          <p className="pz-hero-copy">
+            Project Z covers ten MYP year-and-level pathways and four DP courses. A pathway is never called complete
+            until its skill map is reviewed and every skill has at least 2,000 distinct, verified practice variants.
+          </p>
+        </section>
+
+        <section className="notice" style={{ marginTop: 18 }} aria-live="polite">
           <strong>Status:</strong> {status}
         </section>
 
         {role === 'guest' ? (
-          <section className="card">
-            <h2>Sign in required</h2>
-            <p className="muted">Sign in to choose a course and view the skill map.</p>
-            <a className="btn blue" href="/auth">Sign in</a>
+          <section className="card" style={{ marginTop: 18 }}>
+            <h2>Sign in to continue</h2>
+            <p className="muted">Your pathway connects diagnostics, teaching support and practice evidence.</p>
+            <a className="btn blue" href="/auth?next=%2Fcurriculum">Sign in</a>
           </section>
         ) : (
           <>
-            <section className="grid grid2">
-              <div className="card">
-                <h2>MYP course choice</h2>
-                <p className="muted">The app uses the labels MYP Standard and MYP Extended.</p>
-                <div className="grid">
-                  {mypCourses.map((course) => (
+            <section className="card" style={{ marginTop: 18 }}>
+              <p className="pz-eyebrow">Middle Years Programme</p>
+              <h2>First choose the MYP year</h2>
+              <div className="pz-choice-row" aria-label="MYP year">
+                {PROJECT_Z_MYP_YEARS.map((year) => (
+                  <button
+                    key={year}
+                    className={mypYear === year ? 'btn blue' : 'btn secondary'}
+                    onClick={() => {
+                      setMypYear(year);
+                      showPathway(mypPathwayCode(year, 'Standard'));
+                    }}
+                  >
+                    Year {year}
+                  </button>
+                ))}
+              </div>
+
+              <div className="grid grid2" style={{ marginTop: 18 }}>
+                {(['Standard', 'Extended'] as const).map((level) => {
+                  const code = mypPathwayCode(mypYear, level);
+                  const pathway = pathways.find((row) => row.course_code === code);
+                  return (
                     <button
-                      key={course.course_code}
-                      className={visibleCourseCode === course.course_code ? 'btn blue' : 'btn secondary'}
-                      onClick={() => chooseCourse(course.course_code)}
+                      key={code}
+                      className={`pz-pathway-choice ${visibleCourseCode === code ? 'is-selected' : ''}`}
+                      onClick={() => choosePathway(code)}
                     >
-                      {course.display_name}
+                      <span>
+                        <strong>{level}</strong>
+                        <small>{pathway?.atlas_skill_count || 0} candidate skills · release checks pending</small>
+                      </span>
+                      <span aria-hidden="true">→</span>
                     </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="card">
-                <h2>DP course choice</h2>
-                <p className="muted">Students first choose DP Standard or DP Higher, then AA or AI.</p>
-                <div className="grid">
-                  {dpGateways.map((gateway) => (
-                    <div key={gateway.course_code} className="card" style={{ padding: 14 }}>
-                      <h3>{gateway.display_name}</h3>
-                      <div className="grid">
-                        {dpChildren
-                          .filter((child) => child.parent_course_code === gateway.course_code)
-                          .map((child) => (
-                            <button
-                              key={child.course_code}
-                              className={visibleCourseCode === child.course_code ? 'btn blue' : 'btn secondary'}
-                              onClick={() => chooseCourse(child.course_code)}
-                            >
-                              {child.display_name}
-                            </button>
-                          ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
             </section>
 
             <section className="card" style={{ marginTop: 18 }}>
-              <h2>Selected curriculum</h2>
+              <p className="pz-eyebrow">Diploma Programme</p>
+              <h2>Or choose one DP course</h2>
+              <div className="grid grid2">
+                {dpPathways.map((pathway) => (
+                  <button
+                    key={pathway.course_code}
+                    className={`pz-pathway-choice ${visibleCourseCode === pathway.course_code ? 'is-selected' : ''}`}
+                    onClick={() => choosePathway(pathway.course_code)}
+                  >
+                    <span>
+                      <strong>{pathway.display_name.replace('DP Mathematics: ', '')}</strong>
+                      <small>{pathway.atlas_skill_count || 0} candidate skills · {pathway.level_name}</small>
+                    </span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className="card" style={{ marginTop: 18 }}>
+              <p className="pz-eyebrow">Current pathway</p>
+              <h2>{visiblePathway?.display_name || 'Choose a pathway'}</h2>
               {selectedCourse ? (
-                <p>
-                  <strong>{selectedCourse.display_name}</strong>
-                  <br />
-                  <span className="muted">This is the saved course for diagnostics, recommended practice, and the skill path.</span>
-                </p>
+                <p className="muted">Saved for this student: {selectedCourse.display_name}</p>
               ) : (
-                <p className="muted">No saved course yet. Students should choose one course.</p>
+                <p className="muted">No pathway is saved yet.</p>
               )}
-            </section>
 
-            <section className="card" style={{ marginTop: 18 }}>
-              <h2>Skill map</h2>
-              <p className="muted">
-                Mastery should grow with evidence. Skills have a max mastery cap so students do not easily reach 100 percent.
-              </p>
-
-              {Object.entries(groupedSkills).map(([groupName, groupSkills]) => (
-                <div key={groupName} style={{ marginTop: 20 }}>
-                  <h3>{groupName}</h3>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Skill</th>
-                        <th>Level</th>
-                        <th>Mastery</th>
-                        <th>Evidence</th>
-                        <th>Diagnostic</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {groupSkills.map((skill) => (
-                        <tr key={skill.course_skill_code}>
-                          <td>
-                            <strong>{skill.title}</strong><br />
-                            <span className="muted">{skill.description}</span><br />
-                            <span className="muted">{skill.course_skill_code}</span>
-                          </td>
-                          <td>Band {skill.difficulty_band}</td>
-                          <td>
-                            <strong>{skill.mastery_percent}%</strong><br />
-                            <span className="muted">Max {skill.max_mastery_percent}%</span>
-                          </td>
-                          <td>
-                            {skill.correct_count}/{skill.evidence_count}<br />
-                            <span className="muted">Confidence {skill.confidence_percent}%</span>
-                          </td>
-                          <td>{skill.diagnostic_enabled ? 'Yes' : 'No'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <div className="pz-evidence-strip">
+                <div>
+                  <strong>{visiblePathway?.atlas_skill_count || 0}</strong>
+                  <span>candidate skills</span>
                 </div>
-              ))}
+                <div>
+                  <strong>{reviewedPercent}%</strong>
+                  <span>educator-reviewed</span>
+                </div>
+                <div>
+                  <strong>{visiblePathway?.variant_ready_skill_count || 0}</strong>
+                  <span>skills at the 2,000-variant floor</span>
+                </div>
+              </div>
+
+              <div className="pz-calm-callout" style={{ marginTop: 18 }}>
+                <strong>Release state: not ready</strong>
+                <p>
+                  The current atlas is a useful candidate skeleton. Official-guide alignment, mathematics educator
+                  approval and verified practice depth are still incomplete, so Project Z does not present it as finished.
+                </p>
+              </div>
+
+              <button className="btn secondary" style={{ marginTop: 16 }} onClick={() => setShowAtlas((value) => !value)}>
+                {showAtlas ? 'Hide skill atlas' : `View candidate skill atlas (${skills.length})`}
+              </button>
             </section>
 
-            <section className="grid grid3" style={{ marginTop: 18 }}>
-              <div className="card">
-                <h2>Next: Diagnostic</h2>
-                <p className="muted">The next phase will ask enough questions until the system has strong evidence of strengths and weaknesses.</p>
-              </div>
-              <div className="card">
-                <h2>Next: Recommended practice</h2>
-                <p className="muted">Practice will recommend weak skills, missing prerequisites, and review skills.</p>
-              </div>
-              <div className="card">
-                <h2>Next: Game path</h2>
-                <p className="muted">The Duolingo-style path will unlock skill nodes while still adapting to weak prerequisite skills.</p>
-              </div>
-            </section>
+            {showAtlas && (
+              <section className="card" style={{ marginTop: 18 }}>
+                <h2>Candidate skill atlas</h2>
+                <p className="muted">These skills are visible for review, but none are served as released practice yet.</p>
+                <div className="pz-atlas-groups">
+                  {groupedSkills.map(([strand, strandSkills]) => (
+                    <details key={strand}>
+                      <summary>
+                        <span>{compactStrand(strand)}</span>
+                        <span>{strandSkills.length} skills</span>
+                      </summary>
+                      <div className="pz-atlas-list">
+                        {strandSkills.map((skill) => (
+                          <article key={skill.atlas_skill_code}>
+                            <div>
+                              <strong>{skill.title}</strong>
+                              <p>{skill.learning_objective}</p>
+                            </div>
+                            <span className="pz-status-pill">Review pending</span>
+                          </article>
+                        ))}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
           </>
         )}
       </div>

@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-56b-identity-privacy-completion',
+    version: 'phase-57-ib-curriculum-evidence-foundation',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -39,6 +39,12 @@ export async function GET() {
       ciReleaseGate: true,
       productConstitutionTracked: true,
       ibCoverageContractTracked: true,
+      fourteenIbPathwaysRegistered: true,
+      curriculumSourceProvenanceTracked: true,
+      curriculumClaimsFailClosed: true,
+      minimumTwoThousandVariantGateEnforced: true,
+      curriculumPathwaysReleased: false,
+      legacyContentQuarantinedForReview: true,
       referenceBoundaryTracked: true,
       completionAcceptanceMatrixTracked: true,
       calmRoleHome: true,
