@@ -43,7 +43,7 @@ try {
   const health = await healthResponse.json();
   assert.equal(health.ok, true);
   assert.equal(health.app, 'Project Z');
-  assert.equal(health.version, 'phase-58-curriculum-review-workbench');
+  assert.equal(health.version, 'phase-58b-golden-generator-foundation');
   assert.equal(health.checks.controlledAssignmentFactory, true);
   assert.equal(health.checks.verifiedClaimsRouteProtection, true);
   assert.equal(health.checks.accountDataExport, true);
@@ -52,6 +52,10 @@ try {
   assert.equal(health.checks.curriculumPathwaysReleased, false);
   assert.equal(health.checks.curriculumReviewWorkbench, true);
   assert.equal(health.checks.twoPersonCurriculumApproval, true);
+  assert.equal(health.checks.goldenGeneratorFiveFamilies, true);
+  assert.equal(health.checks.goldenGeneratorTwoThousandFiveHundredDistinct, true);
+  assert.equal(health.checks.generatorHumanMathematicsReviewRequired, true);
+  assert.equal(health.checks.goldenGeneratorReleased, false);
 
   await verifyText('/home', ['Project Z', 'Choose your starting point', 'More tools']);
   await verifyText('/role-navigation', ['One clear path, with every tool available', 'Suggested path']);

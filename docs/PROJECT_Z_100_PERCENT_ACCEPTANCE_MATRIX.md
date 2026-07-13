@@ -21,14 +21,14 @@ No percentage based on page count, route count, question rows, or phases complet
 | Calm product shell | AMBER | Home and role navigation simplified in Phase 53; every primary route still requires the same audit. |
 | MYP atlas | RED | Phase 57 registers all ten Year 1–5 Standard/Extended pathways and 142 legacy candidate placements. Phase 58 now enforces separate verified source alignment and mathematics-educator sign-off, but no authorized guide or reviewer is registered and no placement is approved. |
 | DP atlas | RED | Phase 57 registers AA SL/HL and AI SL/HL and 296 legacy candidate placements, with current-2021 and upcoming-2029 briefs separated. Phase 58 adds the auditable two-person review gate, but exact guide alignment and approval remain at zero. |
-| Practice depth | RED | Phase 57 enforces a 2,000-distinct-verified-variant floor and reports zero release-ready skills; generator diversity, approval, and sampling remain incomplete. |
+| Practice depth | RED | Phase 58b proves one automated candidate skill across five families and 2,500 distinct variants with independent answer checks and zero duplicates. It remains blocked pending curriculum/human review, and every other skill still lacks equivalent evidence. |
 | Diagnostic validity | RED | Adaptive placement and misconception detection validated against reviewed cases. |
 | Mastery validity | RED | Explainable mastery and spaced review calibrated against reviewed learning histories. |
 | Teaching AI | RED | Tutor ladder, safety evaluation, misconception repair, and learning-gain evaluation pass. |
 | Student loop | RED | Diagnostic → learn → practise → feedback → correction → mastery passes in real browser and data tests. |
 | Teacher loop | RED | Class → insight → generate → audit → publish → review → report passes with role isolation. |
 | Parent loop | RED | Linked-child summaries pass and prohibited/private data are proven inaccessible. |
-| Mathematical QA | RED | Generator, solver, equivalence, unit, notation, duplicate, and regression suites pass. |
+| Mathematical QA | RED | Phase 58b establishes deterministic fixed-point, independent-answer, duplicate and regression-digest checks for one place-value candidate; symbolic, unit, notation and full-atlas suites remain incomplete. |
 | Accessibility | RED | WCAG 2.2 AA evidence across role-critical flows, devices, zoom, keyboard, and screen readers. |
 | Reliability/operations | RED | Monitoring, rate/cost limits, backup/restore drill, incident response, provider outage, and rollback tested. |
 | Privacy/compliance | RED | Approved privacy, terms, retention, consent, child-data, export, deletion, and breach procedures. |
