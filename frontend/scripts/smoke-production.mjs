@@ -43,10 +43,13 @@ try {
   const health = await healthResponse.json();
   assert.equal(health.ok, true);
   assert.equal(health.app, 'Project Z');
-  assert.equal(health.version, 'phase-56b-identity-privacy-completion');
+  assert.equal(health.version, 'phase-57-ib-curriculum-evidence-foundation');
   assert.equal(health.checks.controlledAssignmentFactory, true);
   assert.equal(health.checks.verifiedClaimsRouteProtection, true);
   assert.equal(health.checks.accountDataExport, true);
+  assert.equal(health.checks.fourteenIbPathwaysRegistered, true);
+  assert.equal(health.checks.minimumTwoThousandVariantGateEnforced, true);
+  assert.equal(health.checks.curriculumPathwaysReleased, false);
 
   await verifyText('/home', ['Project Z', 'Choose your starting point', 'More tools']);
   await verifyText('/role-navigation', ['One clear path, with every tool available', 'Suggested path']);

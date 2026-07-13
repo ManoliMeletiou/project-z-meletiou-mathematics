@@ -15,6 +15,10 @@ The launch coverage matrix contains fourteen pathways:
 
 The curriculum atlas must be mapped against the current authorized IB subject documentation used by the school. Project Z may add prerequisite or enrichment skills, but must distinguish them from required programme coverage.
 
+MYP source boundary: the public IB framework defines broad content areas and Standard/Extended challenge, while schools retain flexibility over detailed content and sequence. Project Z's Year 1–5 pathways are therefore an explicit school/product sequence and must not be described as an IB-issued year-by-year syllabus. Every MYP placement requires authorized-guide alignment and educator approval.
+
+DP version boundary: current and upcoming cohort specifications must be versioned separately. A skill or assessment rule may not silently combine the first-assessment-2021 and first-assessment-2029 courses.
+
 ## Skill record contract
 
 Every advertised skill requires:
@@ -105,4 +109,3 @@ The tutor follows a learning ladder:
 10. record safe, structured learning evidence.
 
 The tutor must support text and mathematical notation first. Graphs, diagrams, manipulatives, audio, or vision may be added when they materially improve understanding and pass the same safety and accessibility gates.
-

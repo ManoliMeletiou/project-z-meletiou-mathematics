@@ -16,6 +16,13 @@ Move Project Z from a live feature-rich prototype to a secure, tested, pilot-rea
 - Supabase has 122 public tables, 204 public functions, 7 active Edge Functions, and 6,255 question-bank rows.
 - Supabase advisor baseline: 327 security notices and 385 performance notices. The urgent issue is default function execution: 145 `SECURITY DEFINER` functions were executable by `anon`.
 
+## Verified progress — 13 July 2026
+
+- Phases 52–56b are merged and live: anonymous function execution is closed, dependencies/CI are pinned, the calm role shell and controlled assignment factory are present, and cookie sessions, database roles, operator separation, export, and delayed deletion are implemented.
+- Phase 57 foundation is applied to Project Z Supabase: exactly 14 pathways, 438 legacy candidate pathway-skill placements, official-source/version records, and a hard 2,000-distinct-variant release floor.
+- All 14 pathways remain blocked and advertise no completion. The old 18 blueprint and 22 diagnostic `verified` flags were preserved in quarantine history and cleared because they do not satisfy the new evidence contract.
+- Current security advisor baseline is 206 notices: 14 informational RLS-with-no-policy notices on sealed legacy tables, 191 intentional/legacy authenticated `SECURITY DEFINER` warnings, and leaked-password protection disabled. Phase 57's new read-only evidence RPCs use caller RLS and add no advisor warning.
+
 ## Definition of done
 
 Project Z is launch-complete only when every gate is met:

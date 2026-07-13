@@ -19,9 +19,9 @@ No percentage based on page count, route count, question rows, or phases complet
 | Least-privilege data security | RED | Role matrix tests pass; no unresolved high/critical advisor issue; privileged RPCs minimized; RLS policy gaps resolved. |
 | Identity lifecycle | AMBER | Signup/reset/global logout, self-promotion prevention, server route guards, operator approval, export, deletion grace/cancellation, and safe callbacks exist; authenticated browser fixtures, leaked-password protection, and MFA policy remain. |
 | Calm product shell | AMBER | Home and role navigation simplified in Phase 53; every primary route still requires the same audit. |
-| MYP atlas | RED | Years 1–5 Standard and Extended fully mapped, reviewed, versioned, and audited. |
-| DP atlas | RED | AA SL/HL and AI SL/HL fully mapped, reviewed, versioned, and audited. |
-| Practice depth | RED | Every active skill proves at least 2,000 distinct verified instances and blueprint diversity. |
+| MYP atlas | RED | Phase 57 registers all ten Year 1–5 Standard/Extended pathways and 142 legacy candidate placements with source/version evidence; authorized-guide alignment and educator approval remain incomplete. |
+| DP atlas | RED | Phase 57 registers AA SL/HL and AI SL/HL and 296 legacy candidate placements, with current-2021 and upcoming-2029 briefs separated; exhaustive guide alignment and educator approval remain incomplete. |
+| Practice depth | RED | Phase 57 enforces a 2,000-distinct-verified-variant floor and reports zero release-ready skills; generator diversity, approval, and sampling remain incomplete. |
 | Diagnostic validity | RED | Adaptive placement and misconception detection validated against reviewed cases. |
 | Mastery validity | RED | Explainable mastery and spaced review calibrated against reviewed learning histories. |
 | Teaching AI | RED | Tutor ladder, safety evaluation, misconception repair, and learning-gain evaluation pass. |

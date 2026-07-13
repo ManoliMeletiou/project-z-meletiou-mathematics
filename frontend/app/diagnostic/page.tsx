@@ -62,7 +62,7 @@ export default function DiagnosticPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [courses, setCourses] = useState<CourseCatalogRow[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<SelectedCourseRow | null>(null);
-  const [courseCode, setCourseCode] = useState('myp_standard');
+  const [courseCode, setCourseCode] = useState('myp_1_standard');
   const [session, setSession] = useState<DiagnosticSession | null>(null);
   const [question, setQuestion] = useState<DiagnosticQuestion | null>(null);
   const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>([]);
@@ -86,7 +86,7 @@ export default function DiagnosticPage() {
 
     setCourses(selectable);
     setSelectedCourse(selected);
-    setCourseCode(selected?.course_code || selectable[0]?.course_code || 'myp_standard');
+    setCourseCode(selected?.course_code || selectable[0]?.course_code || 'myp_1_standard');
 
     const summaryRows = await fetchDiagnosticSummary();
     setSummary(summaryRows);
@@ -125,6 +125,12 @@ export default function DiagnosticPage() {
   async function beginDiagnostic() {
     if (role !== 'student') {
       setStatus('Only students can start diagnostics.');
+      return;
+    }
+
+    const pathway = courses.find((course) => course.course_code === courseCode);
+    if (!pathway?.advertised_complete || pathway.release_state !== 'released') {
+      setStatus('This diagnostic is locked while its skill map and question evidence are being verified.');
       return;
     }
 
@@ -196,6 +202,8 @@ export default function DiagnosticPage() {
   }
 
   const selectedCourseName = courses.find((course) => course.course_code === courseCode)?.display_name || selectedCourse?.display_name || courseCode;
+  const selectedPathway = courses.find((course) => course.course_code === courseCode);
+  const diagnosticReleased = selectedPathway?.advertised_complete === true && selectedPathway.release_state === 'released';
 
   const weakSkills = useMemo(
     () => summary.filter((row) => row.strength_band === 'Weak').slice(0, 5),
@@ -267,9 +275,14 @@ export default function DiagnosticPage() {
                   <strong>Selected:</strong> {selectedCourseName}
                 </p>
 
-                <button className="btn blue" onClick={beginDiagnostic}>
-                  Start / continue diagnostic
+                <button className="btn blue" onClick={beginDiagnostic} disabled={!diagnosticReleased}>
+                  {diagnosticReleased ? 'Start / continue diagnostic' : 'Diagnostic verification in progress'}
                 </button>
+                {!diagnosticReleased && (
+                  <p className="muted">
+                    Project Z will not place you using unreviewed skills or unverified questions. You can save this pathway now; the diagnostic unlocks after release evidence passes.
+                  </p>
+                )}
               </div>
 
               <div className="card">
@@ -282,7 +295,7 @@ export default function DiagnosticPage() {
                   <li>Questions shuffle, but the skill stays tracked.</li>
                   <li>MYP Criteria A-D can be diagnosed.</li>
                   <li>Wrong answers represent realistic misconceptions.</li>
-                  <li>The next phase will use this to recommend practice.</li>
+                  <li>Recommendations use repeated evidence, not a single answer.</li>
                 </ul>
               </div>
             </section>
