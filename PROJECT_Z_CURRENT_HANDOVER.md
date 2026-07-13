@@ -3,7 +3,7 @@
 Authoritative handover:
 
 ```text
-docs/handover/PROJECT_Z_HANDOVER_PHASE_58.md
+docs/handover/PROJECT_Z_HANDOVER_PHASE_58B.md
 ```
 
 Completion plan:
@@ -15,17 +15,17 @@ docs/PROJECT_Z_COMPLETION_MASTER_PLAN.md
 Current verified production milestone before this release:
 
 ```text
-Phase 56b — Identity and Privacy Completion
+Phase 58 — Curriculum Review Workbench
 ```
 
 Current release being prepared:
 
 ```text
-Phase 58 — Curriculum Review Workbench
+Phase 58b — Golden Generator Foundation
 ```
 
 Expected health version after deployment:
 
 ```text
-phase-58-curriculum-review-workbench
+phase-58b-golden-generator-foundation
 ```

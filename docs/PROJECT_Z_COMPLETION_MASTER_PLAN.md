@@ -22,6 +22,7 @@ Move Project Z from a live feature-rich prototype to a secure, tested, pilot-rea
 - Phase 57 foundation is applied to Project Z Supabase: exactly 14 pathways, 438 legacy candidate pathway-skill placements, official-source/version records, and a hard 2,000-distinct-variant release floor.
 - Phase 58's restricted curriculum-review foundation is applied: operator-managed verified reviewer credentials, an immutable review audit trail, separate source-mapper and mathematics-educator decisions, and a database constraint requiring two different people before a skill can be approved.
 - Current curriculum truth remains deliberately fail-closed: zero authorized guides, zero verified reviewers, zero approved skills, zero released pathways, and therefore zero completeness claims.
+- Phase 58b adds the first reproducible generator candidate for `number.place-value.round-order`: five meaningful families, 500 sampled seeds per family, 2,500 distinct variants, 2,500 independent answer recalculations, a stable SHA-256 evidence digest, zero duplicates, and no learner-facing release. Human mathematics review remains pending.
 - All 14 pathways remain blocked and advertise no completion. The old 18 blueprint and 22 diagnostic `verified` flags were preserved in quarantine history and cleared because they do not satisfy the new evidence contract.
 - Current security advisor baseline is 213 notices: 14 informational RLS-with-no-policy notices on sealed legacy tables, 198 intentional/legacy authenticated `SECURITY DEFINER` warnings, and leaked-password protection disabled. Phase 58 adds seven intentionally signed-in-only private-table gateways; each has an explicit identity/role check, exact grants, fixed search path, anonymous denial, and tested fail-closed behavior. No new critical/high finding or missing-index finding was introduced.
 
@@ -120,6 +121,16 @@ Exit gate: every advertised course meets the approved coverage threshold and sam
 7. Separate motivation signals from formal assessment in schema, UI, exports, and reports.
 
 Exit gate: curriculum decisions have reproducible two-person evidence, and learning decisions are explainable, reproducible, and do not overstate assessment certainty.
+
+#### Phase 58b — Golden generator foundation
+
+1. Establish one deterministic, exact-arithmetic generator across multiple meaningful representations.
+2. Sample at least 500 variants per family and at least 2,000 distinct variants for the skill.
+3. Recalculate every answer independently, reject duplicates, and freeze a regression digest.
+4. Store automated evidence privately without turning it into curriculum or human approval.
+5. Keep serving blocked until authorized-source alignment and independent mathematics review pass.
+
+Current evidence: five place-value/rounding families, 2,500 tested and distinct variants, zero duplicates, all blocked pending human review.
 
 ### Phase 59 — UX, accessibility, and performance
 

@@ -8,9 +8,10 @@
     "build": "next build",
     "start": "next start",
     "smoke": "node scripts/smoke-production.mjs",
+    "verify:generator": "node --experimental-strip-types scripts/verify-golden-generator.mts",
     "test": "node --experimental-strip-types --test tests/*.test.mts",
     "typecheck": "tsc --noEmit",
-    "check": "npm test && npm run typecheck && npm run build && npm run smoke"
+    "check": "npm test && npm run verify:generator && npm run typecheck && npm run build && npm run smoke"
   },
   "dependencies": {
     "@react-three/drei": "10.7.7",

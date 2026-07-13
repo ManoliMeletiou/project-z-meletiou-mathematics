@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-58-curriculum-review-workbench',
+    version: 'phase-58b-golden-generator-foundation',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -49,6 +49,11 @@ export async function GET() {
       curriculumReviewerCredentialsRequired: true,
       twoPersonCurriculumApproval: true,
       protectedGuideContentNotCopied: true,
+      goldenGeneratorFiveFamilies: true,
+      goldenGeneratorTwoThousandFiveHundredDistinct: true,
+      goldenGeneratorIndependentAnswerChecks: true,
+      generatorHumanMathematicsReviewRequired: true,
+      goldenGeneratorReleased: false,
       referenceBoundaryTracked: true,
       completionAcceptanceMatrixTracked: true,
       calmRoleHome: true,
