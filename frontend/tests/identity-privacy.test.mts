@@ -15,7 +15,7 @@ const browserClientUrl = new URL('../lib/supabaseClient.ts', import.meta.url);
 test('every private Project Z entry point is protected by a database role rule', () => {
   const expected = [
     '/assignment-factory', '/teacher', '/student-dashboard', '/diagnostic',
-    '/parent-dashboard', '/reports', '/tutor', '/export-reports'
+    '/parent-dashboard', '/reports', '/tutor', '/export-reports', '/curriculum-review'
   ];
   for (const path of expected) assert.ok(projectZRouteRuleForPath(path), `${path} must be protected`);
   assert.ok(projectZProtectedRouteRules.length >= 30);
@@ -27,6 +27,8 @@ test('route decisions deny signed-out and wrong-role access', () => {
   assert.equal(projectZRouteDecision('/assignment-factory', true, 'teacher').allowed, true);
   assert.equal(projectZRouteDecision('/diagnostic', true, 'teacher').allowed, false);
   assert.equal(projectZRouteDecision('/diagnostic', true, 'student').allowed, true);
+  assert.equal(projectZRouteDecision('/curriculum-review', true, 'student').allowed, false);
+  assert.equal(projectZRouteDecision('/curriculum-review', true, 'student', { curriculumReview: true }).allowed, true);
   assert.equal(projectZRouteDecision('/home', false, null).allowed, true);
 });
 
@@ -41,6 +43,7 @@ test('server route boundary verifies claims and reads the protected profile role
   assert.match(source, /auth\.getClaims\(\)/);
   assert.match(source, /from\('project_z_profiles'\)/);
   assert.match(source, /select\('role'\)/);
+  assert.match(source, /rpc\('project_z_curriculum_review_access'\)/);
   assert.doesNotMatch(source, /auth\.getSession\(\)/);
 });
 

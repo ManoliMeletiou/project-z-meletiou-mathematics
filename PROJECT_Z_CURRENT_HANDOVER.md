@@ -3,7 +3,7 @@
 Authoritative handover:
 
 ```text
-docs/handover/PROJECT_Z_HANDOVER_PHASE_57.md
+docs/handover/PROJECT_Z_HANDOVER_PHASE_58.md
 ```
 
 Completion plan:
@@ -21,11 +21,11 @@ Phase 56b — Identity and Privacy Completion
 Current release being prepared:
 
 ```text
-Phase 57 — IB Curriculum Evidence Foundation
+Phase 58 — Curriculum Review Workbench
 ```
 
 Expected health version after deployment:
 
 ```text
-phase-57-ib-curriculum-evidence-foundation
+phase-58-curriculum-review-workbench
 ```

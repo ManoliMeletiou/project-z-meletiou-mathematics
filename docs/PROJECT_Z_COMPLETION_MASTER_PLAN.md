@@ -20,8 +20,10 @@ Move Project Z from a live feature-rich prototype to a secure, tested, pilot-rea
 
 - Phases 52–56b are merged and live: anonymous function execution is closed, dependencies/CI are pinned, the calm role shell and controlled assignment factory are present, and cookie sessions, database roles, operator separation, export, and delayed deletion are implemented.
 - Phase 57 foundation is applied to Project Z Supabase: exactly 14 pathways, 438 legacy candidate pathway-skill placements, official-source/version records, and a hard 2,000-distinct-variant release floor.
+- Phase 58's restricted curriculum-review foundation is applied: operator-managed verified reviewer credentials, an immutable review audit trail, separate source-mapper and mathematics-educator decisions, and a database constraint requiring two different people before a skill can be approved.
+- Current curriculum truth remains deliberately fail-closed: zero authorized guides, zero verified reviewers, zero approved skills, zero released pathways, and therefore zero completeness claims.
 - All 14 pathways remain blocked and advertise no completion. The old 18 blueprint and 22 diagnostic `verified` flags were preserved in quarantine history and cleared because they do not satisfy the new evidence contract.
-- Current security advisor baseline is 206 notices: 14 informational RLS-with-no-policy notices on sealed legacy tables, 191 intentional/legacy authenticated `SECURITY DEFINER` warnings, and leaked-password protection disabled. Phase 57's new read-only evidence RPCs use caller RLS and add no advisor warning.
+- Current security advisor baseline is 213 notices: 14 informational RLS-with-no-policy notices on sealed legacy tables, 198 intentional/legacy authenticated `SECURITY DEFINER` warnings, and leaked-password protection disabled. Phase 58 adds seven intentionally signed-in-only private-table gateways; each has an explicit identity/role check, exact grants, fixed search path, anonymous denial, and tested fail-closed behavior. No new critical/high finding or missing-index finding was introduced.
 
 ## Definition of done
 
@@ -107,15 +109,17 @@ Exit gate: no user can self-promote or access another role's data.
 
 Exit gate: every advertised course meets the approved coverage threshold and sampling audit.
 
-### Phase 58 — Learning intelligence and assessment integrity
+### Phase 58 — Curriculum review workbench and learning intelligence
 
-1. Validate diagnostics, mastery updates, spaced repetition, prerequisite gaps, and recommendations with test cases.
-2. Keep Criterion A deterministic where possible.
-3. Treat B/C/D structured auto-marking separately from open-response teacher judgement.
-4. Calibrate AI feedback and suggested marks against teacher-reviewed examples.
-5. Separate motivation signals from formal assessment in schema, UI, exports, and reports.
+1. Provide a restricted, calm one-skill-at-a-time curriculum-review queue without copying protected guide text into Project Z.
+2. Require a verified source mapper and a different verified mathematics educator before curriculum approval can be recorded.
+3. Validate diagnostics, mastery updates, spaced repetition, prerequisite gaps, and recommendations with test cases.
+4. Keep Criterion A deterministic where possible.
+5. Treat B/C/D structured auto-marking separately from open-response teacher judgement.
+6. Calibrate AI feedback and suggested marks against teacher-reviewed examples.
+7. Separate motivation signals from formal assessment in schema, UI, exports, and reports.
 
-Exit gate: learning decisions are explainable, reproducible, and do not overstate assessment certainty.
+Exit gate: curriculum decisions have reproducible two-person evidence, and learning decisions are explainable, reproducible, and do not overstate assessment certainty.
 
 ### Phase 59 — UX, accessibility, and performance
 

@@ -48,6 +48,7 @@ export async function updateProjectZSession(request: NextRequest) {
   if (!routeRule) return response;
 
   let role: ProjectZDatabaseRole | null = null;
+  let curriculumReview = false;
   if (userId) {
     const { data: profile } = await supabase
       .from('project_z_profiles')
@@ -57,9 +58,21 @@ export async function updateProjectZSession(request: NextRequest) {
     role = ['student', 'teacher', 'parent'].includes(profile?.role)
       ? profile.role as ProjectZDatabaseRole
       : null;
+
+    if (routeRule.access === 'curriculum-review') {
+      const { data: reviewAccess } = await supabase.rpc('project_z_curriculum_review_access');
+      const accessRow = Array.isArray(reviewAccess) ? reviewAccess[0] : reviewAccess;
+      curriculumReview = accessRow?.is_operator === true
+        || (Array.isArray(accessRow?.reviewer_roles) && accessRow.reviewer_roles.length > 0);
+    }
   }
 
-  const decision = projectZRouteDecision(request.nextUrl.pathname, Boolean(userId), role);
+  const decision = projectZRouteDecision(
+    request.nextUrl.pathname,
+    Boolean(userId),
+    role,
+    { curriculumReview }
+  );
   if (decision.allowed || !decision.redirectTo) return response;
 
   const destination = new URL(decision.redirectTo, request.url);

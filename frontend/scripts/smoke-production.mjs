@@ -43,19 +43,22 @@ try {
   const health = await healthResponse.json();
   assert.equal(health.ok, true);
   assert.equal(health.app, 'Project Z');
-  assert.equal(health.version, 'phase-57-ib-curriculum-evidence-foundation');
+  assert.equal(health.version, 'phase-58-curriculum-review-workbench');
   assert.equal(health.checks.controlledAssignmentFactory, true);
   assert.equal(health.checks.verifiedClaimsRouteProtection, true);
   assert.equal(health.checks.accountDataExport, true);
   assert.equal(health.checks.fourteenIbPathwaysRegistered, true);
   assert.equal(health.checks.minimumTwoThousandVariantGateEnforced, true);
   assert.equal(health.checks.curriculumPathwaysReleased, false);
+  assert.equal(health.checks.curriculumReviewWorkbench, true);
+  assert.equal(health.checks.twoPersonCurriculumApproval, true);
 
   await verifyText('/home', ['Project Z', 'Choose your starting point', 'More tools']);
   await verifyText('/role-navigation', ['One clear path, with every tool available', 'Suggested path']);
   await verifyText('/auth', ['Project Z role-based access', 'Sign in']);
   await verifyText('/account', ['Sign in to Project Z']);
   await verifyRedirect('/assignment-factory', '/auth');
+  await verifyRedirect('/curriculum-review', '/auth');
   process.stdout.write('Project Z production smoke test passed.\n');
 } finally {
   server.kill('SIGTERM');
