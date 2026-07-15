@@ -33,7 +33,8 @@ No percentage based on page count, route count, question rows, or phases complet
 | Reliability/operations | RED | Monitoring, rate/cost limits, backup/restore drill, incident response, provider outage, and rollback tested. |
 | Privacy/compliance | RED | Approved privacy, terms, retention, consent, child-data, export, deletion, and breach procedures. |
 | Controlled pilot | RED | Representative students, teachers, and parents complete the pilot with zero release blocker. |
-| Final handover | RED | Phase 58 handover records the current fail-closed curriculum state; final architecture, schema, curriculum, AI, environments, deployment, rollback, operations, limitations, and launch decision remain incomplete. |
+| Continuation handover | GREEN | Phase 58c provides an authoritative handover, world-class blueprint, persistent ChatGPT Project instructions and exact first prompt, all restartable from GitHub without prior chat context. |
+| Final launch handover | RED | Final architecture, schema, curriculum, AI, environments, deployment, rollback, operations, limitations, pilot evidence and launch decision remain incomplete until every product gate is green. |
 
 ## Launch rule
 

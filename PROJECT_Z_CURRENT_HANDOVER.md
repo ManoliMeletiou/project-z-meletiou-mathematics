@@ -3,7 +3,7 @@
 Authoritative handover:
 
 ```text
-docs/handover/PROJECT_Z_HANDOVER_PHASE_58B.md
+docs/handover/PROJECT_Z_HANDOVER_PHASE_58C.md
 ```
 
 Completion plan:
@@ -12,20 +12,27 @@ Completion plan:
 docs/PROJECT_Z_COMPLETION_MASTER_PLAN.md
 ```
 
-Current verified production milestone before this release:
-
-```text
-Phase 58 — Curriculum Review Workbench
-```
-
-Current release being prepared:
+Current verified production milestone:
 
 ```text
 Phase 58b — Golden Generator Foundation
 ```
 
-Expected health version after deployment:
+Current documentation-only transfer milestone:
+
+```text
+Phase 58c — ChatGPT Project Transfer Blueprint
+```
+
+Production health version remains:
 
 ```text
 phase-58b-golden-generator-foundation
+```
+
+New ChatGPT Project setup:
+
+```text
+docs/handover/PROJECT_Z_CHATGPT_PROJECT_INSTRUCTIONS.md
+docs/handover/PROJECT_Z_NEW_PROJECT_FIRST_PROMPT.md
 ```
