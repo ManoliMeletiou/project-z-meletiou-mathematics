@@ -54,8 +54,16 @@ Project Z is not 100% complete. Every pathway, diagnostic calibration and learne
 | Python engine | PASS — `python -m py_compile engine/main.py` |
 | Next production build | PASS |
 | Whitespace/migration diff | PASS |
+| GitHub PR #11 release-gate run `29411633625` | PASS |
+| Vercel preview `dpl_2AjAnHNiGtFhE74asgsMzC5jiwfR` | READY; health 200 |
+| Supabase migration `20260715112739` | APPLIED |
+| Supabase FK-index migration `20260715112958` | APPLIED |
+| Post-apply fail-closed assertions | PASS — 14 draft, 0 approved/released/verified/delivered/active |
+| Unsafe RPC execute matrix | PASS — anon denied; authenticated practice/XP/quest denied; Phase 58d diagnostic allow-list only |
+| Security advisors | 198 total, down from 213; 0 ERROR/CRITICAL |
+| Missing-FK-index advisors | 111, unchanged from baseline |
 
-Production migration, PR/CI, merge and final live deployment identifiers are recorded in the Phase 58d handover once verified.
+PR/CI, preview, production migrations and database assertions are verified. Merge and final live deployment evidence remain before phase closure.
 
 ## Acceptance impact
 
