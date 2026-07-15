@@ -28,6 +28,16 @@ The current dependency-ordered execution and evidence plan is `docs/PROJECT_Z_OB
 - All 14 pathways remain blocked and advertise no completion. The old 18 blueprint and 22 diagnostic `verified` flags were preserved in quarantine history and cleared because they do not satisfy the new evidence contract.
 - Current security advisor baseline is 213 notices: 14 informational RLS-with-no-policy notices on sealed legacy tables, 198 intentional/legacy authenticated `SECURITY DEFINER` warnings, and leaked-password protection disabled. Phase 58 adds seven intentionally signed-in-only private-table gateways; each has an explicit identity/role check, exact grants, fixed search path, anonymous denial, and tested fail-closed behavior. No new critical/high finding or missing-index finding was introduced.
 
+## Verified progress — 15 July 2026, Phase 58e live foundation
+
+- PR `#13` merged the collision-free Phase 58e model as `8c06da797c2d06348ff6565bc6276248a010c328`; GitHub release-gate run `29415046847` passed.
+- Supabase migration `20260715122514 phase_58e_vertical_slice_event_model` is applied. It preserves the single collided legacy practice row, keeps every legacy practice RPC revoked and adds fail-closed append-only first-mission ledgers.
+- Vercel production `dpl_F7ABP8zKyRTgPHQqntnexj1e1nr4` is READY with health version `phase-58e-vertical-slice-event-model`; build and route-scoped runtime inspection found no error.
+- The new database serving generator exactly reproduces all five Phase 58b families, all 2,500 distinct instances and digest `cfc6b83b2e6eee891fbe5110d5cadf16ffbf9ce232432f743cc0733ca4246b2f`.
+- All fourteen pathways and both candidate place-value slice placements remain blocked. Authorized guides, verified reviewers, approved skills, teaching assets, generator families and learner slice events remain zero.
+- Post-apply advisors show 205 security findings (no ERROR/CRITICAL) and 427 performance findings. The pre-existing unindexed-foreign-key count remains 111; seven authenticated gateway warnings and expected unused indexes were added by the empty Phase 58e ledgers.
+- The Phase 58e reviewed-release exit gate remains RED/BLOCKED pending the owner-only authorized source, two distinct qualified reviewers, reviewed diagnostic cases/account fixtures and a complete authenticated browser/database trace. Project Z is not 100% complete.
+
 ## Definition of done
 
 Project Z is launch-complete only when every gate is met:

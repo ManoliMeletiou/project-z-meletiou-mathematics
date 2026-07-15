@@ -56,9 +56,10 @@ The live-schema transaction/rollback dry run passed that assertion. This automat
 | TypeScript | PASS |
 | Production-schema migration transaction + rollback | PASS |
 | Exact DB/TypeScript 2,500-instance digest | PASS |
-| Next build/smoke/Python | Pending final local gate |
-| PR CI and Vercel preview | Pending |
-| Applied migration assertions and advisors | Pending |
+| Next build/smoke/Python | PASS |
+| PR CI and Vercel preview | PASS — run `29415046847`; preview `dpl_LatfoQWj9GaAhHL3g1At9Xit68rB` READY |
+| Applied migration assertions and advisors | PASS for Phase 58e change — migration `20260715122514`; no new unindexed foreign key or ERROR/CRITICAL security finding |
+| Production deployment/health/build/runtime | PASS — `dpl_F7ABP8zKyRTgPHQqntnexj1e1nr4` READY; Phase 58e health 200; no build or route-scoped runtime error |
 | Authenticated reviewed browser/data loop | BLOCKED — owner-only review and representative account |
 
 ## Accessibility and child-safety details
@@ -83,7 +84,11 @@ Full WCAG 2.2 AA evidence across role-critical flows remains a later acceptance 
 
 ## Exit-gate status
 
-Engineering foundation: PASS locally and against a rolled-back production-schema transaction.
+Engineering foundation: PASS and live. PR `#13` merged as `8c06da797c2d06348ff6565bc6276248a010c328`; Project Z Supabase applied `20260715122514 phase_58e_vertical_slice_event_model`; Vercel production `dpl_F7ABP8zKyRTgPHQqntnexj1e1nr4` is READY.
+
+Post-apply evidence remains fail-closed: zero released pathways, zero approved atlas skills, zero approved generator families, zero approved teaching assets and zero first-mission learner events. The one collided legacy practice row is preserved; the legacy service RPCs remain revoked. All 139 public tables have RLS, anonymous `SECURITY DEFINER` execution remains zero, and the new ledgers expose no authenticated direct write privilege.
+
+Advisor reconciliation: security 205 total (14 INFO, 191 WARN, no ERROR/CRITICAL); performance 427 total, including 111 unindexed foreign keys unchanged from the pre-phase baseline. Phase 58e adds seven intentional authenticated gateway warnings and expected unused-index findings on empty, indexed ledgers. Leaked-password protection and the wider pre-existing authenticated-function/policy inventory remain open platform risks.
 
 Reviewed vertical-slice release: RED/BLOCKED. No authorized source, verified mapper, different qualified educator, approved calibration, released pathway or authenticated reviewed browser trace exists yet.
 
