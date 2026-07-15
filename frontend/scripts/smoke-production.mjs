@@ -43,7 +43,7 @@ try {
   const health = await healthResponse.json();
   assert.equal(health.ok, true);
   assert.equal(health.app, 'Project Z');
-  assert.equal(health.version, 'phase-58d-diagnostic-prologue-gate');
+  assert.equal(health.version, 'phase-58e-vertical-slice-event-model');
   assert.equal(health.checks.controlledAssignmentFactory, true);
   assert.equal(health.checks.verifiedClaimsRouteProtection, true);
   assert.equal(health.checks.accountDataExport, true);
@@ -61,6 +61,13 @@ try {
   assert.equal(health.checks.diagnosticAnswerLeakageBlocked, true);
   assert.equal(health.checks.mainGamePrologueGate, true);
   assert.equal(health.checks.diagnosticCalibrationApproved, false);
+  assert.equal(health.checks.legacyPracticeCollisionQuarantined, true);
+  assert.equal(health.checks.immutableFirstMissionEventLedger, true);
+  assert.equal(health.checks.serverIssuedPracticeDeliveries, true);
+  assert.equal(health.checks.correctionBeforeContinuationGate, true);
+  assert.equal(health.checks.explainableFirstMissionMastery, true);
+  assert.equal(health.checks.idempotentMotivationOnlyRewards, true);
+  assert.equal(health.checks.reviewedVerticalSliceFoundation, true);
   assert.equal(health.checks.verticalSlicePracticeEngineReleased, false);
 
   await verifyText('/home', ['Project Z', 'Choose your starting point', 'More tools']);
@@ -69,6 +76,7 @@ try {
   await verifyText('/account', ['Sign in to Project Z']);
   await verifyRedirect('/assignment-factory', '/auth');
   await verifyRedirect('/curriculum-review', '/auth');
+  await verifyRedirect('/recommended', '/auth');
   process.stdout.write('Project Z production smoke test passed.\n');
 } finally {
   server.kill('SIGTERM');

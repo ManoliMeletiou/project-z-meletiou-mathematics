@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-58d-diagnostic-prologue-gate',
+    version: 'phase-58e-vertical-slice-event-model',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -59,6 +59,13 @@ export async function GET() {
       diagnosticAnswerLeakageBlocked: true,
       mainGamePrologueGate: true,
       diagnosticCalibrationApproved: false,
+      legacyPracticeCollisionQuarantined: true,
+      immutableFirstMissionEventLedger: true,
+      serverIssuedPracticeDeliveries: true,
+      correctionBeforeContinuationGate: true,
+      explainableFirstMissionMastery: true,
+      idempotentMotivationOnlyRewards: true,
+      reviewedVerticalSliceFoundation: true,
       verticalSlicePracticeEngineReleased: false,
       referenceBoundaryTracked: true,
       completionAcceptanceMatrixTracked: true,
