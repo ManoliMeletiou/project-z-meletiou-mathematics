@@ -17,6 +17,7 @@ It also records the objective-100 dependency plan in `docs/PROJECT_Z_OBJECTIVE_1
 ## Release identifiers
 
 - Starting main commit: `02a13db96549592e56f0fb8e69a09d2350c267cc`
+- Merged implementation commit: `a1cc97eb2c3a7ff832c84dea02e343697697888f`
 - Phase branch: `agent/phase-58d-diagnostic-prologue`
 - Phase PR: `#11`
 - Phase PR head: `28a9d0f5ac3671a4c805476af405cef80fb8fd50`
@@ -28,7 +29,7 @@ It also records the objective-100 dependency plan in `docs/PROJECT_Z_OBJECTIVE_1
 - Rollback: `supabase/rollbacks/20260715105711_phase_58d_diagnostic_prologue_gate_rollback.sql`
 - Previous Vercel production deployment: `dpl_24VhLeFNZbPU25pZSFq3PkcyMVnx`
 - Vercel preview deployment: `dpl_2AjAnHNiGtFhE74asgsMzC5jiwfR` — READY, health 200
-- Production deployment: append after merge/live verification before declaring the phase complete.
+- Production application deployment: `dpl_CHtTjxkqLXHuS4eye4TbJ2daXpoq` — READY on the canonical domain
 
 ## Current release truth
 
@@ -51,7 +52,11 @@ It also records the objective-100 dependency plan in `docs/PROJECT_Z_OBJECTIVE_1
 - PR CI/preview and production migration assertions: PASS.
 - Supabase security advisors: 198 total after apply (14 INFO, 184 WARN), improved from 213; zero ERROR/CRITICAL.
 - Supabase missing-FK-index advisories: 111, unchanged from the pre-phase baseline after the follow-up index migration.
-- Post-merge production smoke/logs: still required before phase closure.
+- Canonical production `/` and `/api/health`: HTTP 200.
+- Production health version: `phase-58d-diagnostic-prologue-gate`; all curriculum, calibration, vertical-slice and golden-generator release flags remain false.
+- Vercel build errors-only log: build completed; no build error.
+- Vercel runtime errors after release: none in the inspected one-hour window.
+- Supabase API/auth logs: empty; Postgres contained the recorded migrations and no post-apply database error. The single earlier SQL syntax error came from the first rolled-back dry-run attempt and was corrected before application.
 
 ## Rollback
 
@@ -66,11 +71,10 @@ Run the Phase 58d fail-closed rollback to quarantine configs, pause sessions, ex
 
 ## Exact next steps
 
-1. Mark PR #11 ready, merge it and verify production health/logs/assertions.
-2. Record the final production deployment here and in the phase report/current handover.
-3. Start Phase 58e with a new immutable practice event model for `number.place-value.round-order`.
-4. Obtain two-person placement/family review without copying protected guide content.
-5. Prove the complete reviewed learning-to-game slice in authenticated browser/database tests.
+1. Start Phase 58e with a new immutable practice event model for `number.place-value.round-order`.
+2. Obtain two-person placement/family review without copying protected guide content.
+3. Build teaching, guided/independent practice, correction, mastery and server-verified reward/unlock events.
+4. Prove the complete reviewed learning-to-game slice in authenticated browser/database tests before replication.
 
 ## Completion warning
 

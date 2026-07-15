@@ -62,8 +62,13 @@ Project Z is not 100% complete. Every pathway, diagnostic calibration and learne
 | Unsafe RPC execute matrix | PASS — anon denied; authenticated practice/XP/quest denied; Phase 58d diagnostic allow-list only |
 | Security advisors | 198 total, down from 213; 0 ERROR/CRITICAL |
 | Missing-FK-index advisors | 111, unchanged from baseline |
+| Merged implementation commit | `a1cc97eb2c3a7ff832c84dea02e343697697888f` |
+| Production deployment | `dpl_CHtTjxkqLXHuS4eye4TbJ2daXpoq` — READY |
+| Canonical `/` and `/api/health` | HTTP 200 |
+| Production health | `phase-58d-diagnostic-prologue-gate`; all release/calibration flags false |
+| Production build/runtime evidence | Build completed; no runtime errors in inspected one-hour window |
 
-PR/CI, preview, production migrations and database assertions are verified. Merge and final live deployment evidence remain before phase closure.
+PR/CI, merge, production migrations, database assertions, canonical health and Vercel build/runtime evidence are verified. The handover now matches the merged live application state.
 
 ## Acceptance impact
 
