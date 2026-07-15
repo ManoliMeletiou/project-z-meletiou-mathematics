@@ -132,6 +132,16 @@ Exit gate: curriculum decisions have reproducible two-person evidence, and learn
 
 Current evidence: five place-value/rounding families, 2,500 tested and distinct variants, zero duplicates, all blocked pending human review.
 
+#### Phase 58c — ChatGPT Project transfer blueprint
+
+1. Make the continuation handover self-contained and authoritative in GitHub.
+2. Record paste-ready ChatGPT Project instructions and the exact first prompt.
+3. Define the mandatory first diagnostic as the game prologue and connect it to the learning map.
+4. Specify the full curriculum, game, practice-depth, AI tutor, calm UX and role-loop outcome.
+5. Make current and future handover updates a mandatory phase exit gate.
+
+Exit gate: a new ChatGPT Project can orient from GitHub alone without relying on previous chat context, while the final launch handover remains open until every product acceptance gate is green.
+
 ### Phase 59 — UX, accessibility, and performance
 
 1. Run complete responsive checks on phone, tablet, laptop, and desktop.
