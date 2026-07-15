@@ -4,6 +4,8 @@
 
 Move Project Z from a live feature-rich prototype to a secure, tested, pilot-ready mathematics learning platform with objective release gates. "Complete" means the system passes the launch definition below; it does not mean that future curriculum or product improvement stops.
 
+The current dependency-ordered execution and evidence plan is `docs/PROJECT_Z_OBJECTIVE_100_EXECUTION_PLAN.md`. It supersedes stale baseline counts in this historical phase outline when the two differ.
+
 ## Current baseline — 11 July 2026
 
 - GitHub source of truth: `ManoliMeletiou/project-z-meletiou-mathematics`, branch `main`.
@@ -141,6 +143,23 @@ Current evidence: five place-value/rounding families, 2,500 tested and distinct 
 5. Make current and future handover updates a mandatory phase exit gate.
 
 Exit gate: a new ChatGPT Project can orient from GitHub alone without relying on previous chat context, while the final launch handover remains open until every product acceptance gate is green.
+
+#### Phase 58d — Database-authoritative diagnostic prologue gate
+
+1. Require pathway/cohort/access setup and unscored tool orientation.
+2. Require curriculum release plus independent diagnostic calibration before starting or serving.
+3. Bind every response to one server-issued outstanding item and prevent replay/arbitrary submission.
+4. Withhold answers and interim mastery during the adaptive run; complete as `inconclusive` rather than guessing.
+5. Assign an approved first mission before main-game unlock.
+6. Revoke answer-bearing direct access, client-awarded XP, pre-prologue quest RPCs and the structurally collided legacy practice RPCs.
+
+Exit gate: the live database, UI and game surfaces fail closed before reviewed release; CI, migration assertions, production health and rollback evidence pass. This is a security/validity foundation, not diagnostic validation or a complete learning loop.
+
+#### Phase 58e — First reviewed learning-to-game vertical slice
+
+Build and independently review one end-to-end slice for `number.place-value.round-order`: diagnostic → teaching → guided/independent practice → feedback → correction → mastery → first mission/game unlock. Resolve the practice schema collision with an immutable event model and prove the complete loop in authenticated browser/database tests before replicating it.
+
+Exit gate: authorized placement and human mathematics review are recorded, at least 2,000 independently verified instances remain reproducible, and the full browser/data loop passes without leakage, replay, reward duplication or premature mastery/unlock.
 
 ### Phase 59 — UX, accessibility, and performance
 

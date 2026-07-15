@@ -4,6 +4,7 @@ import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
 import { ProjectZCompanionUpgradePanel } from '../../components/ProjectZCompanionUpgradePanel';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
+import { DiagnosticGameEntryState, fetchDiagnosticGameEntryState } from '../../lib/projectZDiagnostic';
 import {
   fetchStudentDashboardActions,
   fetchStudentDashboardSkills,
@@ -137,6 +138,7 @@ function pathNodes(level: number) {
 
 export default function StudentDashboardPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
+  const [gameEntry, setGameEntry] = useState<DiagnosticGameEntryState | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [summary, setSummary] = useState<StudentDashboardSummary | null>(null);
   const [actions, setActions] = useState<StudentDashboardAction[]>([]);
@@ -156,6 +158,13 @@ export default function StudentDashboardPage() {
 
     if (profile.role !== 'student') {
       setStatus(profile.role === 'guest' ? 'Sign in as a student to enter your dashboard.' : 'This cosmic dashboard is for student accounts.');
+      return;
+    }
+
+    const entry = await fetchDiagnosticGameEntryState();
+    setGameEntry(entry);
+    if (!entry?.main_game_unlocked) {
+      setStatus('Complete the diagnostic prologue before the game dashboard unlocks.');
       return;
     }
 
@@ -275,7 +284,15 @@ export default function StudentDashboardPage() {
           </section>
         )}
 
-        {role === 'student' && summary && (
+        {role === 'student' && gameEntry && !gameEntry.main_game_unlocked && (
+          <section className="card">
+            <h2>Your starting map comes first</h2>
+            <p className="muted">Project Z will not open the game or assign a first mission from unreviewed evidence.</p>
+            <a className="btn blue" href="/diagnostic">Continue prologue</a>
+          </section>
+        )}
+
+        {role === 'student' && gameEntry?.main_game_unlocked && summary && (
           <>
             <section className="pz-student-dashboard-shell">
               <div className="pz-cosmic-hero">
