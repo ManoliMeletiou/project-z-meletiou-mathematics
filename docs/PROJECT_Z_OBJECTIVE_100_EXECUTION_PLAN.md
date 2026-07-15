@@ -56,6 +56,15 @@ This plan is the dependency-ordered route from the verified live state on 15 Jul
 
 Phase 58d is the first risk-reduction phase because no trustworthy vertical slice can be built while these evidence and unlock boundaries are client-controlled or structurally inconsistent.
 
+### Reconciled live state after Phase 58e
+
+- Phase 58d is merged and live; Phase 58e PR `#13` is merged at `8c06da797c2d06348ff6565bc6276248a010c328` with release-gate run `29415046847` passing.
+- Project Z Supabase applied `20260715122514 phase_58e_vertical_slice_event_model`. The collided legacy row remains quarantined while new append-only teaching, delivery, attempt, correction, mastery, unlock and motivation-only reward ledgers are live and empty.
+- Project Z Vercel production `dpl_F7ABP8zKyRTgPHQqntnexj1e1nr4` is READY; `/api/health` returns the Phase 58e version, `/recommended` remains signed-out protected, and build/runtime inspection is clean.
+- Exactly fourteen pathways remain registered and unreleased. Authorized guides, verified curriculum reviewers, approved skills, approved teaching assets, approved generator families and released slice configs remain zero.
+- The engineering foundation passes 58 Node contracts, typecheck, build, smoke, Python compilation, exact 2,500-instance generator reconciliation, CI and live migration assertions. This does not satisfy the reviewed Phase 58e gate.
+- Owner-only blockers remain current authorized-guide access, a verified source mapper, a different qualified mathematics educator, approved diagnostic cases and representative authenticated accounts. All other work continues, but no curriculum release or completion claim is permitted without those dependencies.
+
 ## Dependency graph
 
 ```mermaid
@@ -94,7 +103,7 @@ Security, accessibility, operational and curriculum evidence work continues in p
 
 ### 1 — Phase 58d: database-authoritative diagnostic prologue and main-game lock
 
-**Dependency:** Phase 0 only. **Current execution phase.**
+**Dependency:** Phase 0 only. **Merged and verified live foundation.**
 
 **Work**
 
@@ -151,7 +160,7 @@ Security, accessibility, operational and curriculum evidence work continues in p
 
 **Owner-only:** current authorized IB guide access; verified source mapper; different qualified mathematics educator; representative test accounts.
 
-**Current implementation status:** the collision-free event model, server-issued deterministic practice, teaching/correction/mastery rules, idempotent game/reward events, account export and calm first-mission UI are implemented with 58 passing Node contracts and a successful production-schema transaction/rollback. The database serving generator reproduces the Phase 58b 2,500-instance digest. This is engineering evidence only: the slice remains blocked and this phase is not GREEN until the owner-only source/reviewer/calibration dependencies and authenticated reviewed browser/data proof are complete.
+**Current implementation status:** the collision-free event model, server-issued deterministic practice, teaching/correction/mastery rules, idempotent game/reward events, account export and calm first-mission UI are merged and live with 58 passing Node contracts, successful CI, production migration assertions and READY deployment evidence. The database serving generator reproduces the Phase 58b 2,500-instance digest. This is engineering evidence only: the slice remains blocked and this phase is not GREEN until the owner-only source/reviewer/calibration dependencies and authenticated reviewed browser/data proof are complete.
 
 ### 3 — Canonical prerequisite-linked atlas for all fourteen pathways
 
