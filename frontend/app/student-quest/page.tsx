@@ -4,6 +4,7 @@ import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
 import { ProjectZCompanionUpgradePanel } from '../../components/ProjectZCompanionUpgradePanel';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
+import { DiagnosticGameEntryState, fetchDiagnosticGameEntryState } from '../../lib/projectZDiagnostic';
 import {
   companionIcon,
   companionMessage,
@@ -53,6 +54,7 @@ function questNodes(level: number) {
 
 export default function StudentQuestPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
+  const [gameEntry, setGameEntry] = useState<DiagnosticGameEntryState | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [profile, setProfile] = useState<StudentQuestProfile | null>(null);
   const [identity, setIdentity] = useState<QuestIdentity | null>(null);
@@ -69,6 +71,13 @@ export default function StudentQuestPage() {
 
     if (currentProfile.role !== 'student') {
       setStatus(currentProfile.role === 'guest' ? 'Sign in as a student to open Student Quest.' : 'Student Quest is for student accounts.');
+      return;
+    }
+
+    const entry = await fetchDiagnosticGameEntryState();
+    setGameEntry(entry);
+    if (!entry?.main_game_unlocked) {
+      setStatus('Complete the diagnostic prologue before Student Quest unlocks.');
       return;
     }
 
@@ -151,7 +160,15 @@ export default function StudentQuestPage() {
           </section>
         )}
 
-        {role === 'student' && profile && (
+        {role === 'student' && gameEntry && !gameEntry.main_game_unlocked && (
+          <section className="card">
+            <h2>Quest is locked</h2>
+            <p className="muted">The main game opens only after the reviewed diagnostic produces an explainable starting map and first mission.</p>
+            <a className="btn blue" href="/diagnostic">Continue prologue</a>
+          </section>
+        )}
+
+        {role === 'student' && gameEntry?.main_game_unlocked && profile && (
           <>
             <section className="pz-student-dashboard-shell">
               <div className="pz-cosmic-hero">

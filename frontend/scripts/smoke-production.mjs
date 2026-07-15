@@ -43,7 +43,7 @@ try {
   const health = await healthResponse.json();
   assert.equal(health.ok, true);
   assert.equal(health.app, 'Project Z');
-  assert.equal(health.version, 'phase-58b-golden-generator-foundation');
+  assert.equal(health.version, 'phase-58d-diagnostic-prologue-gate');
   assert.equal(health.checks.controlledAssignmentFactory, true);
   assert.equal(health.checks.verifiedClaimsRouteProtection, true);
   assert.equal(health.checks.accountDataExport, true);
@@ -56,6 +56,12 @@ try {
   assert.equal(health.checks.goldenGeneratorTwoThousandFiveHundredDistinct, true);
   assert.equal(health.checks.generatorHumanMathematicsReviewRequired, true);
   assert.equal(health.checks.goldenGeneratorReleased, false);
+  assert.equal(health.checks.databaseAuthoritativeDiagnosticPrologue, true);
+  assert.equal(health.checks.diagnosticItemDeliveryBound, true);
+  assert.equal(health.checks.diagnosticAnswerLeakageBlocked, true);
+  assert.equal(health.checks.mainGamePrologueGate, true);
+  assert.equal(health.checks.diagnosticCalibrationApproved, false);
+  assert.equal(health.checks.verticalSlicePracticeEngineReleased, false);
 
   await verifyText('/home', ['Project Z', 'Choose your starting point', 'More tools']);
   await verifyText('/role-navigation', ['One clear path, with every tool available', 'Suggested path']);

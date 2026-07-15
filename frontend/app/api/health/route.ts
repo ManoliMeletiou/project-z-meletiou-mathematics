@@ -6,7 +6,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     app: 'Project Z',
-    version: 'phase-58b-golden-generator-foundation',
+    version: 'phase-58d-diagnostic-prologue-gate',
     checks: {
       supabaseUrlConfigured: hasSupabaseUrl,
       supabaseAnonKeyConfigured: hasSupabaseAnonKey,
@@ -54,6 +54,12 @@ export async function GET() {
       goldenGeneratorIndependentAnswerChecks: true,
       generatorHumanMathematicsReviewRequired: true,
       goldenGeneratorReleased: false,
+      databaseAuthoritativeDiagnosticPrologue: true,
+      diagnosticItemDeliveryBound: true,
+      diagnosticAnswerLeakageBlocked: true,
+      mainGamePrologueGate: true,
+      diagnosticCalibrationApproved: false,
+      verticalSlicePracticeEngineReleased: false,
       referenceBoundaryTracked: true,
       completionAcceptanceMatrixTracked: true,
       calmRoleHome: true,

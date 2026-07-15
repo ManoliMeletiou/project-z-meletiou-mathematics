@@ -74,20 +74,3 @@ export async function touchLearningDay() {
   if (error) return { ok: false, reason: error.message };
   return { ok: true, data };
 }
-
-export async function awardXp(courseSkillCode: string | null, sourceType: string, xpAmount: number, reason: string) {
-  if (!supabase) return { ok: false, reason: 'Supabase client unavailable' };
-
-  const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user) return { ok: false, reason: 'Sign in first' };
-
-  const { data, error } = await supabase.rpc('project_z_award_xp', {
-    p_course_skill_code: courseSkillCode,
-    p_source_type: sourceType,
-    p_xp_amount: xpAmount,
-    p_reason: reason
-  });
-
-  if (error) return { ok: false, reason: error.message };
-  return { ok: true, data };
-}

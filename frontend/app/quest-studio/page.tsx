@@ -4,6 +4,7 @@ import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { ProjectZCompanion3D } from '../../components/ProjectZCompanion3D';
 import { ProjectZCompanionUpgradePanel } from '../../components/ProjectZCompanionUpgradePanel';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
+import { DiagnosticGameEntryState, fetchDiagnosticGameEntryState } from '../../lib/projectZDiagnostic';
 import {
   cosmeticTypeLabel,
   fetchQuestCosmetics,
@@ -47,6 +48,7 @@ function categoryIcon(type: string) {
 
 export default function QuestStudioPage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
+  const [gameEntry, setGameEntry] = useState<DiagnosticGameEntryState | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [identity, setIdentity] = useState<QuestIdentity | null>(null);
   const [cosmetics, setCosmetics] = useState<QuestCosmetic[]>([]);
@@ -63,6 +65,13 @@ export default function QuestStudioPage() {
 
     if (profile.role !== 'student') {
       setStatus(profile.role === 'guest' ? 'Sign in as a student to use Quest Studio.' : 'Quest Studio is for student accounts.');
+      return;
+    }
+
+    const entry = await fetchDiagnosticGameEntryState();
+    setGameEntry(entry);
+    if (!entry?.main_game_unlocked) {
+      setStatus('Complete the diagnostic prologue before Quest Studio unlocks.');
       return;
     }
 
@@ -147,7 +156,15 @@ export default function QuestStudioPage() {
           </section>
         )}
 
-        {role === 'student' && identity && (
+        {role === 'student' && gameEntry && !gameEntry.main_game_unlocked && (
+          <section className="card">
+            <h2>Studio is locked</h2>
+            <p className="muted">Your first reviewed mission must be ready before game identity and rewards unlock.</p>
+            <a className="btn blue" href="/diagnostic">Continue prologue</a>
+          </section>
+        )}
+
+        {role === 'student' && gameEntry?.main_game_unlocked && identity && (
           <>
             <section className="pz-studio-grid">
               <aside className="card pz-companion-stage">
