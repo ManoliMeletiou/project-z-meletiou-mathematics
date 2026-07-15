@@ -151,6 +151,8 @@ Security, accessibility, operational and curriculum evidence work continues in p
 
 **Owner-only:** current authorized IB guide access; verified source mapper; different qualified mathematics educator; representative test accounts.
 
+**Current implementation status:** the collision-free event model, server-issued deterministic practice, teaching/correction/mastery rules, idempotent game/reward events, account export and calm first-mission UI are implemented with 58 passing Node contracts and a successful production-schema transaction/rollback. The database serving generator reproduces the Phase 58b 2,500-instance digest. This is engineering evidence only: the slice remains blocked and this phase is not GREEN until the owner-only source/reviewer/calibration dependencies and authenticated reviewed browser/data proof are complete.
+
 ### 3 — Canonical prerequisite-linked atlas for all fourteen pathways
 
 **Dependencies:** reviewed vertical-slice pattern and source/reviewer capacity.

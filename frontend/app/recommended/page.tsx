@@ -1,376 +1,314 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getCurrentProfile, ProjectZRole } from '../../lib/projectZAuth';
 import {
-  fetchLearningReport,
-  fetchNextPracticeQuestion,
-  fetchRecommendedPractice,
-  LearningReport,
-  PracticeAnswerResult,
-  PracticeQuestion,
-  PracticeSession,
-  RecommendedSkill,
-  startPracticeSkill,
-  submitPracticeAnswer
-} from '../../lib/projectZRecommendedPractice';
+  fetchFirstMissionSummary,
+  fetchNextMissionPractice,
+  fetchNextTeachingStep,
+  FirstMissionSummary,
+  PracticeDelivery,
+  startFirstLearningMission,
+  submitMissionCorrection,
+  submitMissionPractice,
+  submitTeachingCheck,
+  TeachingStep
+} from '../../lib/projectZFirstMission';
 
-type DisplayOption = {
-  displayKey: 'A' | 'B' | 'C' | 'D';
-  originalKey: 'A' | 'B' | 'C' | 'D';
-  text: string;
+const blockerLabels: Record<string, string> = {
+  reviewed_diagnostic_release_required: 'Reviewed diagnostic calibration',
+  authorized_source_and_two_person_placement_review_required: 'Authorized source mapping and two-person placement review',
+  pathway_release_required: 'Pathway curriculum release',
+  generator_family_mathematics_review_required: 'Independent review of all five generator families',
+  teaching_asset_mathematics_review_required: 'Independent review of the teaching sequence',
+  operator_slice_release_required: 'Final operator release record',
+  slice_not_registered: 'A registered first-mission slice'
 };
-
-type DisplayResult = PracticeAnswerResult & {
-  selected_display_option?: string;
-  correct_display_option?: string;
-};
-
-const DISPLAY_KEYS = ['A', 'B', 'C', 'D'] as const;
-const ORIGINAL_KEYS = ['A', 'B', 'C', 'D'] as const;
-
-function shuffleArray<T>(items: T[]) {
-  const copy = [...items];
-
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
-    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
-  }
-
-  return copy;
-}
-
-function buildDisplayOptions(question: PracticeQuestion | null): DisplayOption[] {
-  if (!question || question.done || !question.options) return [];
-
-  const shuffledOriginalKeys = shuffleArray([...ORIGINAL_KEYS]);
-
-  return shuffledOriginalKeys.map((originalKey, index) => ({
-    displayKey: DISPLAY_KEYS[index],
-    originalKey,
-    text: question.options?.[originalKey] || ''
-  }));
-}
 
 export default function RecommendedPracticePage() {
   const [role, setRole] = useState<ProjectZRole>('guest');
   const [email, setEmail] = useState<string | null>(null);
-  const [recommendations, setRecommendations] = useState<RecommendedSkill[]>([]);
-  const [report, setReport] = useState<LearningReport | null>(null);
-  const [session, setSession] = useState<PracticeSession | null>(null);
-  const [question, setQuestion] = useState<PracticeQuestion | null>(null);
-  const [displayOptions, setDisplayOptions] = useState<DisplayOption[]>([]);
-  const [activeSkill, setActiveSkill] = useState<RecommendedSkill | null>(null);
-  const [lastResult, setLastResult] = useState<DisplayResult | null>(null);
-  const [status, setStatus] = useState('Recommended practice loads when a student signs in.');
+  const [summary, setSummary] = useState<FirstMissionSummary | null>(null);
+  const [teaching, setTeaching] = useState<TeachingStep | null>(null);
+  const [practice, setPractice] = useState<PracticeDelivery | null>(null);
+  const [answer, setAnswer] = useState('');
+  const [reflection, setReflection] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [status, setStatus] = useState('Your first mission loads when you sign in.');
+
+  async function refreshSummary() {
+    const result = await fetchFirstMissionSummary();
+    if ('reason' in result) {
+      setStatus(result.reason);
+      return null;
+    }
+    setSummary(result.data);
+    return result.data;
+  }
 
   async function loadPage() {
     const profile = await getCurrentProfile();
     setRole(profile.role);
     setEmail(profile.email);
-
     if (profile.role !== 'student') {
-      setStatus(profile.role === 'guest' ? 'Sign in as a student to use recommended practice.' : 'Only students can practise here. Teachers and parents can view reports.');
+      setStatus(profile.role === 'guest'
+        ? 'Sign in as a student to continue the prologue.'
+        : 'The first learning mission is a student workflow.');
       return;
     }
-
-    const rows = await fetchRecommendedPractice();
-    const learningReport = await fetchLearningReport();
-
-    setRecommendations(rows);
-    setReport(learningReport);
-
-    if (rows.length === 0) {
-      setStatus('No recommendations yet. Complete the diagnostic first, or choose a course in Curriculum.');
-      return;
-    }
-
-    setStatus('Recommended practice loaded from your diagnostic and mastery evidence.');
+    const next = await refreshSummary();
+    setStatus(next?.message || 'Your mission evidence is ready.');
   }
 
   useEffect(() => {
     loadPage();
   }, []);
 
-  function setQuestionWithShuffle(nextQuestion: PracticeQuestion) {
-    setQuestion(nextQuestion);
-    setDisplayOptions(buildDisplayOptions(nextQuestion));
+  async function beginMission() {
+    setStatus('Starting the reviewed first mission…');
+    const result = await startFirstLearningMission();
+    if ('reason' in result) {
+      setStatus(result.reason);
+      return;
+    }
+    await refreshSummary();
+    await loadTeaching(result.data.id);
   }
 
-  async function startSkill(skill: RecommendedSkill) {
-    setActiveSkill(skill);
-    setLastResult(null);
-    setStatus(`Starting practice for ${skill.title}...`);
-
-    const startResult = await startPracticeSkill(skill.course_skill_code);
-
-    if (!startResult.ok || !startResult.data) {
-      setStatus(`Could not start practice: ${startResult.reason}`);
+  async function loadTeaching(missionId = summary?.mission_id) {
+    if (!missionId) return;
+    setStatus('Loading the next teaching step…');
+    const result = await fetchNextTeachingStep(missionId);
+    if ('reason' in result) {
+      setStatus(result.reason);
       return;
     }
-
-    setSession(startResult.data);
-
-    const nextResult = await fetchNextPracticeQuestion(startResult.data.id);
-
-    if (!nextResult.ok || !nextResult.data) {
-      setStatus(`Could not load practice question: ${nextResult.reason}`);
-      return;
-    }
-
-    setQuestionWithShuffle(nextResult.data);
-    setStatus('Recommended practice started. Answer the question.');
-  }
-
-  async function answer(option: DisplayOption) {
-    if (!session || !question?.question_id) {
-      setStatus('Start a practice session first.');
-      return;
-    }
-
-    setStatus('Checking answer...');
-
-    const result = await submitPracticeAnswer(session.id, question.question_id, option.originalKey);
-
-    if (!result.ok || !result.data) {
-      setStatus(`Could not submit answer: ${result.reason}`);
-      return;
-    }
-
-    const correctDisplayOption = displayOptions.find((displayOption) => displayOption.originalKey === result.data.correct_option);
-
-    setLastResult({
-      ...result.data,
-      selected_display_option: option.displayKey,
-      correct_display_option: correctDisplayOption?.displayKey
-    });
-
-    const nextResult = await fetchNextPracticeQuestion(session.id);
-
-    const rows = await fetchRecommendedPractice();
-    const learningReport = await fetchLearningReport();
-    setRecommendations(rows);
-    setReport(learningReport);
-
-    if (!nextResult.ok || !nextResult.data) {
-      setStatus(`Could not load next question: ${nextResult.reason}`);
-      return;
-    }
-
-    setQuestionWithShuffle(nextResult.data);
-
-    if (nextResult.data.done) {
-      setStatus(nextResult.data.message || 'Practice set completed.');
-      setSession(null);
+    setTeaching(result.data.done ? null : result.data);
+    setPractice(null);
+    setAnswer('');
+    setFeedback('');
+    if (result.data.done) {
+      await refreshSummary();
+      setStatus(result.data.message || 'Teaching complete. Guided practice is ready.');
     } else {
-      setStatus('Answer recorded. Next recommended practice question loaded with shuffled options.');
+      setStatus('Read the example, then complete the check in your own time.');
     }
   }
 
-  const urgentRecommendations = useMemo(
-    () => recommendations.slice(0, 4),
-    [recommendations]
-  );
+  async function checkTeaching() {
+    if (!summary?.mission_id || !teaching?.asset_code) return;
+    const result = await submitTeachingCheck(
+      summary.mission_id,
+      teaching.asset_code,
+      answer,
+      crypto.randomUUID()
+    );
+    if ('reason' in result) {
+      setStatus(result.reason);
+      return;
+    }
+    setFeedback(result.data.correct
+      ? result.data.worked_solution || 'That reasoning is ready.'
+      : result.data.scaffold_hint || 'Try the check again.');
+    setStatus(result.data.correct ? 'Teaching check complete.' : 'Use the scaffold and try again.');
+    setAnswer('');
+    if (result.data.correct) {
+      await refreshSummary();
+      await loadTeaching();
+    }
+  }
+
+  async function loadPractice() {
+    if (!summary?.mission_id) return;
+    setStatus('Loading one server-issued item…');
+    const result = await fetchNextMissionPractice(summary.mission_id);
+    if ('reason' in result) {
+      setStatus(result.reason);
+      return;
+    }
+    setPractice(result.data);
+    setTeaching(null);
+    setAnswer('');
+    setReflection('');
+    setFeedback('');
+    setStatus(result.data.message || (
+      result.data.state === 'correction_required'
+        ? 'Repair the missed item before continuing.'
+        : 'Work independently, then submit your reasoning.'
+    ));
+    await refreshSummary();
+  }
+
+  async function checkPractice() {
+    if (!summary?.mission_id || !practice?.delivery_id) return;
+    const result = await submitMissionPractice(
+      summary.mission_id,
+      practice.delivery_id,
+      answer,
+      crypto.randomUUID()
+    );
+    if ('reason' in result) {
+      setStatus(result.reason);
+      return;
+    }
+    setFeedback(result.data.worked_solution);
+    setPractice(result.data.correction_required
+      ? { ...practice, done: true, state: 'correction_required', attempt_id: result.data.attempt_id }
+      : null);
+    setAnswer('');
+    await refreshSummary();
+    setStatus(result.data.next_action === 'game_stage_unlocked'
+      ? 'Mastery verified. The first game stage is unlocked.'
+      : result.data.correction_required
+        ? 'This item needs a correction before the mission continues.'
+        : 'Evidence recorded. Continue when you are ready.');
+  }
+
+  async function checkCorrection() {
+    if (!summary?.mission_id || !practice?.attempt_id) return;
+    const result = await submitMissionCorrection(
+      summary.mission_id,
+      practice.attempt_id,
+      answer,
+      reflection,
+      crypto.randomUUID()
+    );
+    if ('reason' in result) {
+      setStatus(result.reason);
+      return;
+    }
+    setFeedback(result.data.worked_solution);
+    setAnswer('');
+    setReflection('');
+    await refreshSummary();
+    if (result.data.answer_repaired) {
+      setPractice(null);
+      setStatus(result.data.next_action === 'game_stage_unlocked'
+        ? 'Correction resolved and mastery verified. The first game stage is unlocked.'
+        : 'Correction resolved. Continue with the mission when ready.');
+    } else {
+      setStatus('The correction is not resolved yet. Rework the place-value step and try again.');
+    }
+  }
+
+  const releaseBlockers = summary?.release_blockers || [];
+  const isCorrection = practice?.state === 'correction_required';
 
   return (
     <main className="page pz-theme pz-student-theme">
       <div className="container">
-        <nav className="nav">
+        <nav className="nav" aria-label="First mission navigation">
           <div className="brand">
-            <strong>Recommended Practice</strong>
-            <span>{email || 'Sign in'} - role: {role}</span>
+            <strong>First Learning Mission</strong>
+            <span>{email || 'Sign in'} · role: {role}</span>
           </div>
           <div className="navLinks">
-            <a className="btn secondary" href="/">Home</a>
-            <a className="btn secondary" href="/student">Student Portal</a>
-            <a className="btn secondary" href="/diagnostic">Diagnostic</a>
-            <a className="btn secondary" href="/curriculum">Curriculum</a>
-            <a className="btn secondary" href="/path">Skill Path</a>
-            <a className="btn secondary" href="/reports">Reports</a>
-            <a className="btn secondary" href="/account">Account</a>
+            <a className="button secondary" href="/diagnostic">Diagnostic prologue</a>
+            <a className="button secondary" href="/student">Student home</a>
           </div>
         </nav>
 
-        <section className="notice" style={{ marginBottom: 18 }}>
-          <strong>Status:</strong> {status}
+        <section className="hero compact">
+          <p className="eyebrow">Learn → practise → correct → master</p>
+          <h1>A calm first mission, with evidence before rewards.</h1>
+          <p>
+            Teaching and practice evidence determines mastery. XP and coins are motivation only;
+            they never change a grade or an IB assessment judgement.
+          </p>
         </section>
 
-        {role === 'guest' && (
-          <section className="card">
-            <h2>Sign in required</h2>
-            <p className="muted">Sign in as a student to use recommended practice.</p>
-            <a className="btn blue" href="/auth">Sign in</a>
+        <p className="notice" role="status" aria-live="polite">{status}</p>
+
+        {summary && (
+          <section className="panel" aria-labelledby="mission-progress-title">
+            <h2 id="mission-progress-title">Mission progress</h2>
+            <div className="statsGrid">
+              <article className="statCard"><span>State</span><strong>{summary.state.replaceAll('_', ' ')}</strong></article>
+              <article className="statCard"><span>Teaching</span><strong>{summary.teaching_steps_completed || 0}/5</strong></article>
+              <article className="statCard"><span>Independent</span><strong>{summary.independent_attempts || 0}/8</strong></article>
+              <article className="statCard"><span>Checkpoints</span><strong>{summary.checkpoint_attempts || 0}/2</strong></article>
+            </div>
+            {summary.mastery_percent !== undefined && (
+              <p>Current evidence: {summary.mastery_percent}% accuracy, {summary.confidence_percent}% confidence.</p>
+            )}
+            {summary.game_stage_unlocked && (
+              <p className="success">The first place-value game stage is unlocked from verified mastery.</p>
+            )}
           </section>
         )}
 
-        {role !== 'guest' && role !== 'student' && (
-          <section className="card">
-            <h2>Student-only practice</h2>
-            <p className="muted">Teachers and parents can view reports, but only students complete practice sessions.</p>
+        {releaseBlockers.length > 0 && (
+          <section className="panel" aria-labelledby="review-lock-title">
+            <p className="eyebrow">Release lock</p>
+            <h2 id="review-lock-title">This candidate is not learner-facing yet</h2>
+            <p>Engineering evidence is in place. The following human and release evidence remains mandatory:</p>
+            <ul>
+              {releaseBlockers.map((blocker) => <li key={blocker}>{blockerLabels[blocker] || blocker.replaceAll('_', ' ')}</li>)}
+            </ul>
           </section>
         )}
 
-        {role === 'student' && (
-          <>
-            <section className="grid grid3">
-              <div className="card">
-                <h2>Learning report</h2>
-                {report ? (
-                  <p>
-                    <strong>{report.course_display_name || 'No course selected'}</strong><br />
-                    Average mastery: {report.average_mastery}%<br />
-                    Average confidence: {report.average_confidence}%<br />
-                    Diagnostic attempts: {report.total_diagnostic_attempts}<br />
-                    Practice attempts: {report.total_practice_attempts}
-                  </p>
-                ) : (
-                  <p className="muted">No report yet.</p>
-                )}
-              </div>
+        {summary?.state === 'diagnostic_required' && (
+          <section className="panel">
+            <h2>Complete the prologue first</h2>
+            <p>The main mission cannot begin without a sufficient, reviewed diagnostic and an explainable first mission.</p>
+            <a className="button" href="/diagnostic">Open diagnostic prologue</a>
+          </section>
+        )}
 
-              <div className="card">
-                <h2>Skill balance</h2>
-                {report ? (
-                  <p>
-                    Weak: {report.weak_skill_count}<br />
-                    Developing: {report.developing_skill_count}<br />
-                    Strong: {report.strong_skill_count}
-                  </p>
-                ) : (
-                  <p className="muted">Complete diagnostic questions to build this.</p>
-                )}
-              </div>
+        {summary?.state === 'ready_to_start' && (
+          <button className="button" type="button" onClick={beginMission}>Start first mission</button>
+        )}
 
-              <div className="card">
-                <h2>Next step</h2>
-                <p className="muted">{report?.next_steps || 'Complete the diagnostic first.'}</p>
-              </div>
-            </section>
+        {teaching && (
+          <section className="panel" aria-labelledby="teaching-title">
+            <p className="eyebrow">Teaching step {teaching.step_order} of 5</p>
+            <h2 id="teaching-title">{teaching.title}</h2>
+            <p>{teaching.explanation}</p>
+            <div className="notice">
+              <strong>Worked example:</strong> {teaching.worked_example_prompt}<br />
+              {teaching.worked_example_solution}
+            </div>
+            <label>
+              {teaching.check_prompt}
+              <input value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" />
+            </label>
+            <button className="button" type="button" onClick={checkTeaching}>Check my reasoning</button>
+          </section>
+        )}
 
-            <section className="card" style={{ marginTop: 18 }}>
-              <h2>Highest-priority recommended skills</h2>
-              <p className="muted">
-                These are selected using mastery, confidence, evidence count, and curriculum priority. The app should practise the skill, not just random topics.
-              </p>
-
-              {urgentRecommendations.length === 0 ? (
-                <div>
-                  <p className="muted">No recommended skills yet.</p>
-                  <a className="btn blue" href="/diagnostic">Take diagnostic</a>
-                </div>
-              ) : (
-                <div className="grid grid2">
-                  {urgentRecommendations.map((skill) => (
-                    <div key={skill.course_skill_code} className="card">
-                      <h3>{skill.title}</h3>
-                      <p className="muted">
-                        {skill.course_display_name}
-                        {skill.assessment_criterion ? ` - Criterion ${skill.assessment_criterion}` : ''}
-                        <br />
-                        {skill.strand_title}
-                      </p>
-                      <p>{skill.description}</p>
-                      <p>
-                        Mastery: <strong>{skill.mastery_percent}%</strong><br />
-                        Confidence: <strong>{skill.confidence_percent}%</strong><br />
-                        Evidence: <strong>{skill.correct_count}/{skill.evidence_count}</strong><br />
-                        Priority: <strong>{skill.priority_score}</strong>
-                      </p>
-                      <p className="muted">{skill.recommendation_reason}</p>
-                      <button className="btn blue" onClick={() => startSkill(skill)}>
-                        {skill.next_action}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            <section className="card" style={{ marginTop: 18 }}>
-              <h2>Practice question</h2>
-
-              {!question && (
-                <p className="muted">Choose a recommended skill to start targeted practice.</p>
-              )}
-
-              {question?.done && (
-                <div>
-                  <h3>Practice complete</h3>
-                  <p className="muted">{question.message}</p>
-                  <button className="btn blue" onClick={loadPage}>Refresh recommendations</button>
-                </div>
-              )}
-
-              {question && !question.done && (
-                <div className="grid">
-                  <p className="muted">
-                    Question {question.question_number} of {question.target_questions} - {question.skill_title}
-                    {question.assessment_criterion ? ` - Criterion ${question.assessment_criterion}` : ''}
-                  </p>
-
-                  <h3>{question.prompt}</h3>
-
-                  {displayOptions.map((option) => (
-                    <button key={`${question.question_id}-${option.displayKey}`} className="btn secondary" onClick={() => answer(option)} style={{ textAlign: 'left' }}>
-                      <strong>{option.displayKey}.</strong> {option.text}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            {lastResult && (
-              <section className="card" style={{ marginTop: 18 }}>
-                <h2>{lastResult.correct ? 'Correct' : 'Not yet correct'}</h2>
-                <p>
-                  <strong>Your answer:</strong> {lastResult.selected_display_option || lastResult.selected_option}
-                  <br />
-                  <strong>Correct answer:</strong> {lastResult.correct_display_option || lastResult.correct_option}
-                </p>
-                <p className="muted">{lastResult.explanation}</p>
-                <p>
-                  <strong>Updated skill mastery:</strong> {lastResult.mastery_percent}%
-                  <br />
-                  <span className="muted">
-                    Evidence: {lastResult.correct_count}/{lastResult.evidence_count}, confidence {lastResult.confidence_percent}%
-                  </span>
-                </p>
-              </section>
+        {practice && practice.prompt && (
+          <section className="panel" aria-labelledby="practice-title">
+            <p className="eyebrow">{isCorrection ? 'Correction' : practice.phase || practice.state}</p>
+            <h2 id="practice-title">{practice.prompt}</h2>
+            {practice.scaffold_hint && <p className="notice">Scaffold: {practice.scaffold_hint}</p>}
+            {!isCorrection && practice.hints?.[0] && <details><summary>Need a hint?</summary><p>{practice.hints[0]}</p></details>}
+            <label>
+              {isCorrection ? 'Repaired answer' : 'Your answer'}
+              <input value={answer} onChange={(event) => setAnswer(event.target.value)} autoComplete="off" />
+            </label>
+            {isCorrection && (
+              <label>
+                What changed in your reasoning? (at least 20 characters)
+                <textarea value={reflection} onChange={(event) => setReflection(event.target.value)} rows={4} />
+              </label>
             )}
+            <button className="button" type="button" onClick={isCorrection ? checkCorrection : checkPractice}>
+              {isCorrection ? 'Submit correction' : 'Check answer'}
+            </button>
+          </section>
+        )}
 
-            {recommendations.length > 4 && (
-              <section className="card" style={{ marginTop: 18 }}>
-                <h2>More recommended skills</h2>
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Skill</th>
-                      <th>Mastery</th>
-                      <th>Reason</th>
-                      <th>Start</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recommendations.slice(4).map((skill) => (
-                      <tr key={skill.course_skill_code}>
-                        <td>
-                          <strong>{skill.title}</strong><br />
-                          <span className="muted">{skill.assessment_criterion ? `Criterion ${skill.assessment_criterion}` : 'DP skill'}</span>
-                        </td>
-                        <td>{skill.mastery_percent}%</td>
-                        <td>{skill.recommendation_reason}</td>
-                        <td>
-                          <button className="btn secondary" onClick={() => startSkill(skill)}>
-                            Practise
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </section>
-            )}
-          </>
+        {feedback && <section className="panel" aria-live="polite"><h2>Feedback</h2><p>{feedback}</p></section>}
+
+        {summary?.mission_started && !teaching && !practice && !summary.game_stage_unlocked && (
+          <button
+            className="button"
+            type="button"
+            onClick={() => summary.state === 'teaching' ? loadTeaching() : loadPractice()}
+          >
+            Continue mission
+          </button>
         )}
       </div>
     </main>

@@ -161,6 +161,8 @@ Build and independently review one end-to-end slice for `number.place-value.roun
 
 Exit gate: authorized placement and human mathematics review are recorded, at least 2,000 independently verified instances remain reproducible, and the full browser/data loop passes without leakage, replay, reward duplication or premature mastery/unlock.
 
+Current engineering evidence: the collided table remains quarantined and a new append-only first-mission model now covers reviewed teaching checks, server-issued delivery, guided/independent practice, correction, explainable mastery, unique unlock and motivation-only reward events. Its private database generator reproduces the existing five-family, 2,500-instance digest. The phase exit gate remains blocked because no authorized placement, qualified human mathematics review, approved calibration or authenticated reviewed browser trace exists.
+
 ### Phase 59 — UX, accessibility, and performance
 
 1. Run complete responsive checks on phone, tablet, laptop, and desktop.
