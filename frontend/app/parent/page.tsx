@@ -1,64 +1,112 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getMasterySummary, fetchMyMasteryEvents } from '@/lib/projectZMasteryEvents';
 
-// Basic parent view foundation - will be expanded in next increments
+// Note: In production this would fetch the child's data via secure parent link.
+// For now it demonstrates the real data integration pattern.
+
 export default function ParentDashboard() {
   const [childName] = useState('Your Child');
+  const [summary, setSummary] = useState<any>(null);
+  const [recentEvents, setRecentEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadRealData();
+  }, []);
+
+  async function loadRealData() {
+    setLoading(true);
+    try {
+      // In real implementation this would be the child's data via parent link
+      const s = await getMasterySummary();
+      const events = await fetchMyMasteryEvents();
+      setSummary(s);
+      setRecentEvents(events.slice(0, 6));
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <h1 className="text-3xl font-semibold mb-2">Parent Dashboard</h1>
-      <p className="text-gray-600 mb-8">Welcome back. Here's how {childName} is progressing.</p>
+      <p className="text-gray-600 mb-8">Welcome back. Here's how {childName} is progressing with real evidence.</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Learning Summary Card */}
-        <div className="bg-white rounded-2xl p-6 shadow">
-          <h2 className="text-xl font-semibold mb-4">Learning Summary</h2>
-          <div className="space-y-4">
-            <div>
-              <div className="text-sm text-gray-500">Overall Progress</div>
-              <div className="text-4xl font-semibold text-green-600">68%</div>
-              <div className="text-sm">Strong improvement in the last 2 weeks</div>
-            </div>
-            <div className="pt-4 border-t">
-              <div className="flex justify-between text-sm mb-1">
-                <span>Mastery Evidence Collected</span>
-                <span className="font-medium">24 events</span>
+      {loading ? (
+        <div className="text-center py-12">Loading progress...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Learning Summary with Real Data */}
+          <div className="bg-white rounded-2xl p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">Learning Summary</h2>
+            
+            {summary && (
+              <div className="space-y-6">
+                <div>
+                  <div className="text-sm text-gray-500 mb-1">Mastery Events Recorded</div>
+                  <div className="text-5xl font-semibold text-blue-600">{summary.totalEvents}</div>
+                  <div className="text-sm text-gray-500">Real evidence of learning</div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                  <div>
+                    <div className="text-2xl font-semibold">{summary.teachingChecks}</div>
+                    <div className="text-xs text-gray-500">Teaching Checks</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-semibold">{summary.corrections}</div>
+                    <div className="text-xs text-gray-500">Corrections</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-semibold">{summary.checkpoints}</div>
+                    <div className="text-xs text-gray-500">Checkpoints</div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${summary.masteryAchieved ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                    {summary.masteryAchieved ? 'Mastery Achieved on Current Pathway' : 'Building Mastery — In Progress'}
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>Teaching Checks Passed</span>
-                <span className="font-medium">12</span>
+            )}
+          </div>
+
+          {/* Strengths & Focus + Recent Evidence */}
+          <div className="bg-white rounded-2xl p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">Recent Learning Evidence</h2>
+            
+            {recentEvents.length > 0 ? (
+              <div className="space-y-3">
+                {recentEvents.map((event, index) => (
+                  <div key={index} className="flex justify-between items-center text-sm border-b pb-3 last:border-0">
+                    <div>
+                      <span className="font-medium">{event.event_type.replace('_', ' ')}</span>
+                      {event.skill_title && <span className="text-gray-500 ml-2">• {event.skill_title}</span>}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {new Date(event.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="flex justify-between text-sm">
-                <span>Corrections & Reflections</span>
-                <span className="font-medium">9</span>
-              </div>
+            ) : (
+              <p className="text-gray-500">No events yet. Progress will appear here as your child uses the platform.</p>
+            )}
+
+            <div className="mt-6 pt-4 border-t text-xs text-gray-500">
+              This view shows real, auditable evidence of learning (not just time spent).
             </div>
           </div>
         </div>
+      )}
 
-        {/* Strengths & Focus Areas */}
-        <div className="bg-white rounded-2xl p-6 shadow">
-          <h2 className="text-xl font-semibold mb-4">Strengths & Focus Areas</h2>
-          <div className="space-y-3">
-            <div>
-              <div className="font-medium text-green-700">Strengths</div>
-              <div className="text-sm text-gray-600">• Strong conceptual understanding in algebra basics
-• Consistent reflection when stuck
-• Good improvement in procedural accuracy</div>
-            </div>
-            <div className="pt-3 border-t">
-              <div className="font-medium text-amber-700">Focus Areas</div>
-              <div className="text-sm text-gray-600">• Continue building checkpoint success rate
-• More independent practice on fractions</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8 text-sm text-gray-500">
-        Detailed reports and evidence exports coming soon. This view gives you a calm, clear overview of real learning progress.
+      <div className="mt-8 text-center">
+        <p className="text-sm text-gray-500">Full detailed reports and PDF exports coming in the next update.</p>
       </div>
     </div>
   );
